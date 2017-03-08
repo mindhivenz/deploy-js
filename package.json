@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "babel-runtime": "^6.23.0",
+    "gulp-util": "^3.0.8",
     "shelljs": "^0.7.6"
   },
   "devDependencies": {
