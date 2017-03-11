@@ -9,6 +9,7 @@
   "dependencies": {
     "babel-runtime": "^6.23.0",
     "gulp-util": "^3.0.8",
+    "hash-mod": "^0.0.5",
     "semver": "^5.3.0",
     "shelljs": "^0.7.7"
   },
