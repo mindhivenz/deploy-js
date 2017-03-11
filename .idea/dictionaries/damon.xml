@@ -2,6 +2,7 @@
   <dictionary name="damon">
     <words>
       <w>gutil</w>
+      <w>semver</w>
     </words>
   </dictionary>
 </component>
