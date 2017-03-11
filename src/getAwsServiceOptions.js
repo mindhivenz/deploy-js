@@ -1,7 +1,7 @@
 
 
 const getCredentials = ({ proj, stage }) => {
-  const AWS = require('AWS')  // eslint-disable-line
+  const AWS = require('aws-sdk/global')  // eslint-disable-line
   return new AWS.SharedIniFileCredentials({ profile: stage === 'dev' ? undefined : `${proj}-${stage}` })
 }
 
