@@ -1,1 +1,1 @@
-exports.default = require('./dist/getDevName').default
+module.exports = require('./dist/getDevName')

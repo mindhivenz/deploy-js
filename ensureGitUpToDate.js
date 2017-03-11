@@ -1,1 +1,1 @@
-exports.default = require('./dist/ensureGitUpToDate').default
+module.exports = require('./dist/ensureGitUpToDate')

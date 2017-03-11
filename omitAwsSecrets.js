@@ -1,1 +1,1 @@
-exports.default = require('./dist/omitAwsSecrets').default
+module.exports = require('./dist/omitAwsSecrets')

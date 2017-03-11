@@ -1,1 +1,1 @@
-exports.default = require('./dist/publicStageName').default
+module.exports = require('./dist/publicStageName')

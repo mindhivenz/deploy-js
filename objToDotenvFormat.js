@@ -1,1 +1,1 @@
-exports.default = require('./dist/objToDotenvFormat').default
+module.exports = require('./dist/objToDotenvFormat')

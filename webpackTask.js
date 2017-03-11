@@ -1,1 +1,1 @@
-exports.default = require('./dist/webpackTask').default
+module.exports = require('./dist/webpackTask')

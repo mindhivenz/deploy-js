@@ -1,1 +1,1 @@
-exports.default = require('./dist/readJson').default
+module.exports = require('./dist/readJson')

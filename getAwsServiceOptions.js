@@ -1,1 +1,1 @@
-exports.default = require('./dist/getAwsServiceOptions').default
+module.exports = require('./dist/getAwsServiceOptions')
