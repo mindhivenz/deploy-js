@@ -6,6 +6,11 @@ import gitExec from './gitExec'
 
 export default async (repoPath, pluginName = 'ensureGitUpToDate') => {
   const options = { cwd: repoPath }
+  try {
+    await gitExec('diff-index HEAD --quiet --exit-code', pluginName, options)
+  } catch (e) {
+    throw new gutil.PluginError(pluginName, 'You have uncommitted changes, need to commit')
+  }
   await gitExec('remote update', pluginName, options)
   const local = await gitExec('rev-parse @', pluginName, options)
   const remote = await gitExec('rev-parse @{u}', pluginName, options)
@@ -13,10 +18,10 @@ export default async (repoPath, pluginName = 'ensureGitUpToDate') => {
   if (local === remote) {
     return 'Up to date'
   } else if (local === base) {
-    throw new gutil.PluginError('ensureGitUpToDate', 'You are behind origin, need to pull')
+    throw new gutil.PluginError(pluginName, 'You are behind origin, need to pull')
   } else if (remote === base) {
     return 'Ahead of origin, need to push'
   } else {
-    throw new gutil.PluginError('ensureGitUpToDate', 'You have diverged from origin')
+    throw new gutil.PluginError(pluginName, 'You have diverged from origin')
   }
 }
