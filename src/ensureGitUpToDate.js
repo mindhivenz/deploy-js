@@ -14,10 +14,11 @@ export default async (repoPath, pluginName = 'ensureGitUpToDate') => {
   await gitExec('remote update', pluginName, options)
   const local = await gitExec('rev-parse @', pluginName, options)
   const remote = await gitExec('rev-parse @{u}', pluginName, options)
-  const base = await gitExec('merge-base @ @{u}', pluginName, options)
   if (local === remote) {
     return 'Up to date'
-  } else if (local === base) {
+  }
+  const base = await gitExec('merge-base @ @{u}', pluginName, options)
+  if (local === base) {
     throw new gutil.PluginError(pluginName, 'You are behind origin, need to pull')
   } else if (remote === base) {
     return 'Ahead of origin, need to push'

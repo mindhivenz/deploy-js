@@ -1,5 +1,7 @@
-import * as gitExec from './gitExec'
+import shell from 'shelljs'
 
 
 export default () =>
-  gitExec.sync('config user.name')
+  shell.exec('git config user.name', { silent: true })
+    .stdout
+    .trim()
