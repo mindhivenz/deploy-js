@@ -1,0 +1,208 @@
+
+# Based on: https://gist.github.com/stevecaldwell77/b2e9f9179b4e52235fcee24cf37c8dc9
+# Changed to use 3 availability zones
+
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  ipPrefix:
+    Type: String
+    Description: "The first 2 numbers of a dotted IP notation, e.g. '10.15'"
+
+Resources:
+  VpcLambda:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Sub "${ipPrefix}.0.0/16"
+  SubnetLambdaPublic1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: !Sub "${ipPrefix}.0.0/19"
+      AvailabilityZone: !Sub "${AWS::Region}a"
+      MapPublicIpOnLaunch: true
+      VpcId: !Ref VpcLambda
+  SubnetLambdaPublic2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: !Sub "${ipPrefix}.32.0/19"
+      AvailabilityZone: !Sub "${AWS::Region}b"
+      MapPublicIpOnLaunch: true
+      VpcId: !Ref VpcLambda
+  SubnetLambdaPublic3:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: !Sub "${ipPrefix}.64.0/19"
+      AvailabilityZone: !Sub "${AWS::Region}c"
+      MapPublicIpOnLaunch: true
+      VpcId: !Ref VpcLambda
+  SubnetLambdaPrivate1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: !Sub "${ipPrefix}.128.0/19"
+      AvailabilityZone: !Sub "${AWS::Region}a"
+      MapPublicIpOnLaunch: false
+      VpcId: !Ref VpcLambda
+  SubnetLambdaPrivate2:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: !Sub "${ipPrefix}.160.0/19"
+      AvailabilityZone: !Sub "${AWS::Region}b"
+      MapPublicIpOnLaunch: false
+      VpcId: !Ref VpcLambda
+  SubnetLambdaPrivate3:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: !Sub "${ipPrefix}.192.0/19"
+      AvailabilityZone: !Sub "${AWS::Region}c"
+      MapPublicIpOnLaunch: false
+      VpcId: !Ref VpcLambda
+  InternetGatewayLambda:
+    Type: AWS::EC2::InternetGateway
+  VPCGatewayAttachmentLambda:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VpcLambda
+      InternetGatewayId: !Ref InternetGatewayLambda
+  ElasticIpLambda1:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+  ElasticIpLambda2:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+  ElasticIpLambda3:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+  NatGatewayLambda1:
+    DependsOn: VPCGatewayAttachmentLambda
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt ElasticIpLambda1.AllocationId
+      SubnetId: !Ref SubnetLambdaPublic1
+  NatGatewayLambda2:
+    DependsOn: VPCGatewayAttachmentLambda
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt ElasticIpLambda2.AllocationId
+      SubnetId: !Ref SubnetLambdaPublic2
+  NatGatewayLambda3:
+    DependsOn: VPCGatewayAttachmentLambda
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt ElasticIpLambda3.AllocationId
+      SubnetId: !Ref SubnetLambdaPublic3
+  RouteTableLambdaPublic1:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VpcLambda
+  RouteTableLambdaPublic2:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VpcLambda
+  RouteTableLambdaPublic3:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VpcLambda
+  RouteTableLambdaPrivate1:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VpcLambda
+  RouteTableLambdaPrivate2:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VpcLambda
+  RouteTableLambdaPrivate3:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VpcLambda
+  RouteLambdaPublic1:
+    Type: AWS::EC2::Route
+    DependsOn: VPCGatewayAttachmentLambda
+    Properties:
+      RouteTableId: !Ref RouteTableLambdaPublic1
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGatewayLambda
+  RouteLambdaPublic2:
+    Type: AWS::EC2::Route
+    DependsOn: VPCGatewayAttachmentLambda
+    Properties:
+      RouteTableId: !Ref RouteTableLambdaPublic2
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGatewayLambda
+  RouteLambdaPublic3:
+    Type: AWS::EC2::Route
+    DependsOn: VPCGatewayAttachmentLambda
+    Properties:
+      RouteTableId: !Ref RouteTableLambdaPublic3
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGatewayLambda
+  RouteLambdaPrivate1:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref RouteTableLambdaPrivate1
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGatewayLambda1
+  RouteLambdaPrivate2:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref RouteTableLambdaPrivate2
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGatewayLambda2
+  RouteLambdaPrivate3:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref RouteTableLambdaPrivate3
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGatewayLambda3
+  SubnetRouteTableAssociationLambdaPublic1:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref SubnetLambdaPublic1
+      RouteTableId: !Ref RouteTableLambdaPublic1
+  SubnetRouteTableAssociationLambdaPublic2:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref SubnetLambdaPublic2
+      RouteTableId: !Ref RouteTableLambdaPublic2
+  SubnetRouteTableAssociationLambdaPublic3:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref SubnetLambdaPublic3
+      RouteTableId: !Ref RouteTableLambdaPublic3
+  SubnetRouteTableAssociationLambdaPrivate1:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref SubnetLambdaPrivate1
+      RouteTableId: !Ref RouteTableLambdaPrivate1
+  SubnetRouteTableAssociationLambdaPrivate2:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref SubnetLambdaPrivate2
+      RouteTableId: !Ref RouteTableLambdaPrivate2
+  SubnetRouteTableAssociationLambdaPrivate3:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref SubnetLambdaPrivate3
+      RouteTableId: !Ref RouteTableLambdaPrivate3
+  SecurityGroupLambda:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for lambda functions
+      VpcId: !Ref VpcLambda
+Outputs:
+  vpcSubnetIdLambda1:
+    Value: !Ref SubnetLambdaPrivate1
+  vpcSubnetIdLambda2:
+    Value: !Ref SubnetLambdaPrivate2
+  vpcSubnetIdLambda3:
+    Value: !Ref SubnetLambdaPrivate3
+  ipAddressLambda1:
+    Value: !Ref ElasticIpLambda1
+  ipAddressLambda2:
+    Value: !Ref ElasticIpLambda2
+  ipAddressLambda3:
+    Value: !Ref ElasticIpLambda3
+  securityGroupIdLambda:
+    Value: !Ref SecurityGroupLambda
