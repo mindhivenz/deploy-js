@@ -7,6 +7,16 @@ import path from 'path'
 
 import getAwsServiceOptions from './getAwsServiceOptions'
 
+/* The following is required in the role launching this (like serverless iamRoleStatements)
+
+    - Effect: Allow
+      Action:
+        - ec2:CreateNetworkInterface
+        - ec2:DescribeNetworkInterfaces
+        - ec2:DetachNetworkInterface
+        - ec2:DeleteNetworkInterface
+      Resource: "*"
+ */
 
 const hashIpPrefix = proj =>
   `10.${hash(256)(proj)}`
