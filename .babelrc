@@ -3,7 +3,9 @@
     "env"
   ],
   "plugins": [
-    "transform-object-rest-spread",
-    "transform-runtime"
+    ["transform-runtime", {
+      "polyfill": false
+    }],
+    "transform-object-rest-spread"
   ]
 }
