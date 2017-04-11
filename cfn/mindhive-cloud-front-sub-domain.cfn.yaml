@@ -12,7 +12,7 @@ Resources:
   domain:
     Type: AWS::Route53::RecordSet
     Properties:
-      Name: !Ref domainName,
+      Name: !Ref domainName
       HostedZoneId: Z2S4MPAS4M00TM  # mindhive.cloud
       Type: A
       AliasTarget:
