@@ -1,6 +1,6 @@
 import hash from 'hash-mod'
 import gulp from 'gulp'
-import cloudformation from 'gulp-cloudformation'
+import cfDeploy from 'gulp-cf-deploy'
 import jsonEditor from 'gulp-json-editor'
 import rename from 'gulp-rename'
 import path from 'path'
@@ -39,13 +39,11 @@ export default ({
   ipPrefix = hashIpPrefix(proj),
 }) =>
   gulp.src(path.join(__dirname, `../cfn/vpc-${azCount}.cfn.yaml`))
-    .pipe(cloudformation.init(getAwsServiceOptions({ proj, stage, region })))
-    .pipe(cloudformation.deploy({
-      StackName: `${proj}-vpc`,
-      Parameters: [
-        { ParameterKey: 'ipPrefix', ParameterValue: ipPrefix },
-      ],
-    }))
+    .pipe(cfDeploy(
+      getAwsServiceOptions({ proj, stage, region }),
+      `${proj}-vpc`,
+      { ipPrefix },
+    ))
     .pipe(jsonEditor(awsVpcFlat => ({
       securityGroupId: awsVpcFlat.securityGroupIdLambda,
       vpcSubnetIds: numberedKeysToArray(awsVpcFlat, 'vpcSubnetIdLambda'),

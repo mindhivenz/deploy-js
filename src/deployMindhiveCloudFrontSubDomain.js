@@ -1,4 +1,4 @@
-import cloudformation from 'gulp-cloudformation'
+import cfDeploy from 'gulp-cf-deploy'
 import gulp from 'gulp'
 import path from 'path'
 
@@ -19,14 +19,13 @@ export default ({
   cloudFrontDomainName,
 }) =>
   gulp.src(path.join(__dirname, '../cfn/mindhive-cloud-front-sub-domain.cfn.yaml'))
-    .pipe(cloudformation.init(getServiceOptions()))
-    .pipe(cloudformation.deploy({
-      StackName: `${proj}-${stage}-domain`,
-      ResourceTypes: [  // Because the of the policy conditions
-        'AWS::Route53::RecordSet',
-      ],
-      Parameters: [
-        { ParameterKey: 'domainName', ParameterValue: domainName },
-        { ParameterKey: 'cloudFrontDomainName', ParameterValue: cloudFrontDomainName },
-      ],
-    }))
+    .pipe(cfDeploy(
+      getServiceOptions(),
+      {
+        StackName: `${proj}-${stage}-domain`,
+        ResourceTypes: [  // Because the of the policy conditions
+          'AWS::Route53::RecordSet',
+        ],
+      },
+      { domainName, cloudFrontDomainName },
+    ))
