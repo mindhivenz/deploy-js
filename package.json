@@ -1,6 +1,6 @@
 {
   "name": "@mindhive/deploy",
-  "version": "1.6.2",
+  "version": "1.6.3",
   "scripts": {
     "lint": "eslint src",
     "build": "babel src --ignore *.spec.js --out-dir dist",
