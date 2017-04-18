@@ -1,5 +1,6 @@
 import gutil from 'gulp-util'
 import streamToPromise from 'stream-to-promise'
+import run from 'gulp-run'
 
 
 export default async ({
