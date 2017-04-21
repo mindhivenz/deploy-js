@@ -1,5 +1,5 @@
-import getDevName from './getDevName'
+import devName from './devName'
 
 
 export default stage =>
-  stage === 'dev' ? `dev-${getDevName().toLowerCase()}` : stage
+  stage === 'dev' ? `dev-${devName().toLowerCase()}` : stage

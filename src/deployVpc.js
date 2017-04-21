@@ -5,7 +5,7 @@ import jsonEditor from 'gulp-json-editor'
 import rename from 'gulp-rename'
 import path from 'path'
 
-import getAwsServiceOptions from './getAwsServiceOptions'
+import awsServiceOptions from './awsServiceOptions'
 
 /* The following is required in the role launching this (like serverless iamRoleStatements)
 
@@ -40,7 +40,7 @@ export default ({
 }) =>
   gulp.src(path.join(__dirname, `../cfn/vpc-${azCount}.cfn.yaml`))
     .pipe(cfDeploy(
-      getAwsServiceOptions({ proj, stage, region }),
+      awsServiceOptions({ proj, stage, region }),
       `${proj}-vpc`,
       { ipPrefix },
     ))
