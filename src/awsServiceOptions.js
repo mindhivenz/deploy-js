@@ -1,7 +1,7 @@
 
 
 export const awsCredentialsProfile = ({ proj, stage }) =>
-  stage === 'dev' ? undefined : `${proj}-${stage}`
+  stage === 'dev' ? 'default' : `${proj}-${stage}`
 
 const getCredentials = (profile) => {
   const AWS = require('aws-sdk/global')  // eslint-disable-line
