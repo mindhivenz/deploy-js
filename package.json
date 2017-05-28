@@ -11,6 +11,7 @@
     "glob": "^7.1.1",
     "gulp": "gulpjs/gulp.git#4.0",
     "gulp-cf-deploy": "^1.0.0",
+    "gulp-file": "^0.3.0",
     "gulp-git": "^2.1.0",
     "gulp-json-editor": "^2.2.1",
     "gulp-rename": "^1.2.2",
