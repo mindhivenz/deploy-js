@@ -20,7 +20,8 @@
     "hash-mod": "^0.0.5",
     "semver": "^5.3.0",
     "shelljs": "^0.7.7",
-    "stream-to-promise": "^2.2.0"
+    "stream-to-promise": "^2.2.0",
+    "yargs": "^8.0.1"
   },
   "devDependencies": {
     "babel-cli": "^6.23.0",

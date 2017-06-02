@@ -3,6 +3,7 @@ import gulp from 'gulp'
 import path from 'path'
 
 import { fromProfile } from './awsServiceOptions'
+import * as profiles from './awsProfiles'
 
 
 export default ({
@@ -13,7 +14,7 @@ export default ({
 }) =>
   gulp.src(path.join(__dirname, '../cfn/mindhive-cloud-front-sub-domain.cfn.yaml'))
     .pipe(cfDeploy(
-      fromProfile({ profile: 'mindhive.cloud', region: 'us-east-1' }),
+      fromProfile({ profile: profiles.ops, region: 'us-east-1' }),
       {
         StackName: `${proj}-${stage}-domain`,
         ResourceTypes: [  // Because the of the policy conditions
