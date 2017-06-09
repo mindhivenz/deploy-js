@@ -110,6 +110,13 @@ export default (proj, stages) => {
       await iam.attachUserPolicy({ PolicyArn, UserName }).promise()
     })
 
+    gulp.task(`grant:ops-user:${stage}`,
+      gulp.parallel(
+        `grant:ops-user:secrets:${stage}`,
+        `grant:ops-user:access:${stage}`,
+      ),
+    )
+
     gulp.task(`open:aws:${stage}`, async () => {
       const credentials = credentialsFactory({ proj, stage })
       await credentials.getPromise()
