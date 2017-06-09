@@ -3,19 +3,24 @@ import Credstash from 'nodecredstash'
 import streamToPromise from 'stream-to-promise'
 import once from 'lodash/once'
 
-import * as profiles from './awsProfiles'
-import { fromProfile } from './awsServiceOptions'
+import { master } from './awsCredentials'
 import publicStageName from './publicStageName'
 
 
-export const secretRegion = 'us-east-1'
 export const allStages = 'all'
+
+const secretRegion = 'us-east-1'
+
+export const awsOpts = {
+  credentials: master,
+  region: secretRegion,
+}
 
 const secretStash = once(() =>
   new Credstash({
     table: 'deploy-secrets',
     kmsKey: 'alias/deploy-secrets',
-    awsOpts: fromProfile({ profile: profiles.ops, region: secretRegion }),
+    awsOpts,
   })
 )
 

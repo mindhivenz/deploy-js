@@ -1,2 +1,7 @@
 extends:
   - mindhive
+rules:
+  import/no-unresolved:
+    - error
+    - ignore:
+        - 'gulp'

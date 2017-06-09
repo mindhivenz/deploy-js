@@ -4,7 +4,7 @@ import gitExec from './gitExec'
 
 // Based off: https://stackoverflow.com/a/3278427/3424884
 
-export default async (repoPath, pluginName = 'ensureGitUpToDate') => {
+export default async (repoPath, pluginName = '@mindhive/deploy/ensureGitUpToDate') => {
   const options = { cwd: repoPath }
   try {
     await gitExec('diff-index HEAD --quiet --exit-code', pluginName, options)

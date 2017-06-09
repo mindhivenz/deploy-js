@@ -2,7 +2,7 @@ import glob from 'glob'
 import gutil from 'gulp-util'
 
 
-const pluginName = 'ensureNoLinkedModules'
+const pluginName = '@mindhive/deploy/ensureNoLinkedModules'
 
 export default path =>
   new Promise((resolve, reject) => {

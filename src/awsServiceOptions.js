@@ -1,17 +1,10 @@
+import { proj as credentialsFactory } from './awsCredentials'
 
 
 export const awsCredentialsProfile = ({ proj, stage }) =>
   stage === 'dev' ? 'default' : `${proj}-${stage}`
 
-const getCredentials = (profile) => {
-  const AWS = require('aws-sdk/global')  // eslint-disable-line
-  return new AWS.SharedIniFileCredentials({ profile })
-}
-
-export const fromProfile = ({ profile, region }) => ({
-  credentials: getCredentials(profile),
+export default ({ proj, stage, region }) => ({
+  credentials: credentialsFactory({ proj, stage }),
   region,
 })
-
-export default ({ proj, stage, region }) =>
-  fromProfile({ profile: awsCredentialsProfile({ proj, stage }), region })

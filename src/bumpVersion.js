@@ -7,7 +7,7 @@ import ensureGitUpToDate from './ensureGitUpToDate'
 import readJson from './readJson'
 
 
-const pluginName = 'bumpVersion'
+const pluginName = '@mindhive/deploy/bumpVersion'
 
 export default async (packageJsonPath, release = 'patch') => {
   const cwd = path.dirname(packageJsonPath)
