@@ -9,7 +9,7 @@ export default async (repoPath, pluginName = '@mindhive/deploy/ensureGitUpToDate
   try {
     await gitExec('diff-index HEAD --quiet --exit-code', pluginName, options)
   } catch (e) {
-    throw new gutil.PluginError(pluginName, 'You have uncommitted changes, need to commit')
+    throw new gutil.PluginError(pluginName, 'You have uncommitted changes: commit')
   }
   await gitExec('remote update', pluginName, options)
   const local = await gitExec('rev-parse @', pluginName, options)
@@ -19,10 +19,10 @@ export default async (repoPath, pluginName = '@mindhive/deploy/ensureGitUpToDate
   }
   const base = await gitExec('merge-base @ @{u}', pluginName, options)
   if (local === base) {
-    throw new gutil.PluginError(pluginName, 'You are behind origin, need to pull')
+    throw new gutil.PluginError(pluginName, 'You are behind origin: pull')
   } else if (remote === base) {
     return 'Ahead of origin, need to push'
   } else {
-    throw new gutil.PluginError(pluginName, 'You have diverged from origin')
+    throw new gutil.PluginError(pluginName, 'You have diverged from origin: pull and merge')
   }
 }
