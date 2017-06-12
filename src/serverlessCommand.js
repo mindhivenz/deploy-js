@@ -4,9 +4,10 @@ import publicStageName from './publicStageName'
 import { proj as credentialsFactory } from './awsCredentials'
 
 
-const serializeArgs = args => Object.entries(args)
-  .map(([k, v]) => `--${k} "${v}"`)
-  .join(' ')
+const serializeArgs = args =>
+  Object.entries(args)
+    .map(([k, v]) => `--${k} "${v}"`)
+    .join(' ')
 
 class ServerlessRunner extends GulpRunner {
 
@@ -18,7 +19,11 @@ class ServerlessRunner extends GulpRunner {
     ...gulpRunOptions,
   }) {
     super(
-      `serverless ${command} ${serializeArgs({ stageLocal: stage, stagePublic: publicStageName(stage), ...args })}`,
+      `serverless ${command} ${serializeArgs({ 
+        stageLocal: stage, 
+        stagePublic: publicStageName(stage), 
+        ...args,
+      })}`,
       {
         env: { ...process.env },  // Copy to not modify original
         verbosity: 2,

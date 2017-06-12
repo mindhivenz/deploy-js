@@ -10,7 +10,7 @@ import yargs from 'yargs'
 import devName, { requireDevNameSpecified } from './devName'
 import publicStageName from './publicStageName'
 import { awsOpts, allStages } from './secrets'
-import { resolve, accessRoleArn } from './awsAccounts'
+import { accountNameCombinations, resolve, accessRoleArn } from './awsAccounts'
 import { proj as credentialsFactory } from './awsCredentials'
 
 
@@ -53,10 +53,14 @@ const copyColor = gutil.colors.yellow
 
 export default (proj, stages) => {
 
-  gulp.task('who-am-i', async () => gutil.log(`You are devName: ${copyColor(devName())}`))
+  gulp.task('who-am-i', async () =>
+    gutil.log(`You are devName: ${copyColor(devName())}`)
+  )
 
-  gulp.task('add:ops-user', async () => {
-    yargs.usage('Add a new ops user')
+  // TODO: list secrets
+
+  gulp.task('create:ops-user', async () => {
+    yargs.usage('Create a new AWS IAM ops user')
     const UserName = opsUserName()  // Perform this early to catch required param
     const devPublicStage = publicStageName('dev')
     const iam = iamFactory()
@@ -66,21 +70,47 @@ export default (proj, stages) => {
     const createAccessKeyResult = await iam.createAccessKey({ UserName }).promise()
     const accessKey = createAccessKeyResult.AccessKey
     gutil.log([
-      'Copy the SecretAccessKey now, it cannot be retrieved again',
+      `${gutil.colors.underline('Copy the SecretAccessKey now')}, it cannot be retrieved again!`,
       `UserName: ${UserName}`,
       `AccessKeyId: ${copyColor(accessKey.AccessKeyId)}`,
       `SecretAccessKey: ${copyColor(accessKey.SecretAccessKey)}`,
-      `Get user to save the keys using: ${gutil.colors.dim('aws-keychain add mindhive-ops')}`,
-      `They have been granted access to secrets in the ${devPublicStage} stage of any project`,
+      `Get ${devName()} to save the keys using: ${gutil.colors.blue('aws-keychain add mindhive-ops')}`,
+      `They have been granted access to secrets in the ${devPublicStage} stage of any project.`,
+      "Note: the above grant doesn't include secrets in the 'all' stage of a project, you need to grant for that.",
+      "Next you'll probably want to use one of:",
+      gulp.tree()
+        .filter(t => t.startsWith('grant:ops-user:'))
+        .map(t => `- ${gutil.colors.cyan(t)}`)
     ].join('\n'))
   })
 
+  // TODO: 'grant:ops-user:access'
+
   gulp.task('grant:ops-user:secrets', async () => {
     yargs.usage(`Grant an ops user access to ${proj} secrets in any stage`)
-    await grantSecrets(await opsUserArn(), [{ proj }])
+    const userArn = await opsUserArn()
+    await grantSecrets(userArn, [{ proj }])
   })
 
   stages.forEach((stage) => {
+
+    gulp.task(`create:aws:account:${stage}`, async () => {
+      const validNames = accountNameCombinations({ proj, stage })
+      const name = yargs
+        .describe('name', 'The name of the AWS account')
+        .choices('name', validNames)
+        .demandOption(['name'])
+        .argv
+        .name
+      // TODO: check matches one of the names
+      // TODO: create account
+      // TODO: wait for account in correct state
+      if (name !== publicStageName('dev')) {
+        // TODO: create group (is doesn't exist) and policy, attach policy to group
+      }
+    })
+
+    // TODO: setup::aws:account:${stage} (same as post step in create:aws:account:${stage})
 
     gulp.task(`grant:ops-user:secrets:${stage}`, async () => {
       yargs.usage(`Grant an ops user access to ${proj} ${stage} secrets`)
