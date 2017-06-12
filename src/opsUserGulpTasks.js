@@ -9,12 +9,22 @@ import yargs from 'yargs'
 
 import devName, { requireDevNameSpecified } from './devName'
 import publicStageName from './publicStageName'
-import { awsOpts, allStages } from './secrets'
-import { accountNameCombinations, resolve, accessRoleArn } from './awsAccounts'
+import { allStages } from './secrets'
+import {
+  masterAccountId,
+  iamPath,
+  awsOpts,
+  accountNameCombinations,
+  resolveAccount,
+  accessTargetRoleArn,
+  accessSourcePolicyName,
+  accessSourcePolicyArn,
+  extractGroupName,
+  resolveGroupName,
+} from './awsAccounts'
 import { proj as credentialsFactory } from './awsCredentials'
 
 
-const masterAccountId = '087916394902'
 const deploySecretsKeyId = `arn:aws:kms:us-east-1:${masterAccountId}:key/9cef9467-af1d-45e6-bb16-030d8c1ec237`
 const opsUserName = () => {
   requireDevNameSpecified()
@@ -58,15 +68,28 @@ export default (proj, stages) => {
   )
 
   // TODO: list secrets
+  // TODO: list grants
 
   gulp.task('create:ops-user', async () => {
     yargs.usage('Create a new AWS IAM ops user')
     const UserName = opsUserName()  // Perform this early to catch required param
     const devPublicStage = publicStageName('dev')
     const iam = iamFactory()
-    const createUserResult = await iam.createUser({ UserName, Path: '/ops/' }).promise()
+    const createUserResult = await iam.createUser({ UserName, Path: iamPath }).promise()
     await iam.addUserToGroup({ UserName, GroupName: 'ops' }).promise()
-    await grantSecrets(createUserResult.User.Arn, [{ stage: devPublicStage }])
+    const userArn = createUserResult.User.Arn
+    for (;;) {
+      try {
+        await grantSecrets(userArn, [{ stage: devPublicStage }])
+        break
+      } catch (e) {
+        if (e.code !== 'InvalidArnException') {
+          throw e
+        }
+        gutil.log('Waiting for user to be available for grant...')
+        await new Promise(resolve => setTimeout(resolve, 1000))
+      }
+    }
     const createAccessKeyResult = await iam.createAccessKey({ UserName }).promise()
     const accessKey = createAccessKeyResult.AccessKey
     gutil.log([
@@ -78,13 +101,12 @@ export default (proj, stages) => {
       `They have been granted access to secrets in the ${devPublicStage} stage of any project.`,
       "Note: the above grant doesn't include secrets in the 'all' stage of a project, you need to grant for that.",
       "Next you'll probably want to use one of:",
-      gulp.tree()
+      ...gulp.tree()
+        .nodes
         .filter(t => t.startsWith('grant:ops-user:'))
         .map(t => `- ${gutil.colors.cyan(t)}`)
     ].join('\n'))
   })
-
-  // TODO: 'grant:ops-user:access'
 
   gulp.task('grant:ops-user:secrets', async () => {
     yargs.usage(`Grant an ops user access to ${proj} secrets in any stage`)
@@ -92,9 +114,53 @@ export default (proj, stages) => {
     await grantSecrets(userArn, [{ proj }])
   })
 
+  gulp.task('grant:ops-user:access', async () => {
+    const GroupName = await resolveGroupName({ proj })
+    if (GroupName === proj) {
+      yargs.usage(`Grant an ops user access to all stages in the ${GroupName} project`)
+    } else {
+      yargs.usage(`Grant an ops user access to all projects and stages in the ${GroupName} group`)
+    }
+    const UserName = opsUserName()
+    const iam = iamFactory()
+    await iam.addUserToGroup({ GroupName, UserName }).promise()
+  })
+
   stages.forEach((stage) => {
 
-    gulp.task(`create:aws:account:${stage}`, async () => {
+    const createAccountIam = async (accountName) => {
+      const iam = iamFactory()
+      const PolicyName = accessSourcePolicyName(accountName)
+      const GroupName = extractGroupName(accountName, { stage })
+      const createPolicyResult = await iam.createPolicy({
+        PolicyName,
+        PolicyDocument: JSON.stringify({
+          Version: '2012-10-17',
+          Statement: {
+            Effect: 'Allow',
+            Action: 'sts:AssumeRole',
+            Resource: accessTargetRoleArn(accountName),
+          },
+        }),
+      }).promise()
+      try {
+        await iam.createGroup({
+          Path: iamPath,
+          GroupName,
+        }).promise()
+      } catch (e) {
+        if (e.code !== 'EntityAlreadyExists') {
+          throw e
+        }
+      }
+      // TODO: this last part doesn't seem to work. Do we need to delay?
+      await iam.attachGroupPolicy({
+        PolicyArn: createPolicyResult.Policy.Arn,
+        GroupName,
+      })
+    }
+
+    gulp.task(`create:aws-account:${stage}`, async () => {
       const validNames = accountNameCombinations({ proj, stage })
       const name = yargs
         .describe('name', 'The name of the AWS account')
@@ -102,15 +168,17 @@ export default (proj, stages) => {
         .demandOption(['name'])
         .argv
         .name
-      // TODO: check matches one of the names
       // TODO: create account
       // TODO: wait for account in correct state
       if (name !== publicStageName('dev')) {
-        // TODO: create group (is doesn't exist) and policy, attach policy to group
+        await createAccountIam(name)
       }
     })
 
-    // TODO: setup::aws:account:${stage} (same as post step in create:aws:account:${stage})
+    gulp.task(`create:aws-account:iam:${stage}`, async () => {
+      const account = await resolveAccount({ proj, stage })
+      await createAccountIam(account.Name)
+    })
 
     gulp.task(`grant:ops-user:secrets:${stage}`, async () => {
       yargs.usage(`Grant an ops user access to ${proj} ${stage} secrets`)
@@ -125,29 +193,14 @@ export default (proj, stages) => {
     })
 
     gulp.task(`grant:ops-user:access:${stage}`, async () => {
-      const account = await resolve({ proj, stage })
-      yargs.usage(`Grant an ops user full access to the ${account.name} AWS account`)
-      const UserName = opsUserName()  // Perform this early to catch required param
-      const PolicyName = `FullAccess@${account.Name}`
-      const PolicyArn = `arn:aws:iam::${masterAccountId}:policy/${PolicyName}`
+      const account = await resolveAccount({ proj, stage })
+      yargs.usage(`Grant an ops user full access to the ${account.Name} AWS account`)
+      const UserName = opsUserName()
       const iam = iamFactory()
-      try {
-        await iam.getPolicy({ PolicyArn }).promise()
-      } catch (e) {
-        // assume it doesn't exist
-        await iam.createPolicy({
-          PolicyName,
-          PolicyDocument: JSON.stringify({
-            Version: '2012-10-17',
-            Statement: {
-              Effect: 'Allow',
-              Action: 'sts:AssumeRole',
-              Resource: accessRoleArn(account),
-            },
-          }),
-        }).promise()
-      }
-      await iam.attachUserPolicy({ PolicyArn, UserName }).promise()
+      await iam.attachUserPolicy({
+        PolicyArn: accessSourcePolicyArn(account.Name),
+        UserName,
+      }).promise()
     })
 
     gulp.task(`open:aws:${stage}`, async () => {

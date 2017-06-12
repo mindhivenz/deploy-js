@@ -3,7 +3,7 @@ import memoize from 'lodash/memoize'
 import gutil from 'gulp-util'
 
 import devName from './devName'
-import { resolve, accessRoleArn } from './awsAccounts'
+import { resolveAccount, accessTargetRoleArn } from './awsAccounts'
 
 
 // Force credentials to come from the env so they are not being stored unencrypted in the standard ini file
@@ -43,8 +43,8 @@ class ProjCredentials extends AWS.TemporaryCredentials {
     if (this.params.RoleArn) {
       return
     }
-    this.account = await resolve({ proj: this.proj, stage: this.stage })
-    this.params.RoleArn = accessRoleArn(this.account)
+    this.account = await resolveAccount({ proj: this.proj, stage: this.stage })
+    this.params.RoleArn = accessTargetRoleArn(this.account.Id)
     this.params.RoleSessionName = `${devName()}@${this.account.Name}`
   }
 }

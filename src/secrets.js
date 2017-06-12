@@ -3,18 +3,11 @@ import Credstash from 'nodecredstash'
 import streamToPromise from 'stream-to-promise'
 import once from 'lodash/once'
 
-import { master } from './awsCredentials'
+import { awsOpts } from './awsAccounts'
 import publicStageName from './publicStageName'
 
 
 export const allStages = 'all'
-
-const secretRegion = 'us-east-1'
-
-export const awsOpts = {
-  credentials: master,
-  region: secretRegion,
-}
 
 const secretStash = once(() =>
   new Credstash({

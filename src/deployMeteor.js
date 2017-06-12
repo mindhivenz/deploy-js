@@ -17,6 +17,7 @@ export default async ({
         DEPLOY_HOSTNAME: galaxyManagementServer,
       },
       cwd: meteorRootPath,
+      verbosity: 3,  // As Meteor sometimes asks for username password so we need to see what's happening
     }).exec()
   )
   gutil.log(
