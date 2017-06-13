@@ -27,12 +27,14 @@ const groupNameCombinations = ({ proj }) => {
     .map(i => projParts.slice(0, i).join('-'))
 }
 
+export const devsOwnAccountName = () => publicStageName('dev')
+
 export const accountNameCombinations = ({ proj, stage }) => {
   const stagePublic = publicStageName(stage)
   const result = groupNameCombinations({ proj })
     .map(g => `${g}-${stagePublic}`)
   if (stage === 'dev') {
-    result.push(stagePublic)
+    result.push(devsOwnAccountName())
   }
   return result
 }

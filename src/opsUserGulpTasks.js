@@ -15,6 +15,7 @@ import {
   iamPath,
   awsOpts,
   accountNameCombinations,
+  devsOwnAccountName,
   resolveAccount,
   accessTargetRoleArn,
   accessSourcePolicyName,
@@ -59,6 +60,8 @@ const grantSecrets = async (userArn, grants) => {
   }))
 }
 
+const retryPause = () => new Promise(resolve => setTimeout(resolve, 1000))
+
 const copyColor = gutil.colors.yellow
 
 export default (proj, stages) => {
@@ -87,7 +90,7 @@ export default (proj, stages) => {
           throw e
         }
         gutil.log('Waiting for user to be available for grant...')
-        await new Promise(resolve => setTimeout(resolve, 1000))
+        await retryPause()
       }
     }
     const createAccessKeyResult = await iam.createAccessKey({ UserName }).promise()
@@ -128,10 +131,9 @@ export default (proj, stages) => {
 
   stages.forEach((stage) => {
 
-    const createAccountIam = async (accountName) => {
+    const createAccountIam = async (accountName, accountId) => {
       const iam = iamFactory()
       const PolicyName = accessSourcePolicyName(accountName)
-      const GroupName = extractGroupName(accountName, { stage })
       const createPolicyResult = await iam.createPolicy({
         PolicyName,
         PolicyDocument: JSON.stringify({
@@ -139,25 +141,31 @@ export default (proj, stages) => {
           Statement: {
             Effect: 'Allow',
             Action: 'sts:AssumeRole',
-            Resource: accessTargetRoleArn(accountName),
+            Resource: accessTargetRoleArn(accountId),
           },
         }),
       }).promise()
-      try {
-        await iam.createGroup({
-          Path: iamPath,
+      gutil.log(`Created policy ${PolicyName}`)
+      if (accountName !== devsOwnAccountName()) {
+        const GroupName = extractGroupName(accountName, { stage })
+        try {
+          await iam.createGroup({
+            Path: iamPath,
+            GroupName,
+          }).promise()
+          gutil.log(`Created group ${GroupName}`)
+        } catch (e) {
+          if (e.code !== 'EntityAlreadyExists') {
+            throw e
+          }
+          gutil.log(`Group ${GroupName} already exists`)
+        }
+        await iam.attachGroupPolicy({
+          PolicyArn: createPolicyResult.Policy.Arn,
           GroupName,
         }).promise()
-      } catch (e) {
-        if (e.code !== 'EntityAlreadyExists') {
-          throw e
-        }
+        gutil.log('Attached policy to group')
       }
-      // TODO: this last part doesn't seem to work. Do we need to delay?
-      await iam.attachGroupPolicy({
-        PolicyArn: createPolicyResult.Policy.Arn,
-        GroupName,
-      })
     }
 
     gulp.task(`create:aws-account:${stage}`, async () => {
@@ -170,14 +178,12 @@ export default (proj, stages) => {
         .name
       // TODO: create account
       // TODO: wait for account in correct state
-      if (name !== publicStageName('dev')) {
-        await createAccountIam(name)
-      }
+      // TODO: await createAccountIam(name, Id)
     })
 
     gulp.task(`create:aws-account:iam:${stage}`, async () => {
       const account = await resolveAccount({ proj, stage })
-      await createAccountIam(account.Name)
+      await createAccountIam(account.Name, account.Id)
     })
 
     gulp.task(`grant:ops-user:secrets:${stage}`, async () => {
