@@ -65,7 +65,7 @@ const retryPause = () => new Promise(resolve => setTimeout(resolve, 1000))
 
 const copyColor = gutil.colors.yellow
 
-export default (proj, stages) => {
+export default ({ proj, stages, region }) => {
 
   gulp.task('who-am-i', async () =>
     gutil.log(`You are devName: ${copyColor(devName())}`)
@@ -230,7 +230,7 @@ export default (proj, stages) => {
         `https://signin.aws.amazon.com/federation?${querystring.stringify({
           Action: 'login',
           Issuer: '',
-          Destination: 'https://console.aws.amazon.com/',
+          Destination: `https://${region}.console.aws.amazon.com/console/home?region=${region}#`,
           SigninToken: federation.SigninToken,
           SessionDuration: 12 * 60 * 60,  // Max 12 hours
         })}`,
