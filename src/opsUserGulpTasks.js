@@ -25,6 +25,7 @@ import {
 } from './awsAccounts'
 import { proj as credentialsFactory } from './awsCredentials'
 
+// REVISIT: Can / should we do this all through a declarative file (including secret grants), kinda like CFN?
 
 const deploySecretsKeyId = `arn:aws:kms:us-east-1:${masterAccountId}:key/9cef9467-af1d-45e6-bb16-030d8c1ec237`
 const opsUserName = () => {
@@ -178,7 +179,7 @@ export default (proj, stages) => {
         .name
       // TODO: create account
       // TODO: wait for account in correct state
-      // TODO: await createAccountIam(name, Id)
+      // TODO: await createAccountIam(name, id)
     })
 
     gulp.task(`create:aws-account:iam:${stage}`, async () => {
