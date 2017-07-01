@@ -1,5 +1,5 @@
-import devName from './devName'
+import defaultDevName from './devName'
 
 
-export default stage =>
-  stage === 'dev' ? `dev-${devName()}` : stage
+export default (stage, devName = defaultDevName()) =>
+  stage === 'dev' ? `dev-${devName}` : stage

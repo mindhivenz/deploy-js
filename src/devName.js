@@ -11,12 +11,5 @@ const gitUserName = once(() =>  // Don't repeat
     .replace(/\s+/, '-')
 )
 
-export const requireDevNameSpecified = () => {
-  yargs
-    .describe('devName', "Developer's git user.name as kebab-case, can be retrieved with who-am-i task")
-    .demandOption('devName')
-}
-
-export default () => {
-  return yargs.argv.devName || gitUserName()
-}
+export default () =>
+  yargs.argv.devName || gitUserName()

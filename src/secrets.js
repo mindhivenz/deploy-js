@@ -3,7 +3,7 @@ import Credstash from 'nodecredstash'
 import streamToPromise from 'stream-to-promise'
 import once from 'lodash/once'
 
-import { awsOpts } from './awsAccounts'
+import { awsMasterOpts } from './awsAccounts'
 import publicStageName from './publicStageName'
 
 
@@ -13,7 +13,7 @@ const secretStash = once(() =>
   new Credstash({
     table: 'deploy-secrets',
     kmsKey: 'alias/deploy-secrets',
-    awsOpts,
+    awsMasterOpts,
   })
 )
 
