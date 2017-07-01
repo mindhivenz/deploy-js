@@ -13,7 +13,7 @@ const secretStash = once(() =>
   new Credstash({
     table: 'deploy-secrets',
     kmsKey: 'alias/deploy-secrets',
-    awsMasterOpts,
+    awsOpts: awsMasterOpts,
   })
 )
 
