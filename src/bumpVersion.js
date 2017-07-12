@@ -2,6 +2,7 @@ import path from 'path'
 import semver from 'semver'
 import shell from 'shelljs'
 import gutil from 'gulp-util'
+import yargs from 'yargs'
 
 import ensureGitUpToDate from './ensureGitUpToDate'
 import readJson from './readJson'
@@ -9,11 +10,22 @@ import readJson from './readJson'
 
 const pluginName = '@mindhive/deploy/bumpVersion'
 
-export default async (packageJsonPath, release = 'patch') => {
+export default async (packageJsonPath) => {
+  const release = yargs
+    .option('version', {
+      describe: "semver.inc() option, for example: 'patch', 'minor', 'major', or 'same' to not change version",
+      default: 'patch',
+    })
+    .argv
+    .version
   const cwd = path.dirname(packageJsonPath)
   await ensureGitUpToDate(cwd, pluginName)
   const pkg = readJson(packageJsonPath, pluginName)
-  const newVersion = semver.inc(pkg.version, release)
+  const currentVersion = pkg.version
+  if (release === 'same') {
+    return currentVersion
+  }
+  const newVersion = semver.inc(currentVersion, release)
   const bumpResult = shell.exec(
     `yarn version --new-version ${newVersion}`,
     { cwd, silent: true },
