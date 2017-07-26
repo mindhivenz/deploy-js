@@ -16,8 +16,7 @@ export default async (packageJsonPath) => {
       describe: "semver.inc() option, for example: 'patch', 'minor', 'major', or 'same' to not change version",
       default: 'patch',
     })
-    .argv
-    .version
+    .argv['version-bump']
   const cwd = path.dirname(packageJsonPath)
   await ensureGitUpToDate(cwd, pluginName)
   const pkg = readJson(packageJsonPath, pluginName)
