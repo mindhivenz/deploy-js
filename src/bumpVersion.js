@@ -12,7 +12,7 @@ const pluginName = '@mindhive/deploy/bumpVersion'
 
 export default async (packageJsonPath) => {
   const release = yargs
-    .option('version', {
+    .option('version-bump', {
       describe: "semver.inc() option, for example: 'patch', 'minor', 'major', or 'same' to not change version",
       default: 'patch',
     })
