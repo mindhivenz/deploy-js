@@ -14,8 +14,10 @@ export default (
   } catch (e) {
     if (taskNameToCreate && e.code === 'ENOENT') {
       const shortPath = path.startsWith(process.cwd()) ? path.substring(process.cwd().length + 1) : path
-      throw new gutil.PluginError(pluginName,
-        `First run task ${gutil.colors.cyan(taskNameToCreate)} to create ${gutil.colors.yellow(shortPath)}`
+      throw new gutil.PluginError(
+        pluginName,
+        `First run task ${gutil.colors.cyan(taskNameToCreate)} to create ${gutil.colors.yellow(shortPath)}`,
+        { showProperties: false },
       )
     }
     throw e
