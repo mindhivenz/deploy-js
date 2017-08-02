@@ -1,7 +1,7 @@
 import GulpRunner from 'gulp-run'
 
 import publicStageName from './publicStageName'
-import { proj as credentialsFactory } from './awsCredentials'
+import awsCredentialsEnv from './awsCredentialsEnv'
 
 
 const serializeArgs = args =>
@@ -34,17 +34,14 @@ class ServerlessRunner extends GulpRunner {
     this.stage = stage
   }
 
-  _transform(file, encoding, callback) {
-    const credentials = credentialsFactory({ proj: this.proj, stage: this.stage })
-    credentials.getPromise().then(
-      () => {
-        this.command.options.env.AWS_ACCESS_KEY_ID = credentials.accessKeyId
-        this.command.options.env.AWS_SECRET_ACCESS_KEY = credentials.secretAccessKey
-        this.command.options.env.AWS_SESSION_TOKEN = credentials.sessionToken
-        super._transform(file, encoding, callback)
-      },
-      callback,
-    )
+  async _transform(file, encoding, callback) {
+    try {
+      const env = await awsCredentialsEnv({ proj: this.proj, stage: this.stage })
+      Object.assign(this.command.options.env, env)
+      super._transform(file, encoding, callback)
+    } catch (e) {
+      callback(e)
+    }
   }
 }
 
