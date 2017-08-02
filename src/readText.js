@@ -10,7 +10,7 @@ export default (
   } = {}
 ) => {
   try {
-    fs.readFileSync(path, 'utf8').trim()
+    return fs.readFileSync(path, 'utf8').trim()
   } catch (e) {
     if (taskNameToCreate && e.code === 'ENOENT') {
       const shortPath = path.startsWith(process.cwd()) ? path.substring(process.cwd().length + 1) : path
