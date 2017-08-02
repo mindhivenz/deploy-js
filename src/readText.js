@@ -13,8 +13,10 @@ export default (
     fs.readFileSync(path, 'utf8').trim()
   } catch (e) {
     if (taskNameToCreate && e.code === 'ENOENT') {
-      const shortPath = path.startsWith(process.cwd()) ? path.substring(process.cwd().length) : path
-      throw new gutil.PluginError(pluginName, `First run task ${taskNameToCreate} to create ${shortPath}`)
+      const shortPath = path.startsWith(process.cwd()) ? path.substring(process.cwd().length + 1) : path
+      throw new gutil.PluginError(pluginName,
+        `First run task ${gutil.colors.cyan(taskNameToCreate)} to create ${gutil.colors.yellow(shortPath)}`
+      )
     }
     throw e
   }
