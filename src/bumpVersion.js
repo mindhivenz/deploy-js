@@ -19,7 +19,12 @@ export default async (packageJsonPath) => {
     .argv['version-bump']
   const cwd = path.dirname(packageJsonPath)
   await ensureGitUpToDate(cwd, pluginName)
-  const pkg = readJson(packageJsonPath, pluginName)
+  let pkg
+  try {
+    pkg = readJson(packageJsonPath, { pluginName })
+  } catch (e) {
+    throw new gutil.PluginError(pluginName, `Failed to read ${packageJsonPath}: ${e}`)
+  }
   const currentVersion = pkg.version
   if (release === 'same') {
     return currentVersion
