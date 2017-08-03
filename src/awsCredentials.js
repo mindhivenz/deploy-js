@@ -23,18 +23,14 @@ class ProjCredentials extends AWS.TemporaryCredentials {
   }
 
   refresh(callback) {
-    const defaultedCallback = callback || ((err) => { if (err) throw err })  // This default matches what TemporaryCredentials
-    const successCallback = () => {
-      if (! this.accessKeyId) {
-        defaultedCallback(new gutil.PluginError(
-          pluginName,
-          `Could not assume role into project, needed?: grant:ops-user:access:${this.stage} --devName ${devName()}`,
-        ))
-      }
-      defaultedCallback()
-    }
+    const defaultedCallback = callback || ((err) => { if (err) throw err })  // This default matches TemporaryCredentials
     this._resolveRoleArn().then(
-      () => super.refresh(successCallback),
+      () => super.refresh(() => {
+        defaultedCallback(this.accessKeyId ?
+          undefined
+          : new gutil.PluginError(pluginName, 'Could not assume role into project, have you been granted access?')
+        )
+      }),
       defaultedCallback,
     )
   }
