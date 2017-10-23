@@ -16,6 +16,7 @@ class ServerlessRunner extends GulpRunner {
     args = {},
     proj,
     stage,
+    env = {},
     ...gulpRunOptions,
   }) {
     super(
@@ -25,7 +26,7 @@ class ServerlessRunner extends GulpRunner {
         ...args,
       })}`,
       {
-        env: { ...process.env },  // Copy to not modify original
+        env: { ...process.env, ...env },  // Copy to not modify original
         verbosity: 2,
         ...gulpRunOptions,
       }
