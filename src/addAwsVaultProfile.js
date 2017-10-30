@@ -42,7 +42,6 @@ export default ({ proj, stage, region }) =>
         `You already have a profile called ${gutil.colors.yellow(profileName)}.`,
         "I wont't go changing your config. You can do it manually.",
         `This is what you need in ${gutil.colors.yellow(awsConfigFilePath())}:`,
-        '',
         gutil.colors.green(iniProfile),
       ].join('\n'))
       return
