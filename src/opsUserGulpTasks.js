@@ -3,6 +3,7 @@ import gutil from 'gulp-util'
 
 import devName from './devName'
 import openAwsConsoleTask from './openAwsConsoleTask'
+import addAwsVaultProfile from './addAwsVaultProfile'
 
 
 export default ({ proj, stages, region }) => {
@@ -13,6 +14,10 @@ export default ({ proj, stages, region }) => {
 
   stages.forEach((stage) => {
     gulp.task(`open:aws:${stage}`, openAwsConsoleTask({ proj, stage, region }))
+  })
+
+  stages.forEach((stage) => {
+    gulp.task(`add:aws-vault:${stage}`, addAwsVaultProfile({ proj, stage, region }))
   })
 
 }
