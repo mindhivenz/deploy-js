@@ -31,7 +31,7 @@ export default ({ proj, stage, region }) =>
     const account = await resolveAccount({ proj, stage })
     const roleArn = accessTargetRoleArn(account.Id)
     const iniProfile = [
-      `${profileHeader}]`,
+      profileHeader,
       'source_profile=mindhive-ops',
       `role_arn=${roleArn}`,
       `region=${region}`,
