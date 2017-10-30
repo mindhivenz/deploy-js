@@ -26,8 +26,8 @@ const existingConfigContent = () => {
 
 export default ({ proj, stage, region }) =>
   async () => {
-    const profileName = `${proj}-$[stage}`
-    const profileHeader = `[${profileName}]`
+    const profileName = `${proj}-${stage}`
+    const profileHeader = `[profile ${profileName}]`
     const account = await resolveAccount({ proj, stage })
     const roleArn = accessTargetRoleArn(account.Id)
     const iniProfile = [
@@ -36,7 +36,8 @@ export default ({ proj, stage, region }) =>
       `role_arn=${roleArn}`,
       `region=${region}`,
     ].join('\n')
-    if (existingConfigContent().includes(profileHeader)) {
+    const config = existingConfigContent()
+    if (config.includes(profileHeader)) {
       gutil.log([
         `You already have a profile called ${gutil.colors.yellow(profileName)}.`,
         "I wont't go changing your config. You can do it manually.",
@@ -46,6 +47,7 @@ export default ({ proj, stage, region }) =>
       ].join('\n'))
       return
     }
-    fs.appendFileSync(awsConfigFilePath(), `\n${iniProfile}\n`)
+    const separator = config.endsWith('\n\n') ? '' : '\n'
+    fs.appendFileSync(awsConfigFilePath(), `${separator}${iniProfile}\n`)
     gutil.log(`Profile created. Now you can: ${gutil.colors.blue(`aws-vault exec ${profileName} -- ...`)}`)
   }
