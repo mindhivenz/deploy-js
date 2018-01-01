@@ -1,4 +1,4 @@
-import gutil from 'gulp-util'
+import PluginError from 'plugin-error'
 import Credstash from 'nodecredstash'
 import streamToPromise from 'stream-to-promise'
 import once from 'lodash/once'
@@ -31,7 +31,7 @@ export const getSecretText = async (ref) => {
       context: secretContext(ref),
     })
   } catch (e) {
-    throw new gutil.PluginError(secretsPluginName,
+    throw new PluginError(secretsPluginName,
       `Unable to get secret ${name}, have you been granted access to secrets for this project/stage?\n${e}`
     )
   }
@@ -59,7 +59,7 @@ export const setSecretText = async (ref, secret) => {
       context: secretContext(ref),
     })
   } catch (e) {
-    throw new gutil.PluginError(secretsPluginName,
+    throw new PluginError(secretsPluginName,
       `Unable to set secret ${name}, have you been granted access to secrets for this project/stage?\n${e}`
     )
   }
@@ -71,7 +71,7 @@ export const setSecretJson = async (ref, secretObj) => {
 
 export const readStdInSecretText = async () => {
   if (process.stdin.isTTY) {
-    throw new gutil.PluginError(secretsPluginName,
+    throw new PluginError(secretsPluginName,
       'You must pipe the input. Example: cat secretfile.json | yarn gulp -- set:secret:something',
     )
   }

@@ -1,6 +1,6 @@
 import Organizations from 'aws-sdk/clients/organizations'
 import range from 'lodash/range'
-import gutil from 'gulp-util'
+import PluginError from 'plugin-error'
 
 import { master } from './awsCredentials'
 import publicStageName from './publicStageName'
@@ -44,7 +44,7 @@ export const resolveAccount = async ({ proj, stage }) => {
     .map(name => listResult.Accounts.find(a => a.Name === name))
     .find(Boolean)
   if (! account) {
-    throw new gutil.PluginError(
+    throw new PluginError(
       pluginName,
       `Couldn't match linked account. Searched: ${JSON.stringify(namePrecedence)}. Check AWS Organizations.`,
     )

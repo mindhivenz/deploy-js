@@ -1,4 +1,5 @@
-import gutil from 'gulp-util'
+import PluginError from 'plugin-error'
+import log from 'fancy-log'
 
 
 export default config =>
@@ -9,15 +10,15 @@ export default config =>
         config,
         (err, stats) => {
           if (err) {
-            throw new gutil.PluginError('webpack', err)
+            throw new PluginError('webpack', err)
           }
-          gutil.log('[webpack]', stats.toString({
+          log('[webpack]', stats.toString({
             // output options
           }))
           done()
         },
       )
     } catch (e) {
-      throw new gutil.PluginError('webpack', e)
+      throw new PluginError('webpack', e)
     }
   }

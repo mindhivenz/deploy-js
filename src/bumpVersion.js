@@ -1,7 +1,7 @@
 import path from 'path'
 import semver from 'semver'
 import shell from 'shelljs'
-import gutil from 'gulp-util'
+import PluginError from 'plugin-error'
 import yargs from 'yargs'
 
 import ensureGitUpToDate from './ensureGitUpToDate'
@@ -23,7 +23,7 @@ export default async (packageJsonPath) => {
   try {
     pkg = readJson(packageJsonPath, { pluginName })
   } catch (e) {
-    throw new gutil.PluginError(pluginName, `Failed to read ${packageJsonPath}: ${e}`)
+    throw new PluginError(pluginName, `Failed to read ${packageJsonPath}: ${e}`)
   }
   const currentVersion = pkg.version
   if (release === 'same') {
@@ -35,7 +35,7 @@ export default async (packageJsonPath) => {
     { cwd, silent: true },
   )
   if (bumpResult.code !== 0) {
-    throw new gutil.PluginError(pluginName, bumpResult.stderr)
+    throw new PluginError(pluginName, bumpResult.stderr)
   }
   return newVersion
 }

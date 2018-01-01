@@ -1,6 +1,6 @@
 import AWS from 'aws-sdk/global'
 import memoize from 'lodash/memoize'
-import gutil from 'gulp-util'
+import PluginError from 'plugin-error'
 
 import devName from './devName'
 import { resolveAccount, accessTargetRoleArn } from './awsAccounts'
@@ -28,7 +28,7 @@ class ProjCredentials extends AWS.TemporaryCredentials {
       () => super.refresh(() => {
         defaultedCallback(this.accessKeyId ?
           undefined
-          : new gutil.PluginError(pluginName, 'Could not assume role into project, have you been granted access?')
+          : new PluginError(pluginName, 'Could not assume role into project, have you been granted access?')
         )
       }),
       defaultedCallback,

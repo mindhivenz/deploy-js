@@ -1,7 +1,9 @@
 import fs from 'fs'
 import os from 'os'
 import path from 'path'
-import gutil from 'gulp-util'
+import PluginError from 'plugin-error'
+import log from 'fancy-log'
+import colors from 'ansi-colors'
 import { accessTargetRoleArn, resolveAccount } from './awsAccounts'
 
 
@@ -13,7 +15,7 @@ const existingConfigContent = () => {
     return fs.readFileSync(configPath, 'utf8')
   } catch (e) {
     if (e.code === 'ENOENT') {
-      throw new gutil.PluginError(
+      throw new PluginError(
         'addAwsVaultProfile',
         `It appears you don't have any credentials setup. No existing aws config at: ${configPath}`,
         { showProperties: false },
@@ -38,15 +40,15 @@ export default ({ proj, stage, region }) =>
     ].join('\n')
     const config = existingConfigContent()
     if (config.includes(profileHeader)) {
-      gutil.log([
-        `You already have a profile called ${gutil.colors.yellow(profileName)}.`,
+      log([
+        `You already have a profile called ${colors.yellow(profileName)}.`,
         "I wont't go changing your config. You can do it manually.",
-        `This is what you need in ${gutil.colors.yellow(awsConfigFilePath())}:`,
-        gutil.colors.green(iniProfile),
+        `This is what you need in ${colors.yellow(awsConfigFilePath())}:`,
+        colors.green(iniProfile),
       ].join('\n'))
       return
     }
     const separator = config.endsWith('\n\n') ? '' : '\n'
     fs.appendFileSync(awsConfigFilePath(), `${separator}${iniProfile}\n`)
-    gutil.log(`Profile created. Now you can: ${gutil.colors.blue(`aws-vault exec ${profileName} -- ...`)}`)
+    log(`Profile created. Now you can: ${colors.blue(`aws-vault exec ${profileName} -- ...`)}`)
   }

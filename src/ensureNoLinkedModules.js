@@ -1,5 +1,5 @@
 import glob from 'glob'
-import gutil from 'gulp-util'
+import PluginError from 'plugin-error'
 
 
 const pluginName = '@mindhive/deploy/ensureNoLinkedModules'
@@ -13,11 +13,11 @@ export default path =>
           .filter(([, v]) => v)
           .map(([k]) => k)
         if (linked.length) {
-          reject(new gutil.PluginError(pluginName, `You have linked node_modules:\n${linked.join('\n')}`)
+          reject(new PluginError(pluginName, `You have linked node_modules:\n${linked.join('\n')}`)
           )
         } else {
           resolve()
         }
       })
-      .on('error', e => reject(new gutil.PluginError(pluginName, e)))
+      .on('error', e => reject(new PluginError(pluginName, e)))
   })

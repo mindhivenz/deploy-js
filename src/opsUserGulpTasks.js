@@ -1,5 +1,6 @@
 import gulp from 'gulp'
-import gutil from 'gulp-util'
+import log from 'fancy-log'
+import colors from 'ansi-colors'
 
 import devName from './devName'
 import openAwsConsoleTask from './openAwsConsoleTask'
@@ -9,7 +10,7 @@ import addAwsVaultProfile from './addAwsVaultProfile'
 export default ({ proj, stages, region }) => {
 
   gulp.task('who-am-i', async () => {
-    gutil.log(`You are devName: ${gutil.colors.yellow(devName())}`)
+    log(`You are devName: ${colors.yellow(devName())}`)
   })
 
   stages.forEach((stage) => {

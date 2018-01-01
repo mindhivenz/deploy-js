@@ -1,4 +1,5 @@
-import gutil from 'gulp-util'
+import log from 'fancy-log'
+import colors from 'ansi-colors'
 import streamToPromise from 'stream-to-promise'
 import run from 'gulp-run'
 
@@ -20,8 +21,8 @@ export default async ({
       verbosity: 3,  // As Meteor sometimes asks for username password so we need to see what's happening
     }).exec()
   )
-  gutil.log(
-    `Check status of Mete${gutil.colors.red('o')}r deployment at`,
-    gutil.colors.blue(`https://${galaxyManagementServer}/app/${host}/logs`),
+  log(
+    `Check status of Mete${colors.red('o')}r deployment at`,
+    colors.blue(`https://${galaxyManagementServer}/app/${host}/logs`),
   )
 }

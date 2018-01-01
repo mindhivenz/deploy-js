@@ -1,7 +1,8 @@
 import shell from 'shelljs'
 import yargs from 'yargs'
 import once from 'lodash/once'
-import gutil from 'gulp-util'
+import PluginError from 'plugin-error'
+import colors from 'ansi-colors'
 
 
 const gitUserName = once(() => {
@@ -11,9 +12,9 @@ const gitUserName = once(() => {
     .toLowerCase()
     .replace(/\s+/, '-')
   if (! name) {
-    throw new gutil.PluginError(
+    throw new PluginError(
       '@mindhive/deploy/devName',
-      `You need to set your git user name. Such as: ${gutil.colors.blue('git config --global user.name "John Doe"')}`,
+      `You need to set your git user name. Such as: ${colors.blue('git config --global user.name "John Doe"')}`,
     )
   }
   return name
