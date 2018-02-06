@@ -1,7 +1,9 @@
-import file from 'gulp-file'
+import source from 'vinyl-source-stream'
+import intoStream from 'into-stream'
 
 import jsonPretty from './jsonPretty'
 
 
 export default (filename, obj) =>
-  file(filename, jsonPretty(obj), { src: true })
+  intoStream(jsonPretty(obj))
+    .pipe(source(filename))
