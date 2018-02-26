@@ -3,6 +3,8 @@ import semver from 'semver'
 import shell from 'shelljs'
 import PluginError from 'plugin-error'
 import yargs from 'yargs'
+import log from 'fancy-log'
+import colors from 'ansi-colors'
 
 import ensureGitUpToDate from './ensureGitUpToDate'
 import readJson from './readJson'
@@ -37,5 +39,6 @@ export default async (packageJsonPath) => {
   if (bumpResult.code !== 0) {
     throw new PluginError(pluginName, bumpResult.stderr)
   }
+  log(`Version bumped to: ${colors.yellow(newVersion)}`)
   return newVersion
 }
