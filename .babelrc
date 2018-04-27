@@ -1,16 +1,12 @@
 {
   "presets": [
     ["env", {
-      "targets": {
-        "node": "8.0"
-      },
+      "targets": { "node": "8.10" },
       "useBuiltIns": true
     }]
   ],
   "plugins": [
-    ["transform-runtime", {
-      "polyfill": false
-    }],
-    "transform-object-rest-spread"
+    ["transform-runtime", { "polyfill": false }],
+    ["transform-object-rest-spread", { "useBuiltIns": true }]
   ]
 }
