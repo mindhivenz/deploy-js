@@ -3,6 +3,8 @@
     <words>
       <w>credstash</w>
       <w>gutil</w>
+      <w>lstat</w>
+      <w>readdir</w>
       <w>semver</w>
       <w>uniq</w>
       <w>yargs</w>

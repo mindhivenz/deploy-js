@@ -1,25 +1,34 @@
-import { Glob } from 'glob'
 import PluginError from 'plugin-error'
+import { readdir, lstat } from 'fs'
+import { promisify } from 'util'
+import { join } from 'path'
 
+
+// REVISIT: linked modules OK if linked from same Git tree
+// REVISIT: should check that file: linked packages are in the same Git tree
 
 const pluginName = '@mindhive/deploy/ensureNoLinkedModules'
 
-export default path =>
-  new Promise((resolve, reject) => {
-    // Trailing slash means only match directories
-    // because we want to ignore other symlinks like those produced by file: packages
-    const glob = new Glob(`${path}/node_modules/{*,@*/*}/`, { read: false })
-    glob
-      .on('end', (matches) => {
-        // But then need to remove the trailing slash from the match to find it in symlinks
-        const linked = matches
-          .filter(p => p.endsWith('/') && glob.symlinks[p.slice(0, -1)])
-        if (linked.length) {
-          reject(new PluginError(pluginName, `You have linked node_modules:\n${linked.join('\n')}`)
-          )
-        } else {
-          resolve()
+const readdirAsync = promisify(readdir)
+const lstatAsync = promisify(lstat)
+
+const checkDir = async (dirPath) => {
+  const filenames = await readdirAsync(dirPath)
+  await Promise.all([
+    ...filenames
+      .map(async (f) => {
+        const filePath = join(dirPath, f)
+        const stat = await lstatAsync(filePath)
+        if (stat.isSymbolicLink()) {
+          throw new PluginError(pluginName, `You have linked node_module: ${filePath}`)
         }
-      })
-      .on('error', e => reject(new PluginError(pluginName, e)))
-  })
+      }),
+    ...filenames
+      .filter(f => f.startsWith('@'))
+      .map(f => checkDir(join(dirPath, f)))
+  ])
+}
+
+export default async (path) => {
+  await checkDir(join(path, 'node_modules'))
+}
