@@ -1,6 +1,6 @@
 import PluginError from 'plugin-error'
 import Credstash from 'nodecredstash'
-import streamToPromise from 'stream-to-promise'
+import getStdin from 'get-stdin'
 import once from 'lodash/once'
 
 import { awsMasterOpts } from './awsAccounts'
@@ -70,13 +70,13 @@ export const setSecretJson = async (ref, secretObj) => {
 }
 
 export const readStdInSecretText = async () => {
-  if (process.stdin.isTTY) {
+  const raw = await getStdin()
+  if (! raw) {
     throw new PluginError(secretsPluginName,
       'You must pipe the input. Example: cat secretfile.json | yarn gulp -- set:secret:something',
     )
   }
-  const buffer = await streamToPromise(process.stdin)
-  return buffer.toString().trim()
+  return raw.trim()
 }
 
 export const readStdInSecretJson = async () =>

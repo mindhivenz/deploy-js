@@ -1,6 +1,6 @@
 import log from 'fancy-log'
 import colors from 'ansi-colors'
-import streamToPromise from 'stream-to-promise'
+import getStream from 'get-stream'
 import run from 'gulp-run'
 
 
@@ -11,7 +11,7 @@ export default async ({
   meteorSettingsPath,
 }) => {
   const galaxyManagementServer = `${galaxyRegion}.galaxy.meteor.com`
-  await streamToPromise(
+  await getStream.array(  // REVISIT: use our own run, then we don't need getStream
     run(`meteor deploy ${host} --settings ${meteorSettingsPath}`, {
       env: {
         ...process.env,
