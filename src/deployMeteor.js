@@ -2,7 +2,6 @@ import log from 'fancy-log'
 import colors from 'ansi-colors'
 import execFile from './execFile'
 
-
 export default async ({
   host,
   meteorRootPath,
@@ -10,7 +9,7 @@ export default async ({
   meteorSettingsPath,
 }) => {
   const galaxyManagementServer = `${galaxyRegion}.galaxy.meteor.com`
-  await execFile('meteor', ['whoami'])  // So the next command won't sit there asking for user to login
+  await execFile('meteor', ['whoami']) // So the next command won't sit there asking for user to login
   await execFile('meteor', ['deploy', host, '--settings', meteorSettingsPath], {
     env: {
       ...process.env,

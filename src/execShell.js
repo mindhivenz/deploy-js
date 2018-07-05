@@ -1,15 +1,28 @@
-import childProcess from 'child_process'
-import { promisify } from 'util'
+import { exec } from 'child_process'
 import { defaultOptions, handleExecError } from './execCommon'
 
-const exec = promisify(childProcess.exec)
-
 export default async (command, options) => {
-  try {
-    const defaultedOptions = await defaultOptions(options)
-    const { stdout } = await exec(command, defaultedOptions)
-    return stdout
-  } catch (e) {
-    throw handleExecError('@mindhive/deploy/execShell', command, e)
-  }
+  const defaultedOptions = await defaultOptions(options)
+  return await new Promise((resolve, reject) => {
+    const subprocess = exec(
+      command,
+      defaultedOptions,
+      (error, stdout, stderr) => {
+        if (error) {
+          reject(
+            handleExecError(
+              '@mindhive/deploy/execFile',
+              command,
+              error,
+              stdout,
+              stderr,
+            ),
+          )
+        } else {
+          resolve(stdout)
+        }
+      },
+    )
+    subprocess.stdin.end() // Otherwise it will block
+  })
 }
