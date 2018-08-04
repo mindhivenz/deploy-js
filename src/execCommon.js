@@ -6,10 +6,13 @@ import findUp from 'find-up'
 
 export const handleExecError = (pluginName, command, e, stdout, stderr) => {
   log(colors.red('Error'), colors.blue(command))
-  if (stderr) {
-    log(stderr)
-  } else if (stdout) {
+  if (stdout) {
+    log(colors.dim('-- stdout --'))
     log(stdout)
+  }
+  if (stderr) {
+    log(colors.dim('-- stderr --'))
+    log(stderr)
   }
   return new PluginError(pluginName, e.message)
 }
