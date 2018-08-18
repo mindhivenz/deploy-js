@@ -1,6 +1,5 @@
 import { proj as credentialsFactory } from './awsCredentials'
 
-
 export default async ({ proj, stage }) => {
   const credentials = credentialsFactory({ proj, stage })
   await credentials.getPromise()

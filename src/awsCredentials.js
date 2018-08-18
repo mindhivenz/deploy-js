@@ -5,32 +5,36 @@ import PluginError from 'plugin-error'
 import devName from './devName'
 import { resolveAccount, accessTargetRoleArn } from './awsAccounts'
 
-
 // Force credentials to come from the env so they are not being stored unencrypted in the standard ini file
 export const master = new AWS.EnvironmentCredentials('AWS')
 
 const pluginName = '@mindhive/deploy/awsCredentials'
 
 class ProjCredentials extends AWS.TemporaryCredentials {
-
   constructor({ proj, stage }) {
-    super(
-      { credentials: master },
-      master,
-    )
+    super({ credentials: master }, master)
     this.proj = proj
     this.stage = stage
   }
 
   refresh(callback) {
-    const defaultedCallback = callback || ((err) => { if (err) throw err })  // This default matches TemporaryCredentials
+    const defaultedCallback =
+      callback ||
+      (err => {
+        if (err) throw err
+      }) // This default matches TemporaryCredentials
     this._resolveRoleArn().then(
-      () => super.refresh(() => {
-        defaultedCallback(this.accessKeyId ?
-          undefined
-          : new PluginError(pluginName, 'Could not assume role into project, have you been granted access?')
-        )
-      }),
+      () =>
+        super.refresh(() => {
+          defaultedCallback(
+            this.accessKeyId
+              ? undefined
+              : new PluginError(
+                  pluginName,
+                  'Could not assume role into project, have you been granted access?',
+                ),
+          )
+        }),
       defaultedCallback,
     )
   }

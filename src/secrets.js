@@ -6,24 +6,28 @@ import once from 'lodash/once'
 import { awsMasterOpts } from './awsAccounts'
 import publicStageName from './publicStageName'
 
-
 export const allStages = 'all'
 
-const secretStash = once(() =>
-  new Credstash({
-    table: 'deploy-secrets',
-    kmsKey: 'alias/deploy-secrets',
-    awsOpts: awsMasterOpts,
-  })
+const secretStash = once(
+  () =>
+    new Credstash({
+      table: 'deploy-secrets',
+      kmsKey: 'alias/deploy-secrets',
+      awsOpts: awsMasterOpts,
+    }),
 )
 
-const secretStageName = stage => stage ? publicStageName(stage) : allStages
-const secretFqn = ({ name, proj, stage }) => [proj, secretStageName(stage), name].join('.')
-const secretContext = ({ proj, stage }) => ({ proj, stage: secretStageName(stage) })
+const secretStageName = stage => (stage ? publicStageName(stage) : allStages)
+const secretFqn = ({ name, proj, stage }) =>
+  [proj, secretStageName(stage), name].join('.')
+const secretContext = ({ proj, stage }) => ({
+  proj,
+  stage: secretStageName(stage),
+})
 
 const secretsPluginName = '@mindhive/deploy/secrets'
 
-export const getSecretText = async (ref) => {
+export const getSecretText = async ref => {
   const name = secretFqn(ref)
   try {
     return await secretStash().getSecret({
@@ -31,8 +35,9 @@ export const getSecretText = async (ref) => {
       context: secretContext(ref),
     })
   } catch (e) {
-    throw new PluginError(secretsPluginName,
-      `Unable to get secret ${name}, have you been granted access to secrets for this project/stage?\n${e}`
+    throw new PluginError(
+      secretsPluginName,
+      `Unable to get secret ${name}, have you been granted access to secrets for this project/stage?\n${e}`,
     )
   }
 }
@@ -59,8 +64,9 @@ export const setSecretText = async (ref, secret) => {
       context: secretContext(ref),
     })
   } catch (e) {
-    throw new PluginError(secretsPluginName,
-      `Unable to set secret ${name}, have you been granted access to secrets for this project/stage?\n${e}`
+    throw new PluginError(
+      secretsPluginName,
+      `Unable to set secret ${name}, have you been granted access to secrets for this project/stage?\n${e}`,
     )
   }
 }
@@ -71,8 +77,9 @@ export const setSecretJson = async (ref, secretObj) => {
 
 export const readStdInSecretText = async () => {
   const raw = await getStdin()
-  if (! raw) {
-    throw new PluginError(secretsPluginName,
+  if (!raw) {
+    throw new PluginError(
+      secretsPluginName,
       'You must pipe the input. Example: cat secretfile.json | yarn gulp -- set:secret:something',
     )
   }

@@ -1,20 +1,12 @@
 import STS from 'aws-sdk/clients/sts'
 import { proj as credentialsFactory } from './awsCredentials'
+import memoize from 'lodash/memoize'
 
-let resultPromise = null
-
-export default async ({ proj, stage }) => {
-  if (!resultPromise) {
-    resultPromise = new Promise(async (resolve, reject) => {
-      try {
-        const credentials = credentialsFactory({ proj, stage })
-        const sts = new STS({ credentials })
-        const result = await sts.getCallerIdentity({}).promise()
-        resolve(result.Account)
-      } catch (e) {
-        reject(e)
-      }
-    })
-  }
-  await resultPromise
+const getAccountId = async ({ proj, stage }) => {
+  const credentials = credentialsFactory({ proj, stage })
+  const sts = new STS({ credentials })
+  const result = await sts.getCallerIdentity({}).promise()
+  return result.Account
 }
+
+export default memoize(getAccountId, ({ proj, stage }) => `${proj}/${stage}`)

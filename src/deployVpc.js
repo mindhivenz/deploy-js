@@ -18,8 +18,7 @@ import awsServiceOptions from './awsServiceOptions'
       Resource: "*"
  */
 
-const hashIpPrefix = proj =>
-  `10.${hash(256)(proj)}`
+const hashIpPrefix = proj => `10.${hash(256)(proj)}`
 
 const numberedKeysToArray = (obj, keyPrefix) => {
   const result = []
@@ -38,15 +37,18 @@ export default ({
   azCount = stage === 'dev' ? 1 : 2,
   ipPrefix = hashIpPrefix(proj),
 }) =>
-  gulp.src(path.join(__dirname, `../cfn/vpc-${azCount}.cfn.yaml`))
-    .pipe(cfDeploy(
-      awsServiceOptions({ proj, stage, region }),
-      `${proj}-vpc`,
-      { ipPrefix },
-    ))
-    .pipe(jsonEditor(awsVpcFlat => ({
-      securityGroupId: awsVpcFlat.securityGroupIdLambda,
-      vpcSubnetIds: numberedKeysToArray(awsVpcFlat, 'vpcSubnetIdLambda'),
-      ipAddresses: numberedKeysToArray(awsVpcFlat, 'ipAddressLambda'),
-    })))
+  gulp
+    .src(path.join(__dirname, `../cfn/vpc-${azCount}.cfn.yaml`))
+    .pipe(
+      cfDeploy(awsServiceOptions({ proj, stage, region }), `${proj}-vpc`, {
+        ipPrefix,
+      }),
+    )
+    .pipe(
+      jsonEditor(awsVpcFlat => ({
+        securityGroupId: awsVpcFlat.securityGroupIdLambda,
+        vpcSubnetIds: numberedKeysToArray(awsVpcFlat, 'vpcSubnetIdLambda'),
+        ipAddresses: numberedKeysToArray(awsVpcFlat, 'ipAddressLambda'),
+      })),
+    )
     .pipe(rename('aws-vpc.json'))
