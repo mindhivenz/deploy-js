@@ -1,4 +1,3 @@
-import hash from 'hash-mod'
 import gulp from 'gulp'
 import cfDeploy from 'gulp-cf-deploy'
 import jsonEditor from 'gulp-json-editor'
@@ -6,6 +5,7 @@ import rename from 'gulp-rename'
 import path from 'path'
 
 import awsServiceOptions from './awsServiceOptions'
+import cidr16HashedPrefix from './cidr16HashedPrefix'
 
 /* The following is required in the role launching this (like serverless iamRoleStatements)
 
@@ -17,8 +17,6 @@ import awsServiceOptions from './awsServiceOptions'
         - ec2:DeleteNetworkInterface
       Resource: "*"
  */
-
-const hashIpPrefix = proj => `10.${hash(256)(proj)}`
 
 const numberedKeysToArray = (obj, keyPrefix) => {
   const result = []
@@ -35,7 +33,7 @@ export default ({
   stage,
   region,
   azCount = stage === 'dev' ? 1 : 2,
-  ipPrefix = hashIpPrefix(proj),
+  ipPrefix = cidr16HashedPrefix(proj),
 }) =>
   gulp
     .src(path.join(__dirname, `../cfn/vpc-${azCount}.cfn.yaml`))
