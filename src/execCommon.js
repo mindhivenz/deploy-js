@@ -3,12 +3,17 @@ import PluginError from 'plugin-error'
 import path from 'path'
 import colors from 'ansi-colors'
 import findUp from 'find-up'
+import yargs from 'yargs'
+
+const { verbose } = yargs.option('verbose', {
+  describe: 'Stream all sub-process output to console',
+}).argv
 
 export const execCommon = async (
   execFunc,
   pluginName,
   commandDescription,
-  { pipeOutput = false, ...execOptions } = {},
+  { pipeOutput = !!verbose, ...execOptions } = {},
 ) => {
   const defaultExecOptions = async () => {
     const options = { ...execOptions } // copy, don't modify the original
@@ -35,14 +40,6 @@ export const execCommon = async (
     return options
   }
 
-  const pipeStdOutput = (src, dst) => {
-    if (src) {
-      src.on('data', data => {
-        dst.write(data)
-      })
-    }
-  }
-
   const execError = (e, stdout, stderr) => {
     log(colors.red('Error'), colors.blue(commandDescription))
     if (!pipeOutput) {
@@ -66,8 +63,8 @@ export const execCommon = async (
       }
     })
     if (pipeOutput) {
-      pipeStdOutput(subprocess.stdout, process.stdout)
-      pipeStdOutput(subprocess.stderr, process.stderr)
+      subprocess.stdout.pipe(process.stdout)
+      subprocess.stderr.pipe(process.stderr)
     }
     subprocess.stdin.end() // Otherwise it will block
   })
