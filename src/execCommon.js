@@ -40,7 +40,7 @@ export const execCommon = async (
     return options
   }
 
-  const execError = (e, stdout, stderr) => {
+  const execError = (error, stdout, stderr) => {
     log(colors.red('Error'), colors.blue(commandDescription))
     if (!pipeOutput) {
       if (stdout) {
@@ -50,14 +50,14 @@ export const execCommon = async (
         log(`${colors.dim('-- stderr --')}\n${stderr}`)
       }
     }
-    return new PluginError(pluginName, e.message)
+    return new PluginError(pluginName, error.message)
   }
 
   const defaultedOptions = await defaultExecOptions()
   return await new Promise((resolve, reject) => {
     const subprocess = execFunc(defaultedOptions, (error, stdout, stderr) => {
       if (error) {
-        reject(execError(pluginName, commandDescription, error, stdout, stderr))
+        reject(execError(error, stdout, stderr))
       } else {
         resolve(stdout)
       }
