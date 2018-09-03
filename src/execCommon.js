@@ -54,6 +54,9 @@ export const execCommon = async (
   }
 
   const defaultedOptions = await defaultExecOptions()
+  if (verbose) {
+    log(colors.blue(commandDescription))
+  }
   return await new Promise((resolve, reject) => {
     const subprocess = execFunc(defaultedOptions, (error, stdout, stderr) => {
       if (error) {
