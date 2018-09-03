@@ -3,7 +3,7 @@ import { execCommon } from './execCommon'
 
 export default async (file, args, options) =>
   execCommon(
-    execFile.bind(null, file, args),
+    (...rest) => execFile(file, args, ...rest),
     '@mindhive/deploy/execFile',
     [file, ...args].join(' '),
     options,

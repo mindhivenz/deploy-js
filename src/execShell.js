@@ -3,7 +3,7 @@ import { execCommon } from './execCommon'
 
 export default async (command, options) =>
   execCommon(
-    exec.bind(null, command),
+    (...rest) => exec(command, ...rest),
     '@mindhive/deploy/execShell',
     command,
     options,
