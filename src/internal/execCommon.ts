@@ -80,12 +80,12 @@ export const execCommon = async (
   if (verbose) {
     log(colors.blue(commandDescription))
   }
-  return await new Promise((resolve, reject) => {
+  return await new Promise<string>((resolve, reject) => {
     const subprocess = execFunc(defaultedOptions, (error, stdout, stderr) => {
       if (error) {
         reject(execError(error, stdout, stderr))
       } else {
-        resolve(stdout)
+        resolve(stdout as string)
       }
     })
     if (pipeOutput) {
