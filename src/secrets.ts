@@ -18,14 +18,14 @@ const secretStash = once(() =>
 
 interface ISecretContext {
   proj: string
-  stage: string
+  stage?: string
 }
 
 export interface ISecretRef extends ISecretContext {
   name: string
 }
 
-const secretStageName = (stage: string) =>
+const secretStageName = (stage?: string) =>
   stage ? publicStageName(stage) : allStages
 const secretFqn = ({ name, proj, stage }: ISecretRef) =>
   [proj, secretStageName(stage), name].join('.')
