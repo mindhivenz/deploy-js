@@ -20,6 +20,14 @@ const copy = () =>
     .src(['cfn/**/*', 'package.json'], { base: '.', buffer: false })
     .pipe(gulp.dest(distDir))
 
+const publish = () =>
+  spawn('yarn', ['publish', '--non-interactive'], {
+    cwd: distDir,
+    stdio: 'inherit',
+  })
+
 export { clean, build, copy }
 
-export default gulp.series(bumpVersion, clean, build, copy)
+export const release = gulp.series(bumpVersion, clean, build, copy, publish)
+
+export default gulp.series(clean, build, copy)
