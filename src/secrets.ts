@@ -21,7 +21,7 @@ interface ISecretContext {
   stage: string
 }
 
-interface ISecretRef extends ISecretContext {
+export interface ISecretRef extends ISecretContext {
   name: string
 }
 
