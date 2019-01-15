@@ -1,5 +1,5 @@
 import colors from 'ansi-colors'
-import { ChildProcess, ExecOptions } from 'child_process'
+import { ChildProcess, ExecFileOptions, ExecOptions } from 'child_process'
 import log from 'fancy-log'
 import findUp from 'find-up'
 import path from 'path'
@@ -10,7 +10,7 @@ const { verbose } = yargs.option('verbose', {
   describe: 'Stream all sub-process output to console',
 }).argv
 
-interface IOptions extends ExecOptions {
+export interface ILocalOptions {
   pipeOutput?: boolean
 }
 
@@ -26,7 +26,10 @@ export const execCommon = async (
   execFunc: ExecFunc,
   pluginName: string,
   commandDescription: string,
-  { pipeOutput = !!verbose, ...execOptions }: IOptions = {},
+  {
+    pipeOutput = !!verbose,
+    ...execOptions
+  }: ILocalOptions & ExecOptions & ExecFileOptions = {},
 ) => {
   const defaultExecOptions = async () => {
     const options = { ...execOptions } // copy, don't modify the original

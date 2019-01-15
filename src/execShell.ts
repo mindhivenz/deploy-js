@@ -1,7 +1,9 @@
 import { exec, ExecOptions } from 'child_process'
-import { execCommon } from './internal/execCommon'
+import { execCommon, ILocalOptions } from './internal/execCommon'
 
-export default async (command: string, options: ExecOptions) =>
+export type IExecShellOptions = ILocalOptions & ExecOptions
+
+export default async (command: string, options: IExecShellOptions) =>
   execCommon(
     (execOptions, callback) => exec(command, execOptions, callback),
     '@mindhive/deploy/execShell',

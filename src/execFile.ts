@@ -1,10 +1,12 @@
 import { execFile, ExecFileOptions } from 'child_process'
-import { execCommon } from './internal/execCommon'
+import { execCommon, ILocalOptions } from './internal/execCommon'
+
+export type IExecFileOptions = ILocalOptions & ExecFileOptions
 
 export default async (
   file: string,
   args: string[] = [],
-  options: ExecFileOptions = {},
+  options: IExecFileOptions = {},
 ) =>
   execCommon(
     (execOptions, callback) => execFile(file, args, execOptions, callback),
