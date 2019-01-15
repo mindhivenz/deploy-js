@@ -1,11 +1,6 @@
 {
   "name": "@mindhive/deploy",
   "version": "3.8.2",
-  "scripts": {
-    "lint": "eslint src",
-    "build": "babel src --ignore *.spec.js --out-dir dist",
-    "prepublish": "npm run build"
-  },
   "dependencies": {
     "ansi-colors": "^2.0.1",
     "babel-runtime": "^6.23.0",
@@ -31,17 +26,40 @@
     "yargs": "^11.0.0"
   },
   "devDependencies": {
-    "babel-cli": "^6.23.0",
-    "babel-plugin-transform-object-rest-spread": "^6.23.0",
-    "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-preset-env": "^1.2.1",
-    "eslint": "^4.14.0",
-    "eslint-config-mindhive": "^2.0.1",
-    "prettier": "^1.13.7"
+    "@mindhive/tsconfig": "^1.2.0",
+    "@types/del": "^3.0.1",
+    "@types/fancy-log": "^1.3.0",
+    "@types/find-up": "^2.1.1",
+    "@types/get-stdin": "^5.0.1",
+    "@types/gulp": "^4.0.5",
+    "@types/gulp-json-editor": "^2.2.31",
+    "@types/gulp-rename": "^0.0.33",
+    "@types/into-stream": "^3.1.0",
+    "@types/lodash": "^4.14.119",
+    "@types/node": "^10.12.18",
+    "@types/nodecredstash": "^2.0.0",
+    "@types/opn": "^5.1.0",
+    "@types/request-promise-native": "^1.0.15",
+    "@types/semver": "^5.5.0",
+    "@types/shelljs": "^0.8.1",
+    "@types/vinyl-buffer": "^1.0.0",
+    "@types/vinyl-source-stream": "^0.0.30",
+    "@types/webpack": "^4.4.22",
+    "@types/yargs": "^12.0.5",
+    "del": "^3.0.0",
+    "gulp": "^4.0.0",
+    "prettier": "^1.13.7",
+    "ts-node": "^7.0.1",
+    "typescript": "^3.2.2"
   },
   "peerDependencies": {
     "aws-sdk": "^2.7.21",
     "gulp": "^4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "aws-sdk": {
+      "optional": true
+    }
   },
   "license": "MIT"
 }

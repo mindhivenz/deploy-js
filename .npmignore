@@ -1,6 +1,0 @@
-.idea
-*.iml
-.eslintrc*
-wallaby.js
-src/
-.babelrc
