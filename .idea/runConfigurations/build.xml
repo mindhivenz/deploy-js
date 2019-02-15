@@ -1,9 +1,11 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="dist" type="js.build_tools.gulp">
+  <configuration default="false" name="build" type="js.build_tools.gulp">
     <node-interpreter>project</node-interpreter>
     <node-options />
     <gulpfile>$PROJECT_DIR$/gulpfile.ts</gulpfile>
-    <tasks />
+    <tasks>
+      <task>build</task>
+    </tasks>
     <arguments />
     <envs />
     <method v="2" />
