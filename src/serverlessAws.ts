@@ -5,7 +5,7 @@ import publicStageName from './publicStageName'
 
 type IServerlessArgs = Record<string, string | true>
 
-interface IServerlessCommand extends IExecFileOptions {
+export interface IServerlessCommand extends IExecFileOptions {
   proj: string
   stage: string
   command: string
