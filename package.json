@@ -1,6 +1,6 @@
 {
   "name": "@mindhive/deploy",
-  "version": "3.10.3",
+  "version": "3.10.4",
   "dependencies": {
     "ansi-colors": "^2.0.1",
     "babel-runtime": "^6.23.0",
