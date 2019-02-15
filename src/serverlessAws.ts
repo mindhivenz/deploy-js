@@ -27,9 +27,9 @@ export default async ({
   args = {},
   env = {},
   ...options
-}: IServerlessCommand) => {
+}: IServerlessCommand): Promise<string> => {
   const credentialsEnv = await awsCredentialsEnv({ proj, stage })
-  await execFile(
+  return await execFile(
     'serverless',
     [
       ...command.split(/\s+/),
