@@ -20,7 +20,7 @@ const serializeServerlessArgs = (args: IServerlessArgs) =>
     ),
   )
 
-export default async ({
+const task = async ({
   proj,
   stage,
   command,
@@ -49,3 +49,23 @@ export default async ({
     },
   )
 }
+
+type IFixedServerlessOptions = Pick<
+  IServerlessCommand,
+  'proj' | 'stage' | 'cwd'
+>
+
+type ICurriedServerlessOptions = Pick<
+  IServerlessCommand,
+  Exclude<keyof IServerlessCommand, keyof IFixedServerlessOptions>
+>
+
+export const taskFactory = (fixedOptions: IFixedServerlessOptions) => (
+  options: ICurriedServerlessOptions,
+) =>
+  task({
+    ...fixedOptions,
+    ...options,
+  })
+
+export default task
