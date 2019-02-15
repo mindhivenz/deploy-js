@@ -1,3 +1,4 @@
+import flatten from 'lodash/flatten'
 import awsCredentialsEnv from './awsCredentialsEnv'
 import execFile, { IExecFileOptions } from './execFile'
 import publicStageName from './publicStageName'
@@ -13,8 +14,10 @@ interface IServerlessCommand extends IExecFileOptions {
 }
 
 const serializeServerlessArgs = (args: IServerlessArgs) =>
-  Object.entries(args).flatMap(([k, v]) =>
-    v === true ? [`--${k}`] : [`--${k}`, v],
+  flatten(
+    Object.entries(args).map(([k, v]) =>
+      v === true ? [`--${k}`] : [`--${k}`, v],
+    ),
   )
 
 export default async ({
