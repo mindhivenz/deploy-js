@@ -89,9 +89,9 @@ export const execCommon = async (
       }
     })
     if (pipeOutput) {
-      subprocess.stdout.pipe(process.stdout)
-      subprocess.stderr.pipe(process.stderr)
+      subprocess.stdout!.pipe(process.stdout)
+      subprocess.stderr!.pipe(process.stderr)
     }
-    subprocess.stdin.end() // Otherwise it will block
+    subprocess.stdin!.end() // Otherwise it will block
   })
 }
