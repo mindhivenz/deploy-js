@@ -15,10 +15,15 @@ const build = () =>
     stdio: 'inherit',
   })
 
-const copy = () =>
+const copyResources = () =>
   gulp
-    .src(['cfn/**/*', 'package.json'], { base: '.', buffer: false })
+    .src('src/cfn/**/*', { base: 'src', buffer: false })
     .pipe(gulp.dest(distDir))
+
+const copyPackageJson = () =>
+  gulp.src('package.json', { buffer: false }).pipe(gulp.dest(distDir))
+
+const copy = gulp.parallel(copyResources, copyPackageJson)
 
 const publish = () =>
   spawn('yarn', ['publish', '--non-interactive'], {
@@ -28,6 +33,6 @@ const publish = () =>
 
 export { clean, build, copy }
 
-export const release = gulp.series(bumpVersion, clean, build, copy, publish)
+export const dist = gulp.series(clean, gulp.parallel(build, copy))
 
-export default gulp.series(clean, build, copy)
+export const release = gulp.series(bumpVersion, dist, publish)

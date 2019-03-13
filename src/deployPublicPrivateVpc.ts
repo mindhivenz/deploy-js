@@ -48,7 +48,7 @@ export default ({
   ipPrefix = cidr16HashedPrefix(proj),
 }: IOptions) =>
   gulp
-    .src(path.join(__dirname, `../cfn/vpc-${azCount}.cfn.yaml`))
+    .src(path.join(__dirname, `cfn/vpc-${azCount}.cfn.yaml`))
     .pipe(
       cfDeploy(awsServiceOptions({ proj, stage, region }), `${proj}-vpc`, {
         ipPrefix,

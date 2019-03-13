@@ -14,9 +14,7 @@ interface IOptions {
 
 export default ({ proj, stage, domainName, cloudFrontDomainName }: IOptions) =>
   gulp
-    .src(
-      path.join(__dirname, '../cfn/mindhive-cloud-front-sub-domain.cfn.yaml'),
-    )
+    .src(path.join(__dirname, 'cfn/mindhive-cloud-front-sub-domain.cfn.yaml'))
     .pipe(
       cfDeploy(
         { credentials: master, region: 'us-east-1' },
