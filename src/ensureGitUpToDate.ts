@@ -1,6 +1,6 @@
 import PluginError from 'plugin-error'
 
-import gitExec from './internal/gitExec'
+import { gitExec } from './internal/git'
 
 // Based off: https://stackoverflow.com/a/3278427/3424884
 

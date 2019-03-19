@@ -1,17 +1,18 @@
-import yargs from 'yargs'
 import execFile from './execFile'
+import { yarnVersionBumpArgs } from './internal/yarnVersionBumpArgs'
 
 interface IOptions {
+  packageDir: string
   pipeOutput?: boolean
-  cwd?: string
 }
 
-export default async ({ pipeOutput = true, ...options }: IOptions = {}) => {
-  const argv = yargs.argv
-  const versionBump = ['major', 'minor', 'patch'].find(v => argv[v] === true)
-  const versionBumpArgs = versionBump ? [`--${versionBump}`] : []
-  await execFile('yarn', ['publish', '--non-interactive', ...versionBumpArgs], {
-    pipeOutput,
-    ...options,
-  })
+export default async ({ pipeOutput = true, packageDir }: IOptions) => {
+  await execFile(
+    'yarn',
+    ['publish', '--non-interactive', ...yarnVersionBumpArgs()],
+    {
+      cwd: packageDir,
+      pipeOutput,
+    },
+  )
 }

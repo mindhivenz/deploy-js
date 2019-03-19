@@ -1,6 +1,6 @@
 import PluginError from 'plugin-error'
 
-import gitExec from './internal/gitExec'
+import { gitExec } from './internal/git'
 
 const pluginName = '@mindhive/deploy/ensureBranch'
 

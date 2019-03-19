@@ -1,12 +1,15 @@
 // @ts-ignore
 import git from 'gulp-git'
 
-
 const defaultOptions = {
   quiet: true,
 }
 
-export default async (gitCommand: string, pluginName: string, options?: object) =>
+export const gitExec = async (
+  gitCommand: string,
+  pluginName: string,
+  options?: object,
+) =>
   new Promise((resolve, reject) => {
     git.exec(
       {
@@ -20,6 +23,6 @@ export default async (gitCommand: string, pluginName: string, options?: object) 
         } else {
           resolve(stdout.trim())
         }
-      }
+      },
     )
   })

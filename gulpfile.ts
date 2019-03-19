@@ -1,7 +1,8 @@
 import del from 'del'
 import gulp from 'gulp'
+import ensureGitUpToDate from './src/ensureGitUpToDate'
 import execFile from './src/execFile'
-import yarnPublish from './src/yarnPublish'
+import yarnPublish from './src/yarnPublishDist'
 
 const distDir = 'dist'
 
@@ -12,18 +13,16 @@ export const build = () =>
     pipeOutput: true,
   })
 
-const copyResources = () =>
+export const copy = () =>
   gulp
     .src('src/cfn/**/*', { base: 'src', buffer: false })
     .pipe(gulp.dest(distDir))
 
-const copyPackageJson = () =>
-  gulp.src('package.json', { buffer: false }).pipe(gulp.dest(distDir))
-
-export const copy = gulp.parallel(copyResources, copyPackageJson)
-
 export const dist = gulp.series(clean, gulp.parallel(build, copy))
 
-const publish = () => yarnPublish({ cwd: distDir })
+const gitUpToDate = () => ensureGitUpToDate('.')
 
-export const release = gulp.series(dist, publish)
+const publish = () =>
+  yarnPublish({ srcPackageDir: '.', distPackageDir: distDir })
+
+export const release = gulp.series(gitUpToDate, dist, publish)
