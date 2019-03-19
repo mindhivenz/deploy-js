@@ -1,18 +1,15 @@
-import { spawn } from 'child_process'
 import del from 'del'
 import gulp from 'gulp'
-
-import bump from './src/bumpVersion'
+import execFile from './src/execFile'
+import yarnPublish from './src/yarnPublish'
 
 const distDir = 'dist'
-
-const bumpVersion = () => bump()
 
 const clean = () => del(distDir)
 
 const build = () =>
-  spawn('yarn', ['tsc', '--outDir', distDir, '--project', 'src'], {
-    stdio: 'inherit',
+  execFile('tsc', ['--outDir', distDir, '--project', 'src'], {
+    pipeOutput: true,
   })
 
 const copyResources = () =>
@@ -25,14 +22,8 @@ const copyPackageJson = () =>
 
 const copy = gulp.parallel(copyResources, copyPackageJson)
 
-const publish = () =>
-  spawn('yarn', ['publish', '--non-interactive'], {
-    cwd: distDir,
-    stdio: 'inherit',
-  })
-
 export { clean, build, copy }
 
 export const dist = gulp.series(clean, gulp.parallel(build, copy))
 
-export const release = gulp.series(bumpVersion, dist, publish)
+export const release = gulp.series(dist, yarnPublish)

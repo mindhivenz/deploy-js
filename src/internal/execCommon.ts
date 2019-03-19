@@ -45,7 +45,7 @@ export const execCommon = async (
       if (options.env) {
         options.env = { ...options.env } // copy, don't modify the original
       } else {
-        options.env = { ...process.env } // copy, don't modify the original
+        options.env = { ...process.env } // copy, don't modify process.env
       }
       if (options.env.PATH) {
         options.env.PATH = `${binDir}${path.delimiter}${options.env.PATH}`
