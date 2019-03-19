@@ -5,9 +5,9 @@ import yarnPublish from './src/yarnPublish'
 
 const distDir = 'dist'
 
-const clean = () => del(distDir)
+export const clean = () => del(distDir)
 
-const build = () =>
+export const build = () =>
   execFile('tsc', ['--outDir', distDir, '--project', 'src'], {
     pipeOutput: true,
   })
@@ -20,10 +20,10 @@ const copyResources = () =>
 const copyPackageJson = () =>
   gulp.src('package.json', { buffer: false }).pipe(gulp.dest(distDir))
 
-const copy = gulp.parallel(copyResources, copyPackageJson)
-
-export { clean, build, copy }
+export const copy = gulp.parallel(copyResources, copyPackageJson)
 
 export const dist = gulp.series(clean, gulp.parallel(build, copy))
 
-export const release = gulp.series(dist, yarnPublish)
+const publish = () => yarnPublish({ cwd: distDir })
+
+export const release = gulp.series(dist, publish)
