@@ -6,14 +6,14 @@ import yarnPublish from './src/yarnPublishDist'
 
 const distDir = 'dist'
 
-export const clean = () => del(distDir)
+const clean = () => del(distDir)
 
-export const build = () =>
+const build = () =>
   execFile('tsc', ['--outDir', distDir, '--project', 'src'], {
     pipeOutput: true,
   })
 
-export const copy = () =>
+const copy = () =>
   gulp
     .src('src/cfn/**/*', { base: 'src', buffer: false })
     .pipe(gulp.dest(distDir))
