@@ -2,6 +2,7 @@ import del from 'del'
 import gulp from 'gulp'
 import ensureGitUpToDate from './src/ensureGitUpToDate'
 import execFile from './src/execFile'
+import gitPush from './src/gitPush'
 import yarnPublishDist from './src/yarnPublishDist'
 
 const distDir = 'dist'
@@ -25,4 +26,6 @@ const gitUpToDate = () => ensureGitUpToDate('.')
 const publish = () =>
   yarnPublishDist({ srcPackageDir: '.', distPackageDir: distDir })
 
-export const release = gulp.series(gitUpToDate, dist, publish)
+const push = () => gitPush('.')
+
+export const release = gulp.series(gitUpToDate, dist, publish, push)
