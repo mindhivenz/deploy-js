@@ -4,9 +4,13 @@ import { gitExec } from './internal/git'
 
 // Based off: https://stackoverflow.com/a/3278427/3424884
 
+interface IOptions {
+  pluginName?: string
+}
+
 export default async (
   repoPath: string,
-  pluginName = '@mindhive/deploy/ensureGitUpToDate',
+  { pluginName = '@mindhive/deploy/ensureGitUpToDate' }: IOptions = {},
 ) => {
   const options = { cwd: repoPath }
   try {
