@@ -5,6 +5,8 @@ import { dockerLoginArgs, IOptions } from './internal/ecr'
 
 export default async (options: IOptions) => {
   const args = await dockerLoginArgs(options)
-  console.log(`To log  Docker into ${options.proj} ${options.stage} ECR:`)
+  console.log(
+    `Command line to login AWS ECR for ${options.proj}/${options.stage}:`,
+  )
   console.log(colors.blue(['docker', ...args].join(' ')))
 }
