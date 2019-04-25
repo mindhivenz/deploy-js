@@ -1,5 +1,6 @@
 import AWS from 'aws-sdk/global'
 import memoize from 'lodash/memoize'
+import './awsConfig'
 
 import devName from '../devName'
 import { accessTargetRoleArn, resolveAccount } from './awsAccounts'
@@ -33,7 +34,7 @@ class ProjCredentials extends AWS.TemporaryCredentials {
             this.accessKeyId
               ? undefined
               : new Error(
-                  'Could not assume role into project, have you been granted access?'
+                  'Could not assume role into project, have you been granted access?',
                 ),
           )
         }),
