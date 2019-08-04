@@ -6,6 +6,7 @@ import devName from '../devName'
 import { accessTargetRoleArn, resolveAccount } from './awsAccounts'
 import './awsConfig'
 import { master } from './awsMasterCredentials'
+import { MAX_SESSION_SECONDS } from './awsSession'
 
 export interface IOptions {
   proj: string
@@ -32,19 +33,16 @@ export class ProjCredentials extends AWS.ChainableTemporaryCredentials {
   }
 
   private async _resolveRoleArn() {
-    console.log(this.service) // tslint:disable-line
     const params = this.service.config.params as STS.Types.AssumeRoleRequest
     if (params.RoleArn) {
       return
     }
     const account = await resolveAccount(this.projOptions)
     params.RoleArn = accessTargetRoleArn(account.Id!)
-    params.RoleSessionName = `${account.Name}/${devName()}`
-    /* TODO: requires MaxSessionDuration set on Role. Make specific Ops role in accounts.
+    params.RoleSessionName = `${account.Name}-${devName()}`
     if (this.projOptions.fullDurationSession) {
-      params.DurationSeconds = 12 * 60 * 60
+      params.DurationSeconds = MAX_SESSION_SECONDS
     }
-*/
   }
 }
 

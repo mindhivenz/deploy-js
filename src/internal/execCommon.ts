@@ -36,7 +36,6 @@ export const defaultExecOptions = async <T extends IMangedExecOptions>(
     maxBuffer = 10 * 1024 * 1024,
     env: baseEnv = process.env,
   } = options
-  // REVISIT: Does typescript 3.6 fix this?
   const nodeModules = await findUp('node_modules', {
     cwd,
     type: 'directory',

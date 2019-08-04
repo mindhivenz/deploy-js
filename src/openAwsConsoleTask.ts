@@ -3,6 +3,7 @@ import querystring from 'querystring'
 import request from 'request-promise-native'
 import { URL } from 'url'
 import { projCredentialsFactory } from './internal/awsProjCredentials'
+import { MAX_SESSION_SECONDS } from './internal/awsSession'
 
 interface IOptions {
   proj: string
@@ -45,7 +46,7 @@ export default ({
       Action: 'login',
       Destination: destinationUrl.href,
       Issuer: '',
-      SessionDuration: 12 * 60 * 60, // Max 12 hours,
+      SessionDuration: MAX_SESSION_SECONDS,
       SigninToken: federation.SigninToken,
     })}`,
   )

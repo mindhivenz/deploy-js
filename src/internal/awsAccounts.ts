@@ -63,4 +63,4 @@ export const resolveAccount = async ({ proj, stage }: IOptions) => {
 }
 
 export const accessTargetRoleArn = (accountId: string) =>
-  `arn:aws:iam::${accountId}:role/OrganizationAccountAccessRole`
+  `arn:aws:iam::${accountId}:role/Ops`
