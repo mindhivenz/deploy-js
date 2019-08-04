@@ -2,15 +2,17 @@ import getStdin from 'get-stdin'
 import once from 'lodash/once'
 import Credstash from 'nodecredstash'
 import PluginError from 'plugin-error'
-
-import { awsMasterOpts } from './internal/awsAccounts'
+import { master } from './internal/awsMasterCredentials'
 import publicStageName from './publicStageName'
 
 export const allStages = 'all'
 
 const secretStash = once(() =>
   Credstash({
-    awsOpts: awsMasterOpts,
+    awsOpts: {
+      credentials: master,
+      region: 'us-east-1',
+    },
     kmsKey: 'alias/deploy-secrets',
     table: 'deploy-secrets',
   }),

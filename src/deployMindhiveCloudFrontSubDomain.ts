@@ -3,7 +3,7 @@ import gulp from 'gulp'
 import cfDeploy from 'gulp-cf-deploy'
 import path from 'path'
 
-import { master } from './internal/awsCredentials'
+import { master } from './internal/awsMasterCredentials'
 
 interface IOptions {
   proj: string

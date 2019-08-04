@@ -26,7 +26,7 @@ export default async (packageJsonPath: string = './package.json') => {
   const versionBump = yargs.option('version-bump', {
     default: 'patch',
     describe:
-      "semver.inc() option, for example: 'patch', 'minor', 'major', or 'same' to not change version",
+      "'patch', 'minor', 'major', a literal version number, or 'same' to not change version",
   }).argv['version-bump']
   const cwd = path.dirname(packageJsonPath)
   await ensureGitUpToDate(cwd, { pluginName })

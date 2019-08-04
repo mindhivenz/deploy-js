@@ -1,4 +1,4 @@
-import { IOptions, projCredentialsFactory } from './internal/awsCredentials'
+import { IOptions, projCredentialsFactory } from './internal/awsProjCredentials'
 
 export default async (options: IOptions) => {
   const credentials = projCredentialsFactory(options)

@@ -3,6 +3,7 @@ import gulp from 'gulp'
 import ensureGitUpToDate from './src/ensureGitUpToDate'
 import execFile from './src/execFile'
 import gitPush from './src/gitPush'
+import openAwsConsoleTask from './src/openAwsConsoleTask'
 import yarnPublishDist from './src/yarnPublishDist'
 
 const distDir = 'dist'
@@ -29,3 +30,9 @@ const publish = () =>
 const push = () => gitPush('.')
 
 export const release = gulp.series(gitUpToDate, dist, publish, push)
+
+export const testOpen = openAwsConsoleTask({
+  proj: 'devops',
+  region: 'us-east-1',
+  stage: 'production',
+})

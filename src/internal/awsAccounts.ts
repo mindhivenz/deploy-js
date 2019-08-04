@@ -4,14 +4,9 @@ import PluginError from 'plugin-error'
 
 import devName from '../devName'
 import publicStageName from '../publicStageName'
-import { master } from './awsCredentials'
+import { master } from './awsMasterCredentials'
 
 const pluginName = '@mindhive/deploy/awsAccounts'
-
-export const awsMasterOpts = {
-  credentials: master,
-  region: 'us-east-1',
-}
 
 interface IOptions {
   proj: string
@@ -19,7 +14,11 @@ interface IOptions {
 }
 
 const orgsFactory = () =>
-  new Organizations({ apiVersion: '2016-11-28', ...awsMasterOpts })
+  new Organizations({
+    apiVersion: '2016-11-28',
+    credentials: master,
+    region: 'us-east-1',
+  })
 
 const groupNameCombinations = ({ proj }: { proj: string }) => {
   const projParts = proj.split('-')

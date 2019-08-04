@@ -1,7 +1,7 @@
 import {
   IOptions as ICredentialsOptions,
   projCredentialsFactory,
-} from './internal/awsCredentials'
+} from './internal/awsProjCredentials'
 
 interface IOptions extends ICredentialsOptions {
   region: string

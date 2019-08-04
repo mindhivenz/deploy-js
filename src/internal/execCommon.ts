@@ -1,5 +1,5 @@
 import colors from 'ansi-colors'
-import { ChildProcess, ExecFileOptions, ExecOptions } from 'child_process'
+import { ChildProcess } from 'child_process'
 import log from 'fancy-log'
 import findUp from 'find-up'
 import path from 'path'
@@ -20,42 +20,55 @@ export type ExecCallback = (
   stderr?: string | Buffer,
 ) => void
 
-export type ExecFunc = (options: any, callback: ExecCallback) => ChildProcess
+export type ExecFunc = (callback: ExecCallback) => ChildProcess
+
+interface IMangedExecOptions {
+  cwd?: string
+  maxBuffer?: number
+  env?: NodeJS.ProcessEnv
+}
+
+export const defaultExecOptions = async <T extends IMangedExecOptions>(
+  options: T,
+): Promise<T> => {
+  const {
+    cwd = process.cwd(),
+    maxBuffer = 10 * 1024 * 1024,
+    env: baseEnv = process.env,
+  } = options
+  // REVISIT: Does typescript 3.6 fix this?
+  const nodeModules = await findUp('node_modules', {
+    cwd,
+    type: 'directory',
+  })
+  if (!nodeModules) {
+    return {
+      ...options,
+      cwd,
+      maxBuffer,
+    }
+  }
+  const binDir = path.join(nodeModules, '.bin')
+  const pathEnv = baseEnv.PATH
+    ? `${binDir}${path.delimiter}${baseEnv.PATH}`
+    : binDir
+  return {
+    ...options,
+    cwd,
+    env: {
+      ...baseEnv,
+      PATH: baseEnv.PATH ? `${binDir}${path.delimiter}${baseEnv.PATH}` : binDir,
+    },
+    maxBuffer,
+  }
+}
 
 export const execCommon = async (
   execFunc: ExecFunc,
   pluginName: string,
   commandDescription: string,
-  {
-    pipeOutput = !!verbose,
-    ...execOptions
-  }: ILocalOptions & ExecOptions & ExecFileOptions = {},
-) => {
-  const defaultExecOptions = async () => {
-    const options = { ...execOptions } // copy, don't modify the original
-    if (!options.cwd) {
-      options.cwd = process.cwd()
-    }
-    if (!options.maxBuffer) {
-      options.maxBuffer = 10 * 1024 * 1024
-    }
-    const nodeModules = await findUp('node_modules', { cwd: options.cwd })
-    if (nodeModules) {
-      const binDir = path.join(nodeModules, '.bin')
-      if (options.env) {
-        options.env = { ...options.env } // copy, don't modify the original
-      } else {
-        options.env = { ...process.env } // copy, don't modify process.env
-      }
-      if (options.env.PATH) {
-        options.env.PATH = `${binDir}${path.delimiter}${options.env.PATH}`
-      } else {
-        options.env.PATH = binDir
-      }
-    }
-    return options
-  }
-
+  { pipeOutput = !!verbose }: ILocalOptions = {},
+): Promise<string> => {
   const execError = (
     error?: Error,
     stdout?: string | Buffer,
@@ -76,12 +89,11 @@ export const execCommon = async (
     )
   }
 
-  const defaultedOptions = await defaultExecOptions()
   if (verbose) {
     log(colors.blue(commandDescription))
   }
-  return await new Promise<string>((resolve, reject) => {
-    const subprocess = execFunc(defaultedOptions, (error, stdout, stderr) => {
+  return await new Promise((resolve, reject) => {
+    const subprocess = execFunc((error, stdout, stderr) => {
       if (error) {
         reject(execError(error, stdout, stderr))
       } else {

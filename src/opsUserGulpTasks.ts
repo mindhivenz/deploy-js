@@ -1,9 +1,8 @@
 import colors from 'ansi-colors'
 import log from 'fancy-log'
 import gulp from 'gulp'
-
-import addAwsVaultProfile from './internal/addAwsVaultProfile'
 import devName from './devName'
+import addAwsVaultProfile from './internal/addAwsVaultProfile'
 import openAwsConsoleTask from './openAwsConsoleTask'
 
 interface IOptions {

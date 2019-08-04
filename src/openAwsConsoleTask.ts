@@ -1,8 +1,8 @@
-import opn from 'opn'
+import open from 'open'
 import querystring from 'querystring'
 import request from 'request-promise-native'
 import { URL } from 'url'
-import { projCredentialsFactory } from './internal/awsCredentials'
+import { projCredentialsFactory } from './internal/awsProjCredentials'
 
 interface IOptions {
   proj: string
@@ -17,7 +17,11 @@ export default ({
   region,
   urlParts = {},
 }: IOptions) => async () => {
-  const credentials = projCredentialsFactory({ proj, stage })
+  const credentials = projCredentialsFactory({
+    fullDurationSession: true,
+    proj,
+    stage,
+  })
   await credentials.getPromise()
   const tempCredentials = {
     sessionId: credentials.accessKeyId,
@@ -36,7 +40,7 @@ export default ({
     `https://${region}.console.aws.amazon.com/console/home?region=${region}#`,
   )
   Object.assign(destinationUrl, urlParts)
-  await opn(
+  await open(
     `https://signin.aws.amazon.com/federation?${querystring.stringify({
       Action: 'login',
       Destination: destinationUrl.href,
@@ -44,6 +48,5 @@ export default ({
       SessionDuration: 12 * 60 * 60, // Max 12 hours,
       SigninToken: federation.SigninToken,
     })}`,
-    { wait: false },
   )
 }
