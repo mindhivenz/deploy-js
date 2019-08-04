@@ -14,6 +14,13 @@ export interface IOptions {
   fullDurationSession?: boolean
 }
 
+const accentuateAccountName = (name: string) => {
+  if (name.includes('production')) {
+    return name.toLocaleUpperCase()
+  }
+  return name
+}
+
 export class ProjCredentials extends AWS.ChainableTemporaryCredentials {
   constructor(private readonly projOptions: IOptions) {
     super({}, master)
@@ -39,7 +46,8 @@ export class ProjCredentials extends AWS.ChainableTemporaryCredentials {
     }
     const account = await resolveAccount(this.projOptions)
     params.RoleArn = accessTargetRoleArn(account.Id!)
-    params.RoleSessionName = `${account.Name}-${devName()}`
+    const accountName = accentuateAccountName(account.Name!)
+    params.RoleSessionName = `${accountName}-${devName()}`
     if (this.projOptions.fullDurationSession) {
       params.DurationSeconds = MAX_SESSION_SECONDS
     }
