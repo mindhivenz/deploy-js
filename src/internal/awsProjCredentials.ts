@@ -3,7 +3,6 @@ import STS from 'aws-sdk/clients/sts'
 import AWS from 'aws-sdk/global'
 import log from 'fancy-log'
 import memoize from 'lodash/memoize'
-
 import devName from '../devName'
 import { accessTargetRoleArn, resolveAccount } from './awsAccounts'
 import './awsConfig'
