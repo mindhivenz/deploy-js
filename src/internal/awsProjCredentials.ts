@@ -59,10 +59,12 @@ export class ProjCredentials extends AWS.ChainableTemporaryCredentials {
         log(
           colors.yellow(
             "Can't use as 12 hour session as your master credentials are a role. " +
-              'AWS limits chained roles to sessions max of 1 hour, using that instead. ' +
-              "If you're using aws-vault then you need to supply the --no-session parameter. ",
+              'AWS limits chained roles to sessions max of 1 hour, using that instead.',
           ),
         )
+        if ('AWS_VAULT' in process.env) {
+          log(`Use: ${colors.blue('aws-vault exec --no-session ...')}`)
+        }
         params.DurationSeconds = MAX_CHAINED_ROLE_SESSION_SECONDS
       } else {
         params.DurationSeconds = MAX_SESSION_SECONDS
