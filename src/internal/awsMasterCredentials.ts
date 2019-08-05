@@ -2,3 +2,8 @@
 import AWS from 'aws-sdk/global'
 
 export const master = new AWS.EnvironmentCredentials('AWS')
+
+export const masterIsRole = async (): Promise<boolean> => {
+  await master.getPromise()
+  return !!master.sessionToken
+}

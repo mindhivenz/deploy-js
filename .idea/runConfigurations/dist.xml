@@ -2,7 +2,7 @@
   <configuration default="false" name="dist" type="js.build_tools.gulp">
     <node-interpreter>project</node-interpreter>
     <node-options />
-    <gulpfile>$PROJECT_DIR$/gulpfile.ts</gulpfile>
+    <gulpfile>$PROJECT_DIR$/deploy/gulpfile.ts</gulpfile>
     <tasks>
       <task>dist</task>
     </tasks>

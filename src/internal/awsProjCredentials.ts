@@ -1,12 +1,17 @@
+import colors from 'ansi-colors'
 import STS from 'aws-sdk/clients/sts'
 import AWS from 'aws-sdk/global'
+import log from 'fancy-log'
 import memoize from 'lodash/memoize'
 
 import devName from '../devName'
 import { accessTargetRoleArn, resolveAccount } from './awsAccounts'
 import './awsConfig'
-import { master } from './awsMasterCredentials'
-import { MAX_SESSION_SECONDS } from './awsSession'
+import { master, masterIsRole } from './awsMasterCredentials'
+import {
+  MAX_CHAINED_ROLE_SESSION_SECONDS,
+  MAX_SESSION_SECONDS,
+} from './awsSession'
 
 export interface IOptions {
   proj: string
@@ -49,7 +54,19 @@ export class ProjCredentials extends AWS.ChainableTemporaryCredentials {
     const accountName = accentuateAccountName(account.Name!)
     params.RoleSessionName = `${accountName}-${devName()}`
     if (this.projOptions.fullDurationSession) {
-      params.DurationSeconds = MAX_SESSION_SECONDS
+      const chainedRoles = await masterIsRole()
+      if (chainedRoles) {
+        log(
+          colors.yellow(
+            "Can't use as 12 hour session as your master credentials are a role. " +
+              'AWS limits chained roles to sessions max of 1 hour, using that instead. ' +
+              "If you're using aws-vault then you need to supply the --no-session parameter. ",
+          ),
+        )
+        params.DurationSeconds = MAX_CHAINED_ROLE_SESSION_SECONDS
+      } else {
+        params.DurationSeconds = MAX_SESSION_SECONDS
+      }
     }
   }
 }

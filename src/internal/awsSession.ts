@@ -1,1 +1,2 @@
 export const MAX_SESSION_SECONDS = 12 * 60 * 60
+export const MAX_CHAINED_ROLE_SESSION_SECONDS = 60 * 60
