@@ -3,9 +3,9 @@ import log from 'fancy-log'
 import path from 'path'
 import PluginError from 'plugin-error'
 import shell, { ExecOutputReturnValue } from 'shelljs'
-import yargs from 'yargs'
 
 import ensureGitUpToDate from './ensureGitUpToDate'
+import { globalArgs } from './internal/args'
 import readJson from './readJson'
 
 const pluginName = '@mindhive/deploy/bumpVersion'
@@ -23,7 +23,7 @@ export default async (packageJsonPath: string = './package.json') => {
     }
   }
 
-  const versionBump = yargs.option('version-bump', {
+  const versionBump = globalArgs.option('version-bump', {
     default: 'patch',
     describe:
       "'patch', 'minor', 'major', a literal version number, or 'same' to not change version",

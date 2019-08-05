@@ -2,7 +2,7 @@ import colors from 'ansi-colors'
 import once from 'lodash/once'
 import PluginError from 'plugin-error'
 import shell, { ExecOutputReturnValue } from 'shelljs'
-import yargs from 'yargs'
+import { globalArgs } from './internal/args'
 
 const gitUserName = once(() => {
   const execResult = shell.exec('git config user.name', {
@@ -23,4 +23,5 @@ const gitUserName = once(() => {
   return name
 })
 
-export default (): string => (yargs.argv.devName as string) || gitUserName()
+export default (): string =>
+  (globalArgs.argv.devName as string) || gitUserName()

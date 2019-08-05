@@ -4,11 +4,9 @@ import log from 'fancy-log'
 import findUp from 'find-up'
 import path from 'path'
 import PluginError from 'plugin-error'
-import yargs from 'yargs'
+import { globalArgs } from './args'
 
-const { verbose } = yargs.option('verbose', {
-  describe: 'Stream all sub-process output to console',
-}).argv
+const { verbose } = globalArgs.argv
 
 export interface ILocalOptions {
   pipeOutput?: boolean
