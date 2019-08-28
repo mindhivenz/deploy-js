@@ -2,11 +2,6 @@
 # yarn lockfile v1
 
 
-"@mindhive/tsconfig@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@mindhive/tsconfig/-/tsconfig-1.2.0.tgz#d98a2a904b69936c4532fc5cd319e89ff6153d97"
-  integrity sha512-kkAmvyFqVs5j4O76zn/jzWHkUeb1P7VFPd8XVyQwfkFvcHrgqmr4nMtoLct/s2S3Vba/lFPlVQ+bFsdKgEdLOQ==
-
 "@nodelib/fs.scandir@2.1.1":
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/@nodelib/fs.scandir/-/fs.scandir-2.1.1.tgz#7fa8fed654939e1a39753d286b48b4836d00e0eb"
@@ -1940,11 +1935,6 @@ posix-character-classes@^0.1.0:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/posix-character-classes/-/posix-character-classes-0.1.1.tgz#01eac0fe3b5af71a2a6c02feabb8c1fef7e00eab"
   integrity sha1-AerA/jta9xoqbAL+q7jB/vfgDqs=
-
-prettier@^1.13.7:
-  version "1.18.2"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-1.18.2.tgz#6823e7c5900017b4bd3acf46fe9ac4b4d7bda9ea"
-  integrity sha512-OeHeMc0JhFE9idD4ZdtNibzY0+TPHSpSSb9h8FqtP+YnoZZ1sl8Vc9b1sasjfymH3SonAF4QcA2+mzHPhMvIiw==
 
 pretty-hrtime@^1.0.0:
   version "1.0.3"
