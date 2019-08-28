@@ -18,12 +18,8 @@ export interface IOptions {
   fullDurationSession?: boolean
 }
 
-const accentuateAccountName = (name: string) => {
-  if (name.includes('production')) {
-    return name.toLocaleUpperCase()
-  }
-  return name
-}
+const accentuateAccountName = (name: string) =>
+  name.replace('production', 'PRODUCTION')
 
 export class ProjCredentials extends AWS.ChainableTemporaryCredentials {
   constructor(private readonly projOptions: IOptions) {
