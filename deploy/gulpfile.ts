@@ -1,8 +1,8 @@
 import del from 'del'
 import gulp from 'gulp'
+import ts from 'gulp-typescript'
 import path from 'path'
 import ensureGitUpToDate from '../src/ensureGitUpToDate'
-import execFile from '../src/execFile'
 import gitPush from '../src/gitPush'
 import openAwsConsoleTask from '../src/openAwsConsoleTask'
 import yarnPublishDist from '../src/yarnPublishDist'
@@ -12,12 +12,15 @@ process.chdir(projectDir)
 const srcDir = `src`
 const distDir = `dist`
 
+const tsProj = ts.createProject('src/tsconfig.json')
+
 const clean = () => del(distDir)
 
 export const build = () =>
-  execFile('tsc', ['--outDir', distDir, '--project', srcDir], {
-    pipeOutput: true,
-  })
+  tsProj
+    .src()
+    .pipe(tsProj())
+    .pipe(gulp.dest(distDir))
 
 const copy = () =>
   gulp
