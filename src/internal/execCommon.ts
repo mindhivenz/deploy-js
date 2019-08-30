@@ -26,6 +26,23 @@ interface IMangedExecOptions {
   env?: NodeJS.ProcessEnv
 }
 
+const nodeModulesBinDirs = async (cwd: string): Promise<string[]> => {
+  const paths: string[] = []
+  let currentDir = cwd
+  do {
+    const nodeModules = await findUp('node_modules', {
+      cwd: currentDir,
+      type: 'directory',
+    })
+    if (!nodeModules) {
+      break
+    }
+    paths.push(path.join(nodeModules, '.bin'))
+    currentDir = path.dirname(path.dirname(nodeModules))
+  } while (currentDir !== '/')
+  return paths
+}
+
 export const defaultExecOptions = async <T extends IMangedExecOptions>(
   options: T,
 ): Promise<T> => {
@@ -34,29 +51,29 @@ export const defaultExecOptions = async <T extends IMangedExecOptions>(
     maxBuffer = 10 * 1024 * 1024,
     env: baseEnv = process.env,
   } = options
-  const nodeModules = await findUp('node_modules', {
-    cwd,
-    type: 'directory',
-  })
-  if (!nodeModules) {
-    return {
-      ...options,
-      cwd,
-      maxBuffer,
-    }
-  }
-  const binDir = path.join(nodeModules, '.bin')
-  const pathEnv = baseEnv.PATH
-    ? `${binDir}${path.delimiter}${baseEnv.PATH}`
-    : binDir
-  return {
+  const result: T = {
     ...options,
     cwd,
+    maxBuffer,
+  }
+  const binDirs = await nodeModulesBinDirs(cwd)
+  const existingPathDirs = baseEnv.PATH
+    ? baseEnv.PATH.split(path.delimiter)
+    : []
+  const pathAdditions = binDirs.filter(p => !existingPathDirs.includes(p))
+  if (!pathAdditions.length) {
+    return result
+  }
+  const pathEnv = (baseEnv.PATH
+    ? [...pathAdditions, baseEnv.PATH]
+    : pathAdditions
+  ).join(path.delimiter)
+  return {
+    ...result,
     env: {
       ...baseEnv,
-      PATH: baseEnv.PATH ? `${binDir}${path.delimiter}${baseEnv.PATH}` : binDir,
+      PATH: pathEnv,
     },
-    maxBuffer,
   }
 }
 
