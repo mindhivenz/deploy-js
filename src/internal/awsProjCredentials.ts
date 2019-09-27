@@ -23,7 +23,7 @@ const accentuateAccountName = (name: string) =>
 
 export class ProjCredentials extends AWS.ChainableTemporaryCredentials {
   constructor(private readonly projOptions: IOptions) {
-    super({}, master)
+    super({ masterCredentials: master, stsConfig: {} })
   }
 
   public refresh(callback: (err: AWS.AWSError) => void): void {
@@ -69,7 +69,8 @@ export class ProjCredentials extends AWS.ChainableTemporaryCredentials {
 }
 
 export const projCredentialsFactory = memoize(
-  (options: IOptions) => new ProjCredentials(options),
+  (options: IOptions) =>
+    new ProjCredentials(options) as AWS.ChainableTemporaryCredentials,
   ({ fullDurationSession = false, proj, stage }: IOptions) =>
     `${proj}/${stage}/${fullDurationSession}`,
 )
