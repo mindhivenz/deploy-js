@@ -6,7 +6,7 @@ interface IOptions {
   pipeOutput?: boolean
 }
 
-export default async ({ pipeOutput = true, packageDir }: IOptions) => {
+export default async ({ pipeOutput = false, packageDir }: IOptions) => {
   await execFile(
     'yarn',
     ['publish', '--non-interactive', ...yarnVersionBumpArgs()],

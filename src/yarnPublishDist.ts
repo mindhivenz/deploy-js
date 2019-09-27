@@ -11,7 +11,7 @@ interface IOptions {
 }
 
 export default async ({
-  pipeOutput = true,
+  pipeOutput = false,
   srcPackageDir,
   distPackageDir,
 }: IOptions) => {
