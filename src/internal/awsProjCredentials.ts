@@ -1,6 +1,5 @@
 import colors from 'ansi-colors'
-import STS from 'aws-sdk/clients/sts'
-import AWS from 'aws-sdk/global'
+import AWS from 'aws-sdk'
 import log from 'fancy-log'
 import memoize from 'lodash/memoize'
 import devName from '../devName'
@@ -40,7 +39,7 @@ export class ProjCredentials extends AWS.ChainableTemporaryCredentials {
   }
 
   private async _resolveRoleArn() {
-    const params = this.service.config.params as STS.Types.AssumeRoleRequest
+    const params = this.service.config.params as AWS.STS.Types.AssumeRoleRequest
     if (params.RoleArn) {
       return
     }

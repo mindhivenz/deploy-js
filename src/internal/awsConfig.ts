@@ -1,11 +1,11 @@
-import { config } from 'aws-sdk/global'
+import AWS from 'aws-sdk'
 import https from 'https'
 
 const agent = new https.Agent({
   keepAlive: true,
 })
 
-config.update({
+AWS.config.update({
   httpOptions: {
     // See https://github.com/aws/aws-sdk-js/issues/2571
     agent,
@@ -15,7 +15,7 @@ config.update({
 const region = process.env.AWS_DEFAULT_REGION
 
 if (region) {
-  config.update({
+  AWS.config.update({
     region,
     sts: {
       endpoint: `https://sts.${region}.amazonaws.com/`,

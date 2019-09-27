@@ -1,4 +1,4 @@
-import ECR from 'aws-sdk/clients/ecr'
+import AWS from 'aws-sdk'
 import memoize from 'lodash/memoize'
 import awsServiceOptions from '../awsServiceOptions'
 
@@ -14,7 +14,7 @@ export const optionsMemoKey = ({ proj, stage, region }: IOptions) =>
 export const dockerLoginArgs = memoize(async (options: IOptions): Promise<
   string[]
 > => {
-  const ecr = new ECR(awsServiceOptions(options))
+  const ecr = new AWS.ECR(awsServiceOptions(options))
   const result = await ecr.getAuthorizationToken().promise()
   const [authData] = result.authorizationData || [null]
   if (!authData || !authData.authorizationToken) {

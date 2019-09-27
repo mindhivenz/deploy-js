@@ -1,4 +1,4 @@
-import Organizations from 'aws-sdk/clients/organizations'
+import AWS from 'aws-sdk'
 import range from 'lodash/range'
 import PluginError from 'plugin-error'
 
@@ -14,7 +14,7 @@ interface IOptions {
 }
 
 const orgsFactory = () =>
-  new Organizations({
+  new AWS.Organizations({
     apiVersion: '2016-11-28',
     credentials: master,
     region: 'us-east-1',
