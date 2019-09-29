@@ -67,9 +67,12 @@ export class ProjCredentials extends AWS.ChainableTemporaryCredentials {
   }
 }
 
+const credentialsFactory = (
+  options: IOptions,
+): AWS.ChainableTemporaryCredentials => new ProjCredentials(options)
+
 export const projCredentialsFactory = memoize(
-  (options: IOptions) =>
-    new ProjCredentials(options) as AWS.ChainableTemporaryCredentials,
+  credentialsFactory,
   ({ fullDurationSession = false, proj, stage }: IOptions) =>
     `${proj}/${stage}/${fullDurationSession}`,
-)
+) as typeof credentialsFactory

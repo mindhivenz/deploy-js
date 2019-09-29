@@ -12,4 +12,7 @@ const getAccountId = async (options: IOptions): Promise<string> => {
   return result.Account
 }
 
-export default memoize(getAccountId, ({ proj, stage }) => `${proj}/${stage}`)
+export default memoize(
+  getAccountId,
+  ({ proj, stage }) => `${proj}/${stage}`,
+) as typeof getAccountId

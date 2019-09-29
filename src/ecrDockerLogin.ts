@@ -1,9 +1,14 @@
 import memoize from 'lodash/memoize'
 import execFile from './execFile'
-import { dockerLoginArgs, IOptions, optionsMemoKey } from './internal/ecr'
+import { dockerLoginArgs, IOptions } from './internal/ecr'
 
-// Need to memoize otherwise multiple logins can screw things up
-export default memoize(async (options: IOptions) => {
+// Need to memoize otherwise multiple logins will screw things up
+const login = async (options: IOptions) => {
   const args = await dockerLoginArgs(options)
   await execFile('docker', args)
-}, optionsMemoKey)
+}
+
+export default memoize(
+  login,
+  ({ proj, stage, region }: IOptions) => `${proj}/${stage}/${region}`,
+) as typeof login

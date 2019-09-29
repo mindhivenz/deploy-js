@@ -8,12 +8,7 @@ export interface IOptions {
   stage: string
 }
 
-export const optionsMemoKey = ({ proj, stage, region }: IOptions) =>
-  `${proj}/${stage}/${region}`
-
-export const dockerLoginArgs = memoize(async (options: IOptions): Promise<
-  string[]
-> => {
+const buildArgs = async (options: IOptions): Promise<string[]> => {
   const ecr = new AWS.ECR(awsServiceOptions(options))
   const result = await ecr.getAuthorizationToken().promise()
   const [authData] = result.authorizationData || [null]
@@ -25,4 +20,9 @@ export const dockerLoginArgs = memoize(async (options: IOptions): Promise<
   )
   const [username, password] = authPair.split(':')
   return ['login', '-u', username, '-p', password, authData.proxyEndpoint!]
-}, optionsMemoKey)
+}
+
+export const dockerLoginArgs = memoize(
+  buildArgs,
+  ({ proj, stage, region }: IOptions) => `${proj}/${stage}/${region}`,
+) as typeof buildArgs
