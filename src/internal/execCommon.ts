@@ -1,30 +1,13 @@
 import colors from 'ansi-colors'
-import { ChildProcess } from 'child_process'
+import { spawn, SpawnOptions } from 'child_process'
 import log from 'fancy-log'
 import findUp from 'find-up'
 import path from 'path'
 import PluginError from 'plugin-error'
+import shellEscape from 'shell-escape'
 import { globalArgs } from './args'
 
 const { verbose } = globalArgs.argv
-
-export interface ILocalOptions {
-  pipeOutput?: boolean
-}
-
-export type ExecCallback = (
-  error: Error | null,
-  stdout?: string | Buffer,
-  stderr?: string | Buffer,
-) => void
-
-export type ExecFunc = (callback: ExecCallback) => ChildProcess
-
-interface IMangedExecOptions {
-  cwd?: string
-  maxBuffer?: number
-  env?: NodeJS.ProcessEnv
-}
 
 const nodeModulesBinDirs = async (cwd: string): Promise<string[]> => {
   const paths: string[] = []
@@ -43,81 +26,105 @@ const nodeModulesBinDirs = async (cwd: string): Promise<string[]> => {
   return paths
 }
 
-export const defaultExecOptions = async <T extends IMangedExecOptions>(
-  options: T,
-): Promise<T> => {
-  const {
-    cwd = process.cwd(),
-    maxBuffer = 10 * 1024 * 1024,
-    env: baseEnv = process.env,
-  } = options
-  const result: T = {
-    ...options,
-    cwd,
-    maxBuffer,
-  }
-  const binDirs = await nodeModulesBinDirs(cwd)
-  const existingPathDirs = baseEnv.PATH
-    ? baseEnv.PATH.split(path.delimiter)
-    : []
-  const pathAdditions = binDirs.filter(p => !existingPathDirs.includes(p))
-  if (!pathAdditions.length) {
-    return result
-  }
-  const pathEnv = (baseEnv.PATH
-    ? [...pathAdditions, baseEnv.PATH]
-    : pathAdditions
-  ).join(path.delimiter)
-  return {
-    ...result,
-    env: {
-      ...baseEnv,
-      PATH: pathEnv,
-    },
-  }
+export interface IExecOpts extends Pick<SpawnOptions, 'cwd' | 'env'> {
+  pipeInput?: boolean
+  captureOutput?: boolean
+  pipeOutput?: boolean
 }
 
-export const execCommon = async (
-  execFunc: ExecFunc,
-  pluginName: string,
-  commandDescription: string,
-  { pipeOutput = !!verbose }: ILocalOptions = {},
-): Promise<string> => {
-  const execError = (
-    error?: Error,
-    stdout?: string | Buffer,
-    stderr?: string | Buffer,
-  ) => {
-    log(colors.red('Error'), colors.blue(commandDescription))
-    if (!pipeOutput) {
-      if (stdout) {
-        log(`${colors.dim('-- stdout --')}\n${stdout}`)
-      }
-      if (stderr) {
-        log(`${colors.dim('-- stderr --')}\n${stderr}`)
-      }
-    }
-    return new PluginError(
-      pluginName,
-      (error && error.message) || 'exec failed without message',
-    )
-  }
+export interface IInternalExecOpts {
+  shell: boolean
+  pluginName: string
+}
+
+export const execCommand = async (
+  { shell, pluginName }: IInternalExecOpts,
+  command: string,
+  args: Readonly<string[]>,
+  {
+    cwd = process.cwd(),
+    env = { ...process.env },
+    pipeInput = false,
+    captureOutput = false,
+    pipeOutput = !!verbose,
+  }: IExecOpts = {},
+): Promise<string | undefined> => {
+  const binDirs = await nodeModulesBinDirs(cwd)
+  env.PATH = [...binDirs, ...(env.PATH ? [env.PATH] : [])].join(path.delimiter)
+
+  const commandDescription = (): string =>
+    colors.blue(shellEscape([command, ...args]))
 
   if (verbose) {
-    log(colors.blue(commandDescription))
+    log(commandDescription())
   }
   return await new Promise((resolve, reject) => {
-    const subprocess = execFunc((error, stdout, stderr) => {
-      if (error) {
-        reject(execError(error, stdout, stderr))
-      } else {
-        resolve(stdout as string)
+    const stdOutBuffers: Buffer[] = []
+    const stdErrBuffers: Buffer[] = []
+
+    const concatBuffers = (buffers: Buffer[]): string =>
+      Buffer.concat(buffers).toString()
+
+    const rejectWith = (error: Error | string) => {
+      log(`${colors.red('Errored:')} ${commandDescription()}`)
+      if (!pipeOutput) {
+        const stdOut = concatBuffers(stdOutBuffers)
+        const stdErr = concatBuffers(stdErrBuffers)
+        if (stdOut) {
+          log(`${colors.dim('-- stdout --')}\n${stdOut}`)
+        }
+        if (stdErr) {
+          log(`${colors.dim('-- stderr --')}\n${stdErr}`)
+        }
       }
-    })
-    if (pipeOutput) {
-      subprocess.stdout!.pipe(process.stdout)
-      subprocess.stderr!.pipe(process.stderr)
+      const message =
+        typeof error === 'string'
+          ? error
+          : error.message || 'spawn failed without message'
+      reject(new PluginError(pluginName, message))
     }
-    subprocess.stdin!.end() // Otherwise it will block
+
+    const subProcess = spawn(command, args, {
+      cwd,
+      env,
+      stdio: [
+        pipeInput ? 'inherit' : 'ignore',
+        !captureOutput && pipeOutput ? 'inherit' : 'pipe',
+        pipeOutput ? 'inherit' : 'pipe',
+      ],
+    })
+      .on('error', e => {
+        if (!pipeOutput) {
+          if (subProcess.stdout) {
+            subProcess.stdout.destroy()
+          }
+          if (subProcess.stderr) {
+            subProcess.stderr.destroy()
+          }
+        }
+        rejectWith(e)
+      })
+      .on('close', (code, signal) => {
+        if (signal) {
+          rejectWith(`Exited with signal ${signal}`)
+        } else if (code !== 0) {
+          rejectWith(`Exited with code ${code}`)
+        } else {
+          resolve(pipeOutput ? undefined : concatBuffers(stdOutBuffers))
+        }
+      })
+    if ((captureOutput || !pipeOutput) && subProcess.stdout) {
+      subProcess.stdout.on('data', chunk => {
+        if (pipeOutput) {
+          process.stdout.write(chunk)
+        }
+        return stdOutBuffers.push(chunk)
+      })
+    }
+    if (!pipeOutput && subProcess.stderr) {
+      subProcess.stderr.on('data', chunk => {
+        return stdErrBuffers.push(chunk)
+      })
+    }
   })
 }

@@ -1,16 +1,16 @@
 import flatten from 'lodash/flatten'
 import awsCredentialsEnv from './awsCredentialsEnv'
-import execFile, { IExecFileOptions } from './execFile'
+import execFile from './execFile'
+import { IExecOpts } from './internal/execCommon'
 import publicStageName from './publicStageName'
 
 type IServerlessArgs = Record<string, string | true>
 
-export interface IServerlessCommand extends IExecFileOptions {
+export interface IServerlessCommand extends IExecOpts {
   proj: string
   stage: string
   command: string
   args?: IServerlessArgs
-  env?: Record<string, string>
 }
 
 const serializeServerlessArgs = (args: IServerlessArgs) =>
@@ -25,9 +25,9 @@ const task = async ({
   stage,
   command,
   args = {},
-  env = {},
+  env = process.env,
   ...options
-}: IServerlessCommand): Promise<string> => {
+}: IServerlessCommand): Promise<string | undefined> => {
   const credentialsEnv = await awsCredentialsEnv({ proj, stage })
   return await execFile(
     'serverless',
@@ -41,9 +41,8 @@ const task = async ({
     ],
     {
       env: {
-        ...process.env,
-        ...credentialsEnv,
         ...env,
+        ...credentialsEnv,
       },
       ...options,
     },

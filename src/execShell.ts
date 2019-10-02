@@ -1,21 +1,13 @@
-import { exec, ExecOptions } from 'child_process'
-import {
-  defaultExecOptions,
-  execCommon,
-  ILocalOptions,
-} from './internal/execCommon'
-
-export type IExecShellOptions = ILocalOptions & ExecOptions
+import { execCommand, IExecOpts } from './internal/execCommon'
 
 export default async (
   command: string,
-  { pipeOutput, ...execOpts }: IExecShellOptions = {},
-) => {
-  const fullOpts = await defaultExecOptions(execOpts)
-  return await execCommon(
-    callback => exec(command, fullOpts, callback),
-    '@mindhive/deploy/execShell',
+  args: string[] = [],
+  opts: IExecOpts = {},
+) =>
+  await execCommand(
+    { shell: true, pluginName: '@mindhive/deploy/execShell' },
     command,
-    { pipeOutput },
+    args,
+    opts,
   )
-}
