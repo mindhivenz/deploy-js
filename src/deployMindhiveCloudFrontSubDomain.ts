@@ -1,5 +1,4 @@
 import gulp from 'gulp'
-// @ts-ignore
 import cfDeploy from 'gulp-cf-deploy'
 import path from 'path'
 

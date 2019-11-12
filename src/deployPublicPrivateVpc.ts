@@ -1,5 +1,4 @@
 import gulp from 'gulp'
-// @ts-ignore
 import cfDeploy from 'gulp-cf-deploy'
 import jsonEditor from 'gulp-json-editor'
 import rename from 'gulp-rename'

@@ -110,7 +110,7 @@ export const execCommand = async (
         } else if (code !== 0) {
           rejectWith(`Exited with code ${code}`)
         } else {
-          resolve(pipeOutput ? undefined : concatBuffers(stdOutBuffers))
+          resolve(captureOutput ? concatBuffers(stdOutBuffers) : undefined)
         }
       })
     if ((captureOutput || !pipeOutput) && subProcess.stdout) {
