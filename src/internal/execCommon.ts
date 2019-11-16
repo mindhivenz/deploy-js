@@ -48,7 +48,7 @@ export const execCommand = async (
     captureOutput = false,
     pipeOutput = !!verbose,
   }: IExecOpts = {},
-): Promise<string | undefined> => {
+): Promise<string> => {
   const binDirs = await nodeModulesBinDirs(cwd)
   env.PATH = [...binDirs, ...(env.PATH ? [env.PATH] : [])].join(path.delimiter)
 
@@ -58,7 +58,7 @@ export const execCommand = async (
   if (verbose) {
     log(commandDescription())
   }
-  return await new Promise((resolve, reject) => {
+  return await new Promise<string>((resolve, reject) => {
     const stdOutBuffers: Buffer[] = []
     const stdErrBuffers: Buffer[] = []
 
@@ -110,7 +110,7 @@ export const execCommand = async (
         } else if (code !== 0) {
           rejectWith(`Exited with code ${code}`)
         } else {
-          resolve(captureOutput ? concatBuffers(stdOutBuffers) : undefined)
+          resolve(captureOutput ? concatBuffers(stdOutBuffers) : '')
         }
       })
     if ((captureOutput || !pipeOutput) && subProcess.stdout) {
@@ -118,12 +118,12 @@ export const execCommand = async (
         if (pipeOutput) {
           process.stdout.write(chunk)
         }
-        return stdOutBuffers.push(chunk)
+        stdOutBuffers.push(chunk)
       })
     }
     if (!pipeOutput && subProcess.stderr) {
       subProcess.stderr.on('data', chunk => {
-        return stdErrBuffers.push(chunk)
+        stdErrBuffers.push(chunk)
       })
     }
   })

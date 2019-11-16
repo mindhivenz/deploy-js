@@ -16,7 +16,7 @@ const existingConfigContent = () => {
     if (e.code === 'ENOENT') {
       throw new PluginError(
         'addAwsVaultProfile',
-        `It appears you don't have any credentials setup. No existing aws config at: ${configPath}`,
+        `It appears you don't have AWS credentials setup. No existing aws config at: ${configPath}`,
         { showProperties: false },
       )
     } else {
@@ -47,7 +47,7 @@ export default ({ proj, stage, region }: IOptions) => async () => {
     log(
       [
         `You already have a profile called ${colors.yellow(profileName)}.`,
-        "I wont't go changing your config. You can do it manually.",
+        "I won't go changing your config. You can do it manually.",
         `This is what you need in ${colors.yellow(awsConfigFilePath())}:`,
         colors.green(iniProfile),
       ].join('\n'),
