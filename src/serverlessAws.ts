@@ -27,7 +27,7 @@ const task = async ({
   args = {},
   env = process.env,
   ...options
-}: IServerlessCommand): Promise<string | undefined> => {
+}: IServerlessCommand): Promise<string> => {
   const credentialsEnv = await awsCredentialsEnv({ proj, stage })
   return await execFile(
     'serverless',
