@@ -20,5 +20,6 @@ if (region) {
     sts: {
       endpoint: `https://sts.${region}.amazonaws.com/`,
     },
+    stsRegionalEndpoints: 'regional',
   })
 }
