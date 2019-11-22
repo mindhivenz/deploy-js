@@ -14,6 +14,6 @@ export default async ({ region, ...projOptions }: IOptions) => {
     AWS_ACCESS_KEY_ID: credentials.accessKeyId,
     AWS_SECRET_ACCESS_KEY: credentials.secretAccessKey,
     AWS_SESSION_TOKEN: credentials.sessionToken,
-    ...(region ? { AWS_DEFAULT_REGION: region } : {}),
+    ...(region ? { AWS_REGION: region } : {}),
   }
 }
