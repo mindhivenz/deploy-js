@@ -1,4 +1,5 @@
 import flatten from 'lodash/flatten'
+import kebabCase from 'lodash/kebabCase'
 import awsCredentialsEnv from './awsCredentialsEnv'
 import execFile from './execFile'
 import { IExecOpts } from './internal/execCommon'
@@ -15,9 +16,10 @@ export interface IServerlessCommand extends IExecOpts {
 
 const serializeServerlessArgs = (args: IServerlessArgs) =>
   flatten(
-    Object.entries(args).map(([k, v]) =>
-      v === true ? [`--${k}`] : [`--${k}`, v],
-    ),
+    Object.entries(args).map(([k, v]) => {
+      const arg = `--${kebabCase(k)}`
+      return v === true ? [arg] : [arg, v]
+    }),
   )
 
 const task = async ({
