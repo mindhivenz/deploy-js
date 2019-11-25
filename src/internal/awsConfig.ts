@@ -10,6 +10,7 @@ AWS.config.update({
     // See https://github.com/aws/aws-sdk-js/issues/2571
     agent,
   },
+  stsRegionalEndpoints: 'regional',
 })
 
 const region = process.env.AWS_DEFAULT_REGION
@@ -17,9 +18,5 @@ const region = process.env.AWS_DEFAULT_REGION
 if (region) {
   AWS.config.update({
     region,
-    sts: {
-      endpoint: `https://sts.${region}.amazonaws.com/`,
-    },
-    stsRegionalEndpoints: 'regional',
   })
 }
