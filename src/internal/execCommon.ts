@@ -61,11 +61,15 @@ export const execCommand = async (
   return await new Promise<string>((resolve, reject) => {
     const stdOutBuffers: Buffer[] = []
     const stdErrBuffers: Buffer[] = []
+    let rejected = false
 
     const concatBuffers = (buffers: Buffer[]): string =>
       Buffer.concat(buffers).toString()
 
     const rejectWith = (error: Error | string) => {
+      if (rejected) {
+        return
+      }
       log(`${colors.red('Errored:')} ${commandDescription()}`)
       if (!pipeOutput) {
         const stdOut = concatBuffers(stdOutBuffers)
@@ -82,6 +86,7 @@ export const execCommand = async (
           ? error
           : error.message || 'spawn failed without message'
       reject(new PluginError(pluginName, message))
+      rejected = true
     }
 
     const subProcess = spawn(command, args, {
