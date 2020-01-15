@@ -43,13 +43,14 @@ export const execCommand = async (
   args: Readonly<string[]>,
   {
     cwd = process.cwd(),
-    env = { ...process.env },
+    env: passedEnv = process.env,
     pipeInput = false,
     captureOutput = false,
     pipeOutput = !!verbose,
   }: IExecOpts = {},
 ): Promise<string> => {
   const binDirs = await nodeModulesBinDirs(cwd)
+  const env = { ...passedEnv }
   env.PATH = [...binDirs, ...(env.PATH ? [env.PATH] : [])].join(path.delimiter)
 
   const commandDescription = (): string =>
@@ -107,7 +108,12 @@ export const execCommand = async (
             subProcess.stderr.destroy()
           }
         }
-        rejectWith(e)
+        if ((e as any).code === 'ENOENT') {
+          log(`PATH=${env.PATH}`)
+          rejectWith(`Couldn't find file to execute or cwd is not valid`)
+        } else {
+          rejectWith(e)
+        }
       })
       .on('close', (code, signal) => {
         if (signal) {
