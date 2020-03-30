@@ -4,10 +4,10 @@ interface IOptions {
   proj: string
   stage: string
   region: string
-  imageName: string
+  name: string
 }
 
-export default async ({ proj, stage, region, imageName }: IOptions) => {
+export default async ({ proj, stage, region, name }: IOptions) => {
   const accountId = await awsAccountId({ proj, stage })
-  return `${accountId}.dkr.ecr.${region}.amazonaws.com/${imageName}`
+  return `${accountId}.dkr.ecr.${region}.amazonaws.com/${name}`
 }
