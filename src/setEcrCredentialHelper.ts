@@ -17,7 +17,7 @@ export default async (options: IOptions) => {
     )
   }
   const host = await repoHost(options)
-  const configPath = path.join(os.homedir(), '.docker', 'config')
+  const configPath = path.join(os.homedir(), '.docker', 'config.json')
   let originalRaw: string | null = null
   try {
     originalRaw = (await fs.readFile(configPath, {
@@ -46,7 +46,7 @@ export default async (options: IOptions) => {
     config.credHelpers = {}
   }
   config.credHelpers[host] = CRED_HELPER
-  await fs.writeFile(configPath, JSON.stringify(config), {
+  await fs.writeFile(configPath, JSON.stringify(config, null, '\t'), {
     encoding: 'UTF-8',
     mode: 0o600,
   })
