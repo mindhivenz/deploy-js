@@ -1,13 +1,10 @@
-import awsAccountId from './awsAccountId'
+import { IOptions as EcrOptions, repoHost } from './internal/ecr'
 
-interface IOptions {
-  proj: string
-  stage: string
-  region: string
+interface IOptions extends EcrOptions {
   name: string
 }
 
-export default async ({ proj, stage, region, name }: IOptions) => {
-  const accountId = await awsAccountId({ proj, stage })
-  return `${accountId}.dkr.ecr.${region}.amazonaws.com/${name}`
+export default async (options: IOptions) => {
+  const host = await repoHost(options)
+  return `${host}/${options.name}`
 }
