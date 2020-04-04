@@ -7,15 +7,20 @@ import execFile from './execFile'
 
 import { IOptions, repoHost } from './internal/ecr'
 
-export default async (options: IOptions) => {
+const CRED_HELPER = 'ecr-login'
+
+const checkCredentialHelperInstalled = async () => {
   try {
-    await execFile('docker-credential-ecr-login', ['-v'])
+    await execFile(`docker-credential-${CRED_HELPER}`, ['-v'])
   } catch (e) {
     throw new PluginError(
       'setEcrCredentialHelper',
       'You need to install https://github.com/awslabs/amazon-ecr-credential-helper',
     )
   }
+}
+
+export default async (options: IOptions) => {
   const host = await repoHost(options)
   const configPath = path.join(os.homedir(), '.docker', 'config.json')
   let originalRaw: string | null = null
@@ -27,7 +32,6 @@ export default async (options: IOptions) => {
     log.info(`No existing ${configPath}, will create one...`)
   }
   let config: any
-  const CRED_HELPER = 'ecr-login'
   if (originalRaw) {
     config = JSON.parse(originalRaw)
     const currentHelper = config.credHelpers?.[host]
@@ -42,6 +46,7 @@ export default async (options: IOptions) => {
   } else {
     config = {}
   }
+  await checkCredentialHelperInstalled()
   if (!config.credHelpers) {
     config.credHelpers = {}
   }
