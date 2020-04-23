@@ -13,6 +13,9 @@ const gitUserName = once(() => {
     .toLowerCase()
     .replace(/\s+/, '-')
   if (!name) {
+    if (process.env.CI) {
+      return 'ci'
+    }
     throw new PluginError(
       '@mindhive/deploy/devName',
       `You need to set your git user name. Such as: ${colors.blue(
