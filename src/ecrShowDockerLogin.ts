@@ -1,4 +1,4 @@
-import colors from 'ansi-colors'
+import { commandLine } from './internal/colors'
 import { dockerLoginArgs, IOptions } from './internal/ecr'
 
 // tslint:disable:no-console
@@ -8,5 +8,5 @@ export default async (options: IOptions) => {
   console.log(
     `Command line to login AWS ECR for ${options.proj}/${options.stage}:`,
   )
-  console.log(colors.blue(['docker', ...args].join(' ')))
+  console.log(commandLine(['docker', ...args].join(' ')))
 }

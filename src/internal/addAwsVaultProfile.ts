@@ -1,10 +1,10 @@
-import colors from 'ansi-colors'
 import log from 'fancy-log'
 import fs from 'fs'
 import os from 'os'
 import path from 'path'
 import PluginError from 'plugin-error'
 import { accessTargetRoleArn, resolveAccount } from './awsAccounts'
+import { commandLine, highlight, toCopy } from './colors'
 
 const awsConfigFilePath = () => path.join(os.homedir(), '.aws', 'config')
 
@@ -46,10 +46,10 @@ export default ({ proj, stage, region }: IOptions) => async () => {
   if (config.includes(profileHeader)) {
     log(
       [
-        `You already have a profile called ${colors.yellow(profileName)}.`,
+        `You already have a profile called ${highlight(profileName)}.`,
         "I won't go changing your config. You can do it manually.",
-        `This is what you need in ${colors.yellow(awsConfigFilePath())}:`,
-        colors.green(iniProfile),
+        `This is what you need in ${highlight(awsConfigFilePath())}:`,
+        toCopy(iniProfile),
       ].join('\n'),
     )
     return
@@ -57,7 +57,7 @@ export default ({ proj, stage, region }: IOptions) => async () => {
   const separator = config.endsWith('\n\n') ? '' : '\n'
   fs.appendFileSync(awsConfigFilePath(), `${separator}${iniProfile}\n`)
   log(
-    `Profile created. Now you can: ${colors.blue(
+    `Profile created. Now you can: ${commandLine(
       `aws-vault exec ${profileName} -- ...`,
     )}`,
   )

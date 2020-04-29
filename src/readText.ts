@@ -1,6 +1,6 @@
-import colors from 'ansi-colors'
 import fs from 'fs'
 import PluginError from 'plugin-error'
+import { highlight, task } from './internal/colors'
 
 export interface IOptions {
   taskNameToCreate?: string
@@ -20,9 +20,9 @@ export default (
         : path
       throw new PluginError(
         pluginName,
-        `First run task ${colors.cyan(
-          taskNameToCreate,
-        )} to create ${colors.yellow(shortPath)}`,
+        `First run task ${task(taskNameToCreate)} to create ${highlight(
+          shortPath,
+        )}`,
         { showProperties: false },
       )
     }

@@ -1,4 +1,3 @@
-import colors from 'ansi-colors'
 import log from 'fancy-log'
 import path from 'path'
 import PluginError from 'plugin-error'
@@ -6,6 +5,7 @@ import shell, { ExecOutputReturnValue } from 'shelljs'
 
 import ensureGitUpToDate from './ensureGitUpToDate'
 import { globalArgs } from './internal/args'
+import { highlight } from './internal/colors'
 import readJson from './readJson'
 
 const pluginName = '@mindhive/deploy/bumpVersion'
@@ -45,6 +45,6 @@ export default async (packageJsonPath: string = './package.json') => {
     throw new PluginError(pluginName, bumpResult.stderr)
   }
   const newVersion = readPackageVersion()
-  log(`Version bumped to: ${colors.yellow(newVersion)}`)
+  log(`Version bumped to: ${highlight(newVersion)}`)
   return newVersion
 }

@@ -1,4 +1,3 @@
-import colors from 'ansi-colors'
 import { spawn, SpawnOptions } from 'child_process'
 import log from 'fancy-log'
 import findUp from 'find-up'
@@ -6,6 +5,7 @@ import path from 'path'
 import PluginError from 'plugin-error'
 import shellEscape from 'shell-escape'
 import { globalArgs } from './args'
+import { commandLine, dim, error } from './colors'
 
 const { verbose } = globalArgs.argv
 
@@ -54,7 +54,7 @@ export const execCommand = async (
   env.PATH = [...binDirs, ...(env.PATH ? [env.PATH] : [])].join(path.delimiter)
 
   const commandDescription = (): string =>
-    colors.blue(shellEscape([command, ...args]))
+    commandLine(shellEscape([command, ...args]))
 
   if (verbose) {
     log(commandDescription())
@@ -67,25 +67,25 @@ export const execCommand = async (
     const concatBuffers = (buffers: Buffer[]): string =>
       Buffer.concat(buffers).toString()
 
-    const rejectWith = (error: Error | string) => {
+    const rejectWith = (err: Error | string) => {
       if (rejected) {
         return
       }
-      log(`${colors.red('Errored:')} ${commandDescription()}`)
+      log(`${error('Errored:')} ${commandDescription()}`)
       if (!pipeOutput) {
         const stdOut = concatBuffers(stdOutBuffers)
         const stdErr = concatBuffers(stdErrBuffers)
         if (stdOut) {
-          log(`${colors.dim('-- stdout --')}\n${stdOut}`)
+          log(`${dim('-- stdout --')}\n${stdOut}`)
         }
         if (stdErr) {
-          log(`${colors.dim('-- stderr --')}\n${stdErr}`)
+          log(`${dim('-- stderr --')}\n${stdErr}`)
         }
       }
       const message =
-        typeof error === 'string'
-          ? error
-          : error.message || 'spawn failed without message'
+        typeof err === 'string'
+          ? err
+          : err.message || 'spawn failed without message'
       reject(new PluginError(pluginName, message))
       rejected = true
     }
@@ -99,7 +99,7 @@ export const execCommand = async (
         pipeOutput ? 'inherit' : 'pipe',
       ],
     })
-      .on('error', e => {
+      .on('error', (e) => {
         if (!pipeOutput) {
           if (subProcess.stdout) {
             subProcess.stdout.destroy()
@@ -125,7 +125,7 @@ export const execCommand = async (
         }
       })
     if ((captureOutput || !pipeOutput) && subProcess.stdout) {
-      subProcess.stdout.on('data', chunk => {
+      subProcess.stdout.on('data', (chunk) => {
         if (pipeOutput) {
           process.stdout.write(chunk)
         }
@@ -133,7 +133,7 @@ export const execCommand = async (
       })
     }
     if (!pipeOutput && subProcess.stderr) {
-      subProcess.stderr.on('data', chunk => {
+      subProcess.stderr.on('data', (chunk) => {
         stdErrBuffers.push(chunk)
       })
     }

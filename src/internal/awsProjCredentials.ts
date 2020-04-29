@@ -1,4 +1,3 @@
-import colors from 'ansi-colors'
 import AWS from 'aws-sdk'
 import log from 'fancy-log'
 import memoize from 'lodash/memoize'
@@ -10,6 +9,7 @@ import {
   MAX_CHAINED_ROLE_SESSION_SECONDS,
   MAX_SESSION_SECONDS,
 } from './awsSession'
+import { commandLine, highlight } from './colors'
 
 export interface IOptions {
   proj: string
@@ -30,10 +30,8 @@ export class ProjCredentials extends AWS.ChainableTemporaryCredentials {
       () => {
         super.refresh(callback)
       },
-      err => {
-        if (callback) {
-          callback(err)
-        }
+      (err) => {
+        callback?.(err)
       },
     )
   }
@@ -51,13 +49,12 @@ export class ProjCredentials extends AWS.ChainableTemporaryCredentials {
       const chainedRoles = await masterIsRole()
       if (chainedRoles) {
         log(
-          colors.yellow(
-            "Can't use as 12 hour session as your master credentials are a role. " +
-              'AWS limits chained roles to sessions max of 1 hour, using that instead.',
-          ),
+          `${highlight(
+            "Can't use full duration session",
+          )} as your master credentials are a role/session. AWS limits chained roles to 1 hour sessions, using that instead.`,
         )
         if ('AWS_VAULT' in process.env) {
-          log(`Use: ${colors.blue('aws-vault exec --no-session ...')}`)
+          log(`Use: ${commandLine('aws-vault exec --no-session ...')}`)
         }
         params.DurationSeconds = MAX_CHAINED_ROLE_SESSION_SECONDS
       } else {
