@@ -1,3 +1,4 @@
+import { credentialsEnv } from './internal/awsEnv'
 import {
   IOptions as IProjOptions,
   projCredentialsFactory,
@@ -9,11 +10,5 @@ interface IOptions extends IProjOptions {
 
 export default async ({ region, ...projOptions }: IOptions) => {
   const credentials = projCredentialsFactory(projOptions)
-  await credentials.getPromise()
-  return {
-    AWS_ACCESS_KEY_ID: credentials.accessKeyId,
-    AWS_SECRET_ACCESS_KEY: credentials.secretAccessKey,
-    AWS_SESSION_TOKEN: credentials.sessionToken,
-    ...(region ? { AWS_REGION: region } : {}),
-  }
+  return await credentialsEnv(credentials, { region })
 }
