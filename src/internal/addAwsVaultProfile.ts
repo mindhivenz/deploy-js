@@ -32,7 +32,7 @@ interface IOptions {
 }
 
 export default ({ proj, stage, region }: IOptions) => async () => {
-  const profileName = `${proj}-${stage}`
+  const profileName = stage === 'dev' ? stage : `${proj}-${stage}`
   const profileHeader = `[profile ${profileName}]`
   const account = await resolveAccount({ proj, stage })
   const roleArn = accessTargetRoleArn(account.Id!)
