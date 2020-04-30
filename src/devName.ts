@@ -1,6 +1,7 @@
 import once from 'lodash/once'
 import PluginError from 'plugin-error'
 import shell, { ExecOutputReturnValue } from 'shelljs'
+import camelCase from 'lodash/camelCase'
 import { globalArgs } from './internal/args'
 import { commandLine } from './internal/colors'
 
@@ -8,7 +9,7 @@ const gitUserName = once(() => {
   const execResult = shell.exec('git config user.name', {
     silent: true,
   }) as ExecOutputReturnValue
-  const name = execResult.stdout.trim().toLowerCase().replace(/\s+/, '-')
+  const name = camelCase(execResult.stdout)
   if (!name) {
     if (process.env.CI) {
       return 'ci'
