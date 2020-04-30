@@ -30,6 +30,7 @@ export interface IExecOpts extends Pick<SpawnOptions, 'cwd' | 'env'> {
   pipeInput?: boolean
   captureOutput?: boolean
   pipeOutput?: boolean
+  okExitCodes?: number[]
 }
 
 export interface IInternalExecOpts {
@@ -47,6 +48,7 @@ export const execCommand = async (
     pipeInput = false,
     captureOutput = false,
     pipeOutput = !!verbose,
+    okExitCodes = [0],
   }: IExecOpts = {},
 ): Promise<string> => {
   const binDirs = await nodeModulesBinDirs(cwd)
@@ -118,7 +120,7 @@ export const execCommand = async (
       .on('close', (code, signal) => {
         if (signal) {
           rejectWith(`Exited with signal ${signal}`)
-        } else if (code !== 0) {
+        } else if (!okExitCodes.includes(code)) {
           rejectWith(`Exited with code ${code}`)
         } else {
           resolve(captureOutput ? concatBuffers(stdOutBuffers) : '')
