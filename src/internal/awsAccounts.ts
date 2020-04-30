@@ -22,7 +22,7 @@ const orgsFactory = () =>
 
 const groupNameCombinations = ({ proj }: { proj: string }) => {
   const projParts = proj.split('-')
-  return range(projParts.length, 0, -1).map(i =>
+  return range(projParts.length, 0, -1).map((i) =>
     projParts.slice(0, i).join('-'),
   )
 }
@@ -31,7 +31,9 @@ export const devsOwnAccountName = (name: string) => publicStageName('dev', name)
 
 const accountNameCombinations = ({ proj, stage }: IOptions) => {
   const stagePublic = publicStageName(stage)
-  const result = groupNameCombinations({ proj }).map(g => `${g}-${stagePublic}`)
+  const result = groupNameCombinations({ proj }).map(
+    (g) => `${g}-${stagePublic}`,
+  )
   if (stage === 'dev') {
     result.push(devsOwnAccountName(devName()))
   }
@@ -47,8 +49,8 @@ export const resolveAccount = async ({ proj, stage }: IOptions) => {
   const namePrecedence = accountNameCombinations({ proj, stage })
   const account = namePrecedence
     .map(
-      name =>
-        listResult.Accounts && listResult.Accounts.find(a => a.Name === name),
+      (name) =>
+        listResult.Accounts && listResult.Accounts.find((a) => a.Name === name),
     )
     .find(Boolean)
   if (!account || !account.Id) {
@@ -62,5 +64,7 @@ export const resolveAccount = async ({ proj, stage }: IOptions) => {
   return account
 }
 
+export const accessTargetRoleName = 'ops'
+
 export const accessTargetRoleArn = (accountId: string) =>
-  `arn:aws:iam::${accountId}:role/Ops`
+  `arn:aws:iam::${accountId}:role/${accessTargetRoleName}`
