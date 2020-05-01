@@ -5,18 +5,15 @@ const agent = new https.Agent({
   keepAlive: true,
 })
 
+const nearestRegion = process.env.NEAREST_REGION
+
 AWS.config.update({
   httpOptions: {
     // See https://github.com/aws/aws-sdk-js/issues/2571
     agent,
   },
-  stsRegionalEndpoints: 'regional',
+  ...(nearestRegion && {
+    stsRegionalEndpoints: 'regional',
+    sts: { region: nearestRegion },
+  }),
 })
-
-const region = process.env.AWS_DEFAULT_REGION
-
-if (region) {
-  AWS.config.update({
-    region,
-  })
-}
