@@ -41,7 +41,7 @@ export default ({ proj, region, customers }: IOptions) => {
           green(`# mhd ${taskName}`),
           `${yellow('hybrid_ssm_agent::activation')}:`,
           `  ${yellow('id')}: ${activationResult.ActivationId}`,
-          `  ${yellow('code')}: ENC[KMS,${encodedCode}]`,
+          `  ${yellow('code')}: ${encodedCode}`,
           `${yellow('hybrid_ssm_agent::region')}: ${region}`,
         ].join('\n'),
       )
