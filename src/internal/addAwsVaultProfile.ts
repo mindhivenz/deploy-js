@@ -3,7 +3,11 @@ import fs from 'fs'
 import os from 'os'
 import path from 'path'
 import PluginError from 'plugin-error'
-import { accessTargetRoleArn, resolveAccount } from './awsAccounts'
+import {
+  accessRoleSessionName,
+  accessTargetRoleArn,
+  resolveAccount,
+} from './awsAccounts'
 import { commandLine, highlight, toCopy } from './colors'
 
 const awsConfigFilePath = () => path.join(os.homedir(), '.aws', 'config')
@@ -38,9 +42,10 @@ export default ({ proj, stage, region }: IOptions) => async () => {
   const roleArn = accessTargetRoleArn(account.Id!)
   const iniProfile = [
     profileHeader,
-    'source_profile=mindhive-ops',
-    `role_arn=${roleArn}`,
-    `region=${region}`,
+    'source_profile = mindhive-ops',
+    `role_arn = ${roleArn}`,
+    `role_session_name = ${accessRoleSessionName(account)}`,
+    `region = ${region}`,
   ].join('\n')
   const config = existingConfigContent()
   if (config.includes(profileHeader)) {

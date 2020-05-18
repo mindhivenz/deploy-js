@@ -2,7 +2,6 @@ import AWS from 'aws-sdk'
 import once from 'lodash/once'
 import range from 'lodash/range'
 import PluginError from 'plugin-error'
-
 import devName from '../devName'
 import publicStageName from '../publicStageName'
 import { master } from './awsMasterCredentials'
@@ -72,3 +71,13 @@ export const accessTargetRoleName = 'ops'
 
 export const accessTargetRoleArn = (accountId: string) =>
   `arn:aws:iam::${accountId}:role/${accessTargetRoleName}`
+
+const accentuateAccountName = (name: string) =>
+  name.replace('production', 'PRODUCTION')
+
+export const accessRoleSessionName = (
+  account: AWS.Organizations.Account,
+): string => {
+  const accountName = accentuateAccountName(account.Name!)
+  return `${accountName}-${devName()}`
+}

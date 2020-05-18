@@ -1,8 +1,11 @@
 import AWS from 'aws-sdk'
 import log from 'fancy-log'
 import memoize from 'lodash/memoize'
-import devName from '../devName'
-import { accessTargetRoleArn, resolveAccount } from './awsAccounts'
+import {
+  accessRoleSessionName,
+  accessTargetRoleArn,
+  resolveAccount,
+} from './awsAccounts'
 import './awsConfig'
 import { master, masterIsRole } from './awsMasterCredentials'
 import {
@@ -16,9 +19,6 @@ export interface IOptions {
   stage: string
   fullDurationSession?: boolean
 }
-
-const accentuateAccountName = (name: string) =>
-  name.replace('production', 'PRODUCTION')
 
 export class ProjCredentials extends AWS.ChainableTemporaryCredentials {
   constructor(private readonly projOptions: IOptions) {
@@ -43,8 +43,7 @@ export class ProjCredentials extends AWS.ChainableTemporaryCredentials {
     }
     const account = await resolveAccount(this.projOptions)
     params.RoleArn = accessTargetRoleArn(account.Id!)
-    const accountName = accentuateAccountName(account.Name!)
-    params.RoleSessionName = `${accountName}-${devName()}`
+    params.RoleSessionName = accessRoleSessionName(account)
     if (this.projOptions.fullDurationSession) {
       const chainedRoles = await masterIsRole()
       if (chainedRoles) {
