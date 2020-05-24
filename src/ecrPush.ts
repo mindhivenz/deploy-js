@@ -1,18 +1,23 @@
 import awsCredentialsEnv from './awsCredentialsEnv'
+import ecrImageRepo from './ecrImageRepo'
 import execFile from './execFile'
 import { IOptions as IEcrOptions } from './internal/ecr'
 import setEcrCredentialHelper from './setEcrCredentialHelper'
 
 interface IOptions extends IEcrOptions {
   localImageTag: string
-  ecrImageTag: string
+  repoName: string
+  remoteImageTag: string
 }
 
 export default async ({
   localImageTag,
-  ecrImageTag,
+  repoName,
+  remoteImageTag,
   ...ecrOptions
 }: IOptions) => {
+  const repo = await ecrImageRepo({ name: repoName, ...ecrOptions })
+  const ecrImageTag = `${repo}:${remoteImageTag}`
   await setEcrCredentialHelper(ecrOptions)
   await execFile('docker', ['tag', localImageTag, ecrImageTag])
   const awsEnv = await awsCredentialsEnv(ecrOptions)
