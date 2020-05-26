@@ -55,7 +55,7 @@ const task = async ({
 
 type IFixedServerlessOptions = Pick<
   IServerlessCommand,
-  'proj' | 'stage' | 'cwd'
+  'proj' | 'stage' | 'region' | 'cwd'
 >
 
 type ICurriedServerlessOptions = Pick<
