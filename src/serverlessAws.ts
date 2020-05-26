@@ -10,6 +10,7 @@ type IServerlessArgs = Record<string, string | true>
 export interface IServerlessCommand extends IExecOpts {
   proj: string
   stage: string
+  region?: string
   command: string
   args?: IServerlessArgs
 }
@@ -25,12 +26,13 @@ const serializeServerlessArgs = (args: IServerlessArgs) =>
 const task = async ({
   proj,
   stage,
+  region,
   command,
   args = {},
   env = process.env,
   ...options
 }: IServerlessCommand): Promise<string> => {
-  const credentialsEnv = await awsCredentialsEnv({ proj, stage })
+  const credentialsEnv = await awsCredentialsEnv({ proj, stage, region })
   return await execFile(
     'serverless',
     [
