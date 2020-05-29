@@ -1,7 +1,7 @@
 import { KMS } from 'aws-sdk'
 import { master } from './internal/awsMasterCredentials'
 
-interface IOptions {
+export interface IOptions {
   proj: string
   region: string
 }

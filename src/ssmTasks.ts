@@ -4,13 +4,11 @@ import { addDays } from 'date-fns'
 import log from 'fancy-log'
 import { task } from 'gulp'
 import awsServiceOptions from './awsServiceOptions'
-import eyamlEncode from './eyamlEncode'
+import eyamlEncode, { IOptions as EyamlOptions } from './eyamlEncode'
 import { highlight } from './internal/colors'
 import { nodeRoleName } from './internal/sharedNames'
 
-interface IOptions {
-  proj: string
-  region: string
+interface IOptions extends EyamlOptions {
   customers: string[]
 }
 

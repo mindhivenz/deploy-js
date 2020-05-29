@@ -3,10 +3,12 @@
     <words>
       <w>amazonaws</w>
       <w>cidr</w>
+      <w>ciphertext</w>
       <w>credstash</w>
       <w>eyaml</w>
       <w>gutil</w>
       <w>lstat</w>
+      <w>pbpaste</w>
       <w>readdir</w>
       <w>semver</w>
       <w>uniq</w>

@@ -3,6 +3,7 @@ import once from 'lodash/once'
 import Credstash from 'nodecredstash'
 import PluginError from 'plugin-error'
 import { master } from './internal/awsMasterCredentials'
+import { commandLine } from './internal/colors'
 import publicStageName from './publicStageName'
 
 export const allStages = 'all'
@@ -89,12 +90,16 @@ export const setSecretJson = async (ref: ISecretRef, secretObj: object) => {
   await setSecretText(ref, JSON.stringify(secretObj))
 }
 
-export const readStdInSecretText = async () => {
+const EXAMPLE_TASK_NAME = 'some:task'
+
+export const readStdInSecretText = async (taskName?: string) => {
   const raw = await getStdin()
   if (!raw) {
     throw new PluginError(
-      secretsPluginName,
-      'You must pipe the input. Example: cat secretfile.json | yarn gulp -- set:secret:something',
+      taskName || secretsPluginName,
+      `You must pipe the input. Example: ${commandLine(
+        `pbpaste | mhd ${taskName || EXAMPLE_TASK_NAME}`,
+      )}`,
     )
   }
   return raw.trim()
