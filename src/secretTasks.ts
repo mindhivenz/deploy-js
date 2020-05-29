@@ -33,6 +33,11 @@ export default (options: IOptions) => {
         CiphertextBlob: Buffer.from(input, 'base64'),
       })
       .promise()
-    log(toCopy(decryptResult.Plaintext!.toString()))
+    const decoded = decryptResult.Plaintext as Buffer
+    if (process.stdout.isTTY) {
+      process.stdout.write(decoded)
+    } else {
+      log(toCopy(decoded.toString()))
+    }
   })
 }
