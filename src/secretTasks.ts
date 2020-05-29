@@ -11,7 +11,7 @@ export default (options: IOptions) => {
   task('encrypt:secret:control', async () => {
     const raw = await readStdInSecretText('encrypt:secret:control')
     const encoded = await eyamlEncode(raw, options)
-    log(toCopy(encoded))
+    log('Token for use in eyaml:\n' + toCopy(encoded))
   })
 
   task('decrypt:secret', async () => {
@@ -34,10 +34,6 @@ export default (options: IOptions) => {
       })
       .promise()
     const decoded = decryptResult.Plaintext as Buffer
-    if (process.stdout.isTTY) {
-      process.stdout.write(decoded)
-    } else {
-      log(toCopy(decoded.toString()))
-    }
+    log('Decrypted secret:\n' + toCopy(decoded.toString()))
   })
 }
