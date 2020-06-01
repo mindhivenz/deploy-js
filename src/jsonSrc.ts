@@ -1,10 +1,10 @@
-import intoStream from 'into-stream'
-import buffer from 'vinyl-buffer'
-import source from 'vinyl-source-stream'
-
+import buildSrc from './buildSrc'
 import jsonPretty from './jsonPretty'
 
-export default (filename: string, obj: object) =>
-  intoStream(jsonPretty(obj))
-    .pipe(source(filename))
-    .pipe(buffer())
+export default (
+  filename: string,
+  obj: object | Promise<object>,
+): NodeJS.ReadWriteStream => {
+  const resolvePretty = async (): Promise<string> => jsonPretty(await obj)
+  return buildSrc(filename, resolvePretty())
+}
