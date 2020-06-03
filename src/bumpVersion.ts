@@ -11,7 +11,14 @@ import readJson from './readJson'
 const pluginName = '@mindhive/deploy/bumpVersion'
 const group = 'Version bump'
 
-export default async (packageJsonPath: string = './package.json') => {
+interface IOptions {
+  gitTag: boolean
+}
+
+export default async (
+  packageJsonPath: string = './package.json',
+  { gitTag }: IOptions = { gitTag: true },
+) => {
   const readPackageVersion = (): string => {
     try {
       const pkg = readJson(packageJsonPath, { pluginName })
@@ -44,13 +51,16 @@ export default async (packageJsonPath: string = './package.json') => {
       conflicts: ['minor', 'major'],
       group,
     }).argv
-  const yarnArg = args.major ? '--major' : args.minor ? '--minor' : '--patch'
   const cwd = path.dirname(packageJsonPath)
   await ensureGitUpToDate(cwd, { pluginName })
   if (args.same) {
     return readPackageVersion()
   }
-  await execFile('yarn', ['version', yarnArg], {
+  const yarnArgs = [args.major ? '--major' : args.minor ? '--minor' : '--patch']
+  if (!gitTag) {
+    yarnArgs.push('--no-git-tag-version')
+  }
+  await execFile('yarn', ['version', ...yarnArgs], {
     cwd,
   })
   const newVersion = readPackageVersion()
