@@ -4,12 +4,11 @@ import PluginError from 'plugin-error'
 
 import ensureGitUpToDate from './ensureGitUpToDate'
 import execFile from './execFile'
-import { globalArgs } from './internal/args'
 import { highlight } from './internal/colors'
+import { yarnVersionBumpArgs } from './internal/yarnVersionBumpArgs'
 import readJson from './readJson'
 
 const pluginName = '@mindhive/deploy/bumpVersion'
-const group = 'Version bump'
 
 interface IOptions {
   gitTag: boolean
@@ -31,32 +30,13 @@ export default async (
     }
   }
 
-  const args = globalArgs
-    .option('patch', {
-      boolean: true,
-      default: true,
-      group,
-    })
-    .option('minor', {
-      boolean: true,
-      group,
-    })
-    .option('major', {
-      boolean: true,
-      conflicts: ['minor'],
-      group,
-    })
-    .option('same', {
-      boolean: true,
-      conflicts: ['minor', 'major'],
-      group,
-    }).argv
   const cwd = path.dirname(packageJsonPath)
   await ensureGitUpToDate(cwd, { pluginName })
-  if (args.same) {
+  const yarnArgs = yarnVersionBumpArgs()
+  const sameVersion = !yarnArgs.length
+  if (sameVersion) {
     return readPackageVersion()
   }
-  const yarnArgs = [args.major ? '--major' : args.minor ? '--minor' : '--patch']
   if (!gitTag) {
     yarnArgs.push('--no-git-tag-version')
   }
