@@ -1,6 +1,7 @@
 import log from 'fancy-log'
 import path from 'path'
 import PluginError from 'plugin-error'
+import memoize from 'lodash/memoize'
 
 import ensureGitUpToDate from './ensureGitUpToDate'
 import execFile from './execFile'
@@ -14,8 +15,10 @@ interface IOptions {
   gitTag: boolean
 }
 
-export default async (
-  packageJsonPath: string = './package.json',
+const defaultPackagePath = './package.json'
+
+const bumpVersion = async (
+  packageJsonPath: string = defaultPackagePath,
   { gitTag }: IOptions = { gitTag: true },
 ) => {
   const readPackageVersion = (): string => {
@@ -47,3 +50,10 @@ export default async (
   log(`Version bumped to: ${highlight(newVersion)}`)
   return newVersion
 }
+
+// If multiple tasks call this only bump once
+export default memoize(
+  bumpVersion,
+  (packageJsonPath: string = defaultPackagePath) =>
+    path.normalize(path.resolve(packageJsonPath)),
+)
