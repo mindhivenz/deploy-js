@@ -3,6 +3,7 @@ import gulp from 'gulp'
 import ts from 'gulp-typescript'
 import path from 'path'
 import ensureGitUpToDate from '../src/ensureGitUpToDate'
+import execFile from '../src/execFile'
 import gitPush from '../src/gitPush'
 import openAwsConsoleTask from '../src/openAwsConsoleTask'
 import yarnPublishDist from '../src/yarnPublishDist'
@@ -16,11 +17,7 @@ const tsProj = ts.createProject('src/tsconfig.json')
 
 const clean = () => del(distDir)
 
-export const build = () =>
-  tsProj
-    .src()
-    .pipe(tsProj())
-    .pipe(gulp.dest(distDir))
+export const build = () => tsProj.src().pipe(tsProj()).pipe(gulp.dest(distDir))
 
 const copy = () =>
   gulp
@@ -43,3 +40,5 @@ export const testOpen = openAwsConsoleTask({
   region: 'us-east-1',
   stage: 'production',
 })
+
+export const testExec = () => execFile('echo', ['hello', 'world'], {})

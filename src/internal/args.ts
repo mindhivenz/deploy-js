@@ -7,10 +7,11 @@ export const globalArgs = yargs
   .option('verbose', {
     describe: 'Stream all sub-process output to console',
     group,
-    string: true,
+    boolean: true,
   })
   .option('devName', {
     describe: "Override your 'dev' name",
     group,
     defaultDescription: 'your git username',
+    string: true,
   })
