@@ -6,14 +6,14 @@ import { globalArgs } from './internal/args'
 import { commandLine } from './internal/colors'
 
 const gitUserName = once(() => {
+  if (process.env.CI) {
+    return 'ci'
+  }
   const execResult = shell.exec('git config user.name', {
     silent: true,
   }) as ExecOutputReturnValue
   const name = camelCase(execResult.stdout)
   if (!name) {
-    if (process.env.CI) {
-      return 'ci'
-    }
     throw new PluginError(
       '@mindhive/deploy/devName',
       `You need to set your git user name. Such as: ${commandLine(
