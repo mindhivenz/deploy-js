@@ -20,6 +20,7 @@ export const DATADOG_FORWARDER_POLICY = {
         'directconnect:Describe*',
         'dynamodb:List*',
         'dynamodb:Describe*',
+        'ec2:Get*',
         'ec2:Describe*',
         'ecs:Describe*',
         'ecs:List*',
