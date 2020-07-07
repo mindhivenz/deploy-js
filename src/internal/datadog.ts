@@ -25,7 +25,7 @@ export const DATADOG_FORWARDER_POLICY = {
         'ecs:List*',
         'elasticache:Describe*',
         'elasticache:List*',
-        'elasticfilesystem:DescribeAccessPoint',
+        'elasticfilesystem:DescribeAccessPoints',
         'elasticfilesystem:DescribeFileSystems',
         'elasticfilesystem:DescribeTags',
         'elasticloadbalancing:Describe*',
