@@ -1,7 +1,7 @@
-import { gitExec } from './internal/git'
+import execFile from './execFile'
 
 export default async (repoPath: string, remote: string = 'origin') => {
-  await gitExec(`push --follow-tags ${remote}`, 'gitPush', {
+  await execFile('git', ['push', '--follow-tags', remote], {
     cwd: repoPath,
   })
 }

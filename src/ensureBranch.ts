@@ -1,14 +1,13 @@
 import PluginError from 'plugin-error'
-
-import { gitExec } from './internal/git'
+import execFile from './execFile'
 
 const pluginName = '@mindhive/deploy/ensureBranch'
 
 export default async (requiredBranch: string, repoPath: string) => {
-  const actualBranch = await gitExec(
-    'rev-parse --abbrev-ref HEAD',
-    'ensureBranch',
-    { cwd: repoPath },
+  const actualBranch = await execFile(
+    'git',
+    ['rev-parse', '--abbrev-ref', 'HEAD'],
+    { cwd: repoPath, captureOutput: true },
   )
   if (requiredBranch !== actualBranch) {
     throw new PluginError(

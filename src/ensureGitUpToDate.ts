@@ -1,6 +1,5 @@
 import PluginError from 'plugin-error'
-
-import { gitExec } from './internal/git'
+import execFile from './execFile'
 
 // Based off: https://stackoverflow.com/a/3278427/3424884
 
@@ -12,19 +11,23 @@ export default async (
   repoPath: string,
   { pluginName = '@mindhive/deploy/ensureGitUpToDate' }: IOptions = {},
 ) => {
-  const options = { cwd: repoPath }
+  const options = { cwd: repoPath, captureOutput: true }
   try {
-    await gitExec('diff-index HEAD --quiet --exit-code', pluginName, options)
+    await execFile(
+      'git',
+      ['diff-index', 'HEAD', '--quiet', '--exit-code'],
+      options,
+    )
   } catch (e) {
     throw new PluginError(pluginName, 'You have uncommitted changes: commit')
   }
-  await gitExec('remote update', pluginName, options)
-  const local = await gitExec('rev-parse @', pluginName, options)
-  const remote = await gitExec('rev-parse @{u}', pluginName, options)
+  await execFile('git', ['remote', 'update'], options)
+  const local = await execFile('git', ['rev-parse', '@'], options)
+  const remote = await execFile('git', ['rev-parse', '@{u}'], options)
   if (local === remote) {
     return 'Up to date'
   }
-  const base = await gitExec('merge-base @ @{u}', pluginName, options)
+  const base = await execFile('git', ['merge-base', '@', '@{u}'], options)
   if (local === base) {
     throw new PluginError(pluginName, 'You are behind origin: pull')
   } else if (remote === base) {

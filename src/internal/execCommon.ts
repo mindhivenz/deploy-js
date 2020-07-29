@@ -67,7 +67,7 @@ export const execCommand = async (
     let rejected = false
 
     const concatBuffers = (buffers: Buffer[]): string =>
-      Buffer.concat(buffers).toString()
+      Buffer.concat(buffers).toString().trim()
 
     const rejectWith = (err: Error | string) => {
       if (rejected) {
