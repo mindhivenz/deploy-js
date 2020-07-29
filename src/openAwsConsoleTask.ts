@@ -1,6 +1,7 @@
 import open from 'open'
+import PluginError from 'plugin-error'
 import querystring from 'querystring'
-import request from 'request-promise-native'
+import fetch from 'node-fetch'
 import { URL } from 'url'
 import { projCredentialsFactory } from './internal/awsProjCredentials'
 import { MAX_SESSION_SECONDS } from './internal/awsSession'
@@ -29,14 +30,19 @@ export default ({
     sessionKey: credentials.secretAccessKey,
     sessionToken: credentials.sessionToken,
   }
-  const federation = await request({
-    json: true,
-    qs: {
+  const federationResponse = await fetch(
+    `https://signin.aws.amazon.com/federation?${querystring.stringify({
       Action: 'getSigninToken',
       Session: JSON.stringify(tempCredentials),
-    },
-    url: 'https://signin.aws.amazon.com/federation',
-  })
+    })}`,
+  )
+  if (!federationResponse.ok) {
+    throw new PluginError(
+      'openAwsConsoleTask',
+      `Failed getting signin token: ${federationResponse.statusText}`,
+    )
+  }
+  const federationResult = await federationResponse.json()
   const destinationUrl = new URL(
     `https://${region}.console.aws.amazon.com/console/home?region=${region}#`,
   )
@@ -47,7 +53,7 @@ export default ({
       Destination: destinationUrl.href,
       Issuer: '',
       SessionDuration: MAX_SESSION_SECONDS,
-      SigninToken: federation.SigninToken,
+      SigninToken: federationResult.SigninToken,
     })}`,
   )
 }

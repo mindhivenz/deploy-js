@@ -19,7 +19,6 @@
     "open": "^7.0.3",
     "plugin-error": "^1.0.1",
     "request": "^2.81.0",
-    "request-promise-native": "^1.0.4",
     "shell-escape": "^0.2.0",
     "shelljs": "^0.8.1",
     "stream-to-promise": "^2.2.0",
