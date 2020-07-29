@@ -1,7 +1,21 @@
+import ensureGitUpToDate from './ensureGitUpToDate'
 import execFile from './execFile'
 
-export default async (repoPath: string) =>
-  await execFile('git', ['rev-parse', '--short', 'HEAD'], {
+interface IOptions {
+  gitUpToDate?: boolean
+}
+
+export default async (
+  repoPath?: string,
+  { gitUpToDate = false }: IOptions = {},
+) => {
+  if (gitUpToDate) {
+    await ensureGitUpToDate(repoPath, {
+      pluginName: '@mindhive/deploy/gitHash',
+    })
+  }
+  return await execFile('git', ['rev-parse', '--short', 'HEAD'], {
     cwd: repoPath,
     captureOutput: true,
   })
+}

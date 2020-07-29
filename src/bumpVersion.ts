@@ -12,14 +12,15 @@ import readJson from './readJson'
 const pluginName = '@mindhive/deploy/bumpVersion'
 
 interface IOptions {
-  gitTag: boolean
+  gitTag?: boolean
+  gitUpToDate?: boolean
 }
 
 const defaultPackagePath = './package.json'
 
 const bumpVersion = async (
   packageJsonPath: string = defaultPackagePath,
-  { gitTag }: IOptions = { gitTag: true },
+  { gitTag = true, gitUpToDate = true }: IOptions = {},
 ) => {
   const readPackageVersion = (): string => {
     try {
@@ -33,8 +34,10 @@ const bumpVersion = async (
     }
   }
 
-  const cwd = path.dirname(packageJsonPath)
-  await ensureGitUpToDate(cwd, { pluginName })
+  const repoPath = path.dirname(packageJsonPath)
+  if (gitUpToDate) {
+    await ensureGitUpToDate(repoPath, { pluginName })
+  }
   const yarnArgs = yarnVersionBumpArgs()
   const sameVersion = !yarnArgs.length
   if (sameVersion) {
@@ -44,7 +47,7 @@ const bumpVersion = async (
     yarnArgs.push('--no-git-tag-version')
   }
   await execFile('yarn', ['version', ...yarnArgs], {
-    cwd,
+    cwd: repoPath,
   })
   const newVersion = readPackageVersion()
   log(`Version bumped to: ${highlight(newVersion)}`)

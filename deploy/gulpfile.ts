@@ -26,7 +26,7 @@ const copy = () =>
 
 export const dist = gulp.series(clean, gulp.parallel(build, copy))
 
-const gitUpToDate = () => ensureGitUpToDate('.')
+const gitUpToDate = () => ensureGitUpToDate()
 
 const publish = () =>
   yarnPublishDist({ srcPackageDir: projectDir, distPackageDir: distDir })

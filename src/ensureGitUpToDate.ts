@@ -8,7 +8,7 @@ interface IOptions {
 }
 
 export default async (
-  repoPath: string,
+  repoPath?: string,
   { pluginName = '@mindhive/deploy/ensureGitUpToDate' }: IOptions = {},
 ) => {
   const options = { cwd: repoPath, captureOutput: true }
