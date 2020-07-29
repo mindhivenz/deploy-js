@@ -13,7 +13,7 @@
     "gulp-rename": "^2.0.0",
     "hash-mod": "^0.0.5",
     "into-stream": "^5.0.0",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.19",
     "node-fetch": "^2.6.0",
     "nodecredstash": "^2.0.0",
     "open": "^7.0.3",
