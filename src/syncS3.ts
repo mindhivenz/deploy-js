@@ -110,30 +110,39 @@ export default ({
           return [suffix]
         })
         if (purgeLocal) {
-          const localEntries = await fs.readdir(stripTrailingSlash(cacheDir), {
-            withFileTypes: true,
-          })
-          await Promise.all(
-            localEntries.map(async (entry) => {
-              if (
-                !suffixes.some(
-                  (suffix) =>
-                    suffix === entry.name ||
-                    suffix.startsWith(`${entry.name}/`),
-                )
-              ) {
-                const localPath = path.join(cacheDir, entry.name)
-                if (entry.isDirectory()) {
-                  log(`Removing ${localPath} as no longer on server`)
-                  await fs.rmdir(localPath, {
-                    recursive: true,
-                  })
-                } else {
-                  await fs.unlink(localPath)
+          try {
+            const localEntries = await fs.readdir(
+              stripTrailingSlash(cacheDir),
+              {
+                withFileTypes: true,
+              },
+            )
+            await Promise.all(
+              localEntries.map(async (entry) => {
+                if (
+                  !suffixes.some(
+                    (suffix) =>
+                      suffix === entry.name ||
+                      suffix.startsWith(`${entry.name}/`),
+                  )
+                ) {
+                  const localPath = path.join(cacheDir, entry.name)
+                  if (entry.isDirectory()) {
+                    log(`Removing ${localPath} as no longer on server`)
+                    await fs.rmdir(localPath, {
+                      recursive: true,
+                    })
+                  } else {
+                    await fs.unlink(localPath)
+                  }
                 }
-              }
-            }),
-          )
+              }),
+            )
+          } catch (e) {
+            if (e.code !== 'ENOENT') {
+              throw e
+            }
+          }
         }
         await Promise.all(
           suffixes.map(async (suffix) => {
