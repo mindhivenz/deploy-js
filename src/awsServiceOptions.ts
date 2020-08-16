@@ -1,3 +1,4 @@
+import { Credentials } from 'aws-sdk'
 import {
   IOptions as ICredentialsOptions,
   projCredentialsFactory,
@@ -7,7 +8,12 @@ interface IOptions extends ICredentialsOptions {
   region: string
 }
 
-export default (options: IOptions) => ({
+export interface IServiceOpts {
+  credentials: Credentials
+  region: string
+}
+
+export default (options: IOptions): IServiceOpts => ({
   credentials: projCredentialsFactory(options),
   region: options.region,
 })
