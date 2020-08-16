@@ -31,6 +31,13 @@ const ensureTrailingSlash = (dirPath: string) => {
   return `${dirPath}/`
 }
 
+const stripTrailingSlash = (dirPath: string) => {
+  if (dirPath.endsWith('/')) {
+    return dirPath.substr(0, dirPath.length - 1)
+  }
+  return dirPath
+}
+
 export default ({
   serviceOpts,
   bucket,
@@ -103,7 +110,7 @@ export default ({
           return [suffix]
         })
         if (purgeLocal) {
-          const localEntries = await fs.readdir(cacheDir, {
+          const localEntries = await fs.readdir(stripTrailingSlash(cacheDir), {
             withFileTypes: true,
           })
           await Promise.all(
