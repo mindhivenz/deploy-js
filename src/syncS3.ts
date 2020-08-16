@@ -20,6 +20,10 @@ interface IPathPair {
   cachePath: string
 }
 
+interface IDirOptions extends IPathPair {
+  purgeLocal: boolean
+}
+
 const ensureTrailingSlash = (dirPath: string) => {
   if (dirPath.endsWith('/')) {
     return dirPath
@@ -78,7 +82,7 @@ export default ({
       ({ cachePath }: IPathPair) => cachePath,
     ),
 
-    dir: async ({ s3Path, cachePath }: IPathPair) => {
+    dir: async ({ s3Path, cachePath, purgeLocal }: IDirOptions) => {
       const s3Dir = ensureTrailingSlash(s3Path)
       const cacheDir = ensureTrailingSlash(cachePath)
       const listResult = await s3
@@ -88,18 +92,47 @@ export default ({
         throw new Error('Not implemented yet: paginated results')
       }
       if (listResult.Contents) {
+        const suffixes = listResult.Contents.flatMap(({ Key }) => {
+          if (!Key) {
+            return []
+          }
+          const suffix = Key.substring(s3Dir.length)
+          if (!suffix) {
+            return []
+          }
+          return [suffix]
+        })
+        if (purgeLocal) {
+          const localEntries = await fs.readdir(cacheDir, {
+            withFileTypes: true,
+          })
+          await Promise.all(
+            localEntries.map(async (entry) => {
+              if (
+                !suffixes.some(
+                  (suffix) =>
+                    suffix === entry.name ||
+                    suffix.startsWith(`${entry.name}/`),
+                )
+              ) {
+                const localPath = path.join(cacheDir, entry.name)
+                if (entry.isDirectory()) {
+                  log(`Removing ${localPath} as no longer on server`)
+                  await fs.rmdir(localPath, {
+                    recursive: true,
+                  })
+                } else {
+                  await fs.unlink(localPath)
+                }
+              }
+            }),
+          )
+        }
         await Promise.all(
-          listResult.Contents.map(async ({ Key }) => {
-            if (!Key) {
-              return
-            }
-            const suffix = Key.substring(s3Dir.length)
-            if (!suffix) {
-              return
-            }
+          suffixes.map(async (suffix) => {
             await sync.file({
               s3Path: s3Dir + suffix,
-              cachePath: cacheDir + suffix,
+              cachePath: path.join(cacheDir, suffix),
             })
           }),
         )
