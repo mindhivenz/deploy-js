@@ -12,15 +12,9 @@ interface IOptions {
   region: string
 }
 
-export const openManagedInstanceShellTask = ({
-  stage,
-  proj,
-  region,
-}: IOptions) => async () => {
+export const openManagedInstanceShellTask = (opts: IOptions) => async () => {
   const sessionOpts = {
-    stage,
-    proj,
-    region,
+    ...opts,
     fullDurationSession: true,
   }
   const serviceOpts = awsServiceOptions(sessionOpts)

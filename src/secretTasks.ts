@@ -9,13 +9,13 @@ import { readStdInSecretText } from './secrets'
 
 export default (options: IOptions) => {
   task('encrypt:secret:control', async () => {
-    const raw = await readStdInSecretText('encrypt:secret:control')
+    const raw = await readStdInSecretText()
     const encoded = await eyamlEncode(raw, options)
     log('Token for use in eyaml:\n' + toCopy(encoded))
   })
 
   task('decrypt:secret', async () => {
-    let input = await readStdInSecretText('decrypt:secret')
+    let input = await readStdInSecretText()
     if (input.startsWith('ENC[')) {
       const match = input.match(/^ENC\[KMS,(.*)]$/)
       if (!match || !match[1]) {

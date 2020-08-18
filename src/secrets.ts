@@ -2,8 +2,8 @@ import getStdin from 'get-stdin'
 import once from 'lodash/once'
 import Credstash from 'nodecredstash'
 import PluginError from 'plugin-error'
+import { prompt } from 'prompts'
 import { master } from './internal/awsMasterCredentials'
-import { commandLine } from './internal/colors'
 import publicStageName from './publicStageName'
 
 export const allStages = 'all'
@@ -90,20 +90,20 @@ export const setSecretJson = async (ref: ISecretRef, secretObj: object) => {
   await setSecretText(ref, JSON.stringify(secretObj))
 }
 
-const EXAMPLE_TASK_NAME = 'some:task'
-
-export const readStdInSecretText = async (taskName?: string) => {
+export const readStdInSecretText = async (): Promise<string> => {
   const raw = await getStdin()
-  if (!raw) {
-    throw new PluginError(
-      taskName || secretsPluginName,
-      `You must pipe the input. Example: ${commandLine(
-        `pbpaste | mhd ${taskName || EXAMPLE_TASK_NAME}`,
-      )}`,
-    )
+  if (raw) {
+    return raw.trim()
   }
-  return raw.trim()
+  const answer = await prompt({
+    type: 'password',
+    name: 'raw',
+    message: 'Type/paste secret',
+  })
+  return answer.raw as string
 }
 
-export const readStdInSecretJson = async () =>
-  JSON.parse(await readStdInSecretText())
+export const readStdInSecretJson = async () => {
+  const raw = await getStdin()
+  return JSON.parse(raw)
+}
