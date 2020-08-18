@@ -29,5 +29,13 @@ export default ({ proj, stages, region }: IOptions) => {
       `open:shell:${stage}`,
       openManagedInstanceShellTask({ proj, stage, region }),
     )
+
+    if (stage === 'production') {
+      gulp.task(`open:aws`, openAwsConsoleTask({ proj, stage, region }))
+      gulp.task(
+        `open:shell`,
+        openManagedInstanceShellTask({ proj, stage, region }),
+      )
+    }
   })
 }
