@@ -5,7 +5,7 @@ import path from 'path'
 import ensureGitUpToDate from '../src/ensureGitUpToDate'
 import execFile from '../src/execFile'
 import gitPush from '../src/gitPush'
-import openAwsConsoleTask from '../src/openAwsConsoleTask'
+import openAwsConsoleTask from '../src/internal/openAwsConsoleTask'
 import yarnPublishDist from '../src/yarnPublishDist'
 
 const projectDir = path.dirname(__dirname)

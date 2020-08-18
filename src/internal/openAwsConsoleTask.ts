@@ -3,8 +3,8 @@ import PluginError from 'plugin-error'
 import querystring from 'querystring'
 import fetch from 'node-fetch'
 import { URL } from 'url'
-import { projCredentialsFactory } from './internal/awsProjCredentials'
-import { MAX_SESSION_SECONDS } from './internal/awsSession'
+import { projCredentialsFactory } from './awsProjCredentials'
+import { MAX_SESSION_SECONDS } from './awsSession'
 
 interface IOptions {
   proj: string
