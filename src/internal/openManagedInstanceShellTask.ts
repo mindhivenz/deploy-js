@@ -33,6 +33,9 @@ export const openManagedInstanceShellTask = (opts: IOptions) => async () => {
     message: 'Host',
     choices: sortBy(choices, 'title'),
   })
+  if (!answers.instanceId) {
+    return
+  }
   const awsEnv = await awsCredentialsEnv(sessionOpts)
   await execFile(
     'aws',
