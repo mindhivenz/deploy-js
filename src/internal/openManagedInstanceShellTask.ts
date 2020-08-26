@@ -37,6 +37,11 @@ export const openManagedInstanceShellTask = (opts: IOptions) => async () => {
     return
   }
   const awsEnv = await awsCredentialsEnv(sessionOpts)
+  process.stdin.setRawMode(true)
+  const sigIntHandler = () => {
+    // Ignore it so we don't quit if ctrl-c in shell
+  }
+  process.on('SIGINT', sigIntHandler)
   await execFile(
     'aws',
     ['ssm', 'start-session', '--target', answers.instanceId],
@@ -49,4 +54,5 @@ export const openManagedInstanceShellTask = (opts: IOptions) => async () => {
       pipeOutput: true,
     },
   )
+  process.off('SIGINT', sigIntHandler)
 }
