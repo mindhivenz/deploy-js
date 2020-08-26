@@ -95,6 +95,7 @@ export const execCommand = async (
     const subProcess = spawn(command, args, {
       cwd,
       env,
+      shell,
       stdio: [
         pipeInput ? 'inherit' : 'ignore',
         !captureOutput && pipeOutput ? 'inherit' : 'pipe',
