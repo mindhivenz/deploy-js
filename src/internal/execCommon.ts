@@ -113,7 +113,9 @@ export const execCommand = async (
         }
         if ((e as any).code === 'ENOENT') {
           log(`PATH=${env.PATH}`)
-          rejectWith(`Couldn't find file to execute or cwd is not valid`)
+          rejectWith(
+            `Couldn't find "${command}" to execute or current directory (cwd) "${cwd}" is not valid`,
+          )
         } else {
           rejectWith(e)
         }
