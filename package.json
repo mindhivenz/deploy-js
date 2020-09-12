@@ -53,10 +53,10 @@
     "gulp": "^4.0.0",
     "gulp-typescript": "^5.0.1",
     "prettier": "^2.0.2",
-    "ts-node": "^8.10.2",
+    "ts-node": "^9.0.0",
     "tslint": "^6.1.0",
     "tslint-config-prettier": "^1.18.0",
-    "typescript": "^3.2.2"
+    "typescript": "^4.0.2"
   },
   "peerDependencies": {
     "@aws-cdk/aws-iam": "^1.36.0",
