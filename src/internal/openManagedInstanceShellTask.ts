@@ -21,7 +21,10 @@ export const openManagedInstanceShellTask = (opts: IOptions) => async () => {
   const ssm = new SSM(serviceOpts)
   const instances = await ssm.describeInstanceInformation().promise()
   const choices = instances.InstanceInformationList?.map((inst) => ({
-    title: inst.ComputerName,
+    title:
+      inst.PingStatus === 'Online'
+        ? inst.ComputerName
+        : `${inst.ComputerName} (${inst.PingStatus})`,
     value: inst.InstanceId,
   }))
   if (!choices) {
@@ -42,17 +45,27 @@ export const openManagedInstanceShellTask = (opts: IOptions) => async () => {
     // Ignore it so we don't quit if ctrl-c in shell
   }
   process.on('SIGINT', sigIntHandler)
-  await execFile(
-    'aws',
-    ['ssm', 'start-session', '--target', answers.instanceId],
-    {
-      env: {
-        ...process.env,
-        ...awsEnv,
+  try {
+    await execFile(
+      'aws',
+      [
+        'ssm',
+        'start-session',
+        ...['--target', answers.instanceId],
+        ...['--document-name', 'AWS-StartInteractiveCommand'],
+        // REVISIT: an alternative is to use the new ShellProfile of SSM-SessionManagerRunShell in agent 3.0
+        ...['--parameters', 'command=\'["bash -l"]\''],
+      ],
+      {
+        env: {
+          ...process.env,
+          ...awsEnv,
+        },
+        pipeInput: true,
+        pipeOutput: true,
       },
-      pipeInput: true,
-      pipeOutput: true,
-    },
-  )
-  process.off('SIGINT', sigIntHandler)
+    )
+  } finally {
+    process.off('SIGINT', sigIntHandler)
+  }
 }
