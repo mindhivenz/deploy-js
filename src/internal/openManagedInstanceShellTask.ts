@@ -54,7 +54,7 @@ export const openManagedInstanceShellTask = (opts: IOptions) => async () => {
         ...['--target', answers.instanceId],
         ...['--document-name', 'AWS-StartInteractiveCommand'],
         // REVISIT: an alternative is to use the new ShellProfile of SSM-SessionManagerRunShell in agent 3.0
-        ...['--parameters', 'command=\'["bash -l"]\''],
+        ...['--parameters', 'command="sudo -i -u root"'],
       ],
       {
         env: {
