@@ -3,6 +3,7 @@ import log from 'fancy-log'
 import { createWriteStream, promises as fs, Stats } from 'fs'
 import memoize from 'lodash/memoize'
 import path from 'path'
+import PluginError from 'plugin-error'
 import stream from 'stream'
 import { promisify } from 'util'
 import { IServiceOpts } from './awsServiceOptions'
@@ -65,7 +66,18 @@ export default ({
           Bucket: bucket,
           Key: s3Path,
         }
-        const head = await s3.headObject(s3Params).promise()
+        let head: S3.HeadObjectOutput
+        try {
+          head = await s3.headObject(s3Params).promise()
+        } catch (e) {
+          if (e.code === 'NotFound') {
+            throw new PluginError(
+              '@mindhive/deploy/syncS3',
+              `S3 object not found in bucket: ${bucket}, path: ${s3Path}`,
+            )
+          }
+          throw e
+        }
         const updateReason = !stat
           ? "The local file doesn't exist"
           : head.LastModified! > stat.mtime
@@ -92,9 +104,20 @@ export default ({
     dir: async ({ s3Path, cachePath, purgeLocal }: IDirOptions) => {
       const s3Dir = ensureTrailingSlash(s3Path)
       const cacheDir = ensureTrailingSlash(cachePath)
-      const listResult = await s3
-        .listObjectsV2({ Bucket: bucket, Prefix: s3Dir })
-        .promise()
+      let listResult: S3.ListObjectsV2Output
+      try {
+        listResult = await s3
+          .listObjectsV2({ Bucket: bucket, Prefix: s3Dir })
+          .promise()
+      } catch (e) {
+        if (e.code === 'NotFound') {
+          throw new PluginError(
+            '@mindhive/deploy/syncS3',
+            `No S3 objects not found under bucket: ${bucket}, prefix: ${s3Dir}`,
+          )
+        }
+        throw e
+      }
       if (listResult.IsTruncated) {
         throw new Error('Not implemented yet: paginated results')
       }
