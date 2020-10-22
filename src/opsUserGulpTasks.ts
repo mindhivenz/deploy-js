@@ -20,12 +20,10 @@ export default ({ proj, stages, region }: IOptions) => {
   stages.forEach((stage) => {
     gulp.task(`open:aws:${stage}`, openAwsConsoleTask({ proj, stage, region }))
 
-    if (stage === 'dev') {
-      gulp.task(
-        `add:aws-vault:${stage}`,
-        addAwsVaultProfile({ proj, stage, region }),
-      )
-    }
+    gulp.task(
+      `add:aws-vault:${stage}`,
+      addAwsVaultProfile({ proj, stage, region }),
+    )
 
     gulp.task(
       `open:shell:${stage}`,
