@@ -42,5 +42,10 @@ export default ({ proj, stages, region }: IOptions) => {
   if (!stages.includes('dev')) {
     const stage = 'dev'
     gulp.task(`open:aws:${stage}`, openAwsConsoleTask({ proj, stage, region }))
+
+    gulp.task(
+      `add:aws-vault:${stage}`,
+      addAwsVaultProfile({ proj, stage, region }),
+    )
   }
 }

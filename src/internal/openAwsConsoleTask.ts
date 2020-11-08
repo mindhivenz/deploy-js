@@ -2,7 +2,10 @@ import open from 'open'
 import PluginError from 'plugin-error'
 import querystring from 'querystring'
 import fetch from 'node-fetch'
+import log from 'fancy-log'
 import { URL } from 'url'
+import { url } from './colors'
+import { globalArgs } from './args'
 import { projCredentialsFactory } from './awsProjCredentials'
 import { MAX_SESSION_SECONDS } from './awsSession'
 
@@ -19,6 +22,7 @@ export default ({
   region,
   urlParts = {},
 }: IOptions) => async () => {
+  const { verbose } = globalArgs.argv
   const credentials = projCredentialsFactory({
     fullDurationSession: true,
     proj,
@@ -47,13 +51,17 @@ export default ({
     `https://${region}.console.aws.amazon.com/console/home?region=${region}#`,
   )
   Object.assign(destinationUrl, urlParts)
-  await open(
-    `https://signin.aws.amazon.com/federation?${querystring.stringify({
+  const target = `https://signin.aws.amazon.com/federation?${querystring.stringify(
+    {
       Action: 'login',
       Destination: destinationUrl.href,
       Issuer: '',
       SessionDuration: MAX_SESSION_SECONDS,
       SigninToken: federationResult.SigninToken,
-    })}`,
-  )
+    },
+  )}`
+  if (verbose) {
+    log(`Sign in: ${url(target)}`)
+  }
+  await open(target)
 }
