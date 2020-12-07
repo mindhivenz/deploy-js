@@ -7,6 +7,8 @@ import PluginError from 'plugin-error'
 import stream from 'stream'
 import { promisify } from 'util'
 import { IServiceOpts } from './awsServiceOptions'
+import { globalArgs } from './internal/args'
+import { highlight } from './internal/colors'
 
 const streamFinished = promisify(stream.finished)
 
@@ -52,6 +54,7 @@ export default ({
   const sync = {
     file: memoize(
       async ({ s3Path, cachePath }: IPathPair) => {
+        const { verbose } = globalArgs.argv
         let stat: Stats | null
         try {
           stat = await fs.stat(cachePath)
@@ -88,7 +91,9 @@ export default ({
         if (updateReason) {
           const sizeMiB = Math.round(head.ContentLength! / 2 ** 20)
           log(
-            `Downloading ${cachePath} of ${sizeMiB}MiB because: ${updateReason}`,
+            `Downloading ${highlight(
+              cachePath,
+            )} of ${sizeMiB}MiB because: ${updateReason}`,
           )
           await streamFinished(
             s3
@@ -96,6 +101,10 @@ export default ({
               .createReadStream()
               .pipe(createWriteStream(cachePath)),
           )
+        } else {
+          if (verbose) {
+            log(`Skipping ${highlight(cachePath)} as up to date`)
+          }
         }
       },
       ({ cachePath }: IPathPair) => cachePath,
@@ -150,8 +159,8 @@ export default ({
                   )
                 ) {
                   const localPath = path.join(cacheDir, entry.name)
+                  log(`Removing ${highlight(localPath)} as no longer on server`)
                   if (entry.isDirectory()) {
-                    log(`Removing ${localPath} as no longer on server`)
                     await fs.rmdir(localPath, {
                       recursive: true,
                     })
