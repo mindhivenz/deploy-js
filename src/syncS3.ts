@@ -8,7 +8,7 @@ import stream from 'stream'
 import { promisify } from 'util'
 import { IServiceOpts } from './awsServiceOptions'
 import { globalArgs } from './internal/args'
-import { highlight } from './internal/colors'
+import { highlight, url } from './internal/colors'
 
 const streamFinished = promisify(stream.finished)
 
@@ -130,61 +130,60 @@ export default ({
       if (listResult.IsTruncated) {
         throw new Error('Not implemented yet: paginated results')
       }
-      if (listResult.Contents) {
-        const suffixes = listResult.Contents.flatMap(({ Key }) => {
-          if (!Key) {
-            return []
-          }
-          const suffix = Key.substring(s3Dir.length)
-          if (!suffix) {
-            return []
-          }
-          return [suffix]
-        })
-        if (purgeLocal) {
-          try {
-            const localEntries = await fs.readdir(
-              stripTrailingSlash(cacheDir),
-              {
-                withFileTypes: true,
-              },
-            )
-            await Promise.all(
-              localEntries.map(async (entry) => {
-                if (
-                  !suffixes.some(
-                    (suffix) =>
-                      suffix === entry.name ||
-                      suffix.startsWith(`${entry.name}/`),
-                  )
-                ) {
-                  const localPath = path.join(cacheDir, entry.name)
-                  log(`Removing ${highlight(localPath)} as no longer on server`)
-                  if (entry.isDirectory()) {
-                    await fs.rmdir(localPath, {
-                      recursive: true,
-                    })
-                  } else {
-                    await fs.unlink(localPath)
-                  }
+      if (!listResult.Contents || !listResult.Contents.length) {
+        log(`Remote ${url(`s3://${bucket}/${s3Dir}`)} is empty`)
+        return
+      }
+      const suffixes = listResult.Contents.flatMap(({ Key }) => {
+        if (!Key) {
+          return []
+        }
+        const suffix = Key.substring(s3Dir.length)
+        if (!suffix) {
+          return []
+        }
+        return [suffix]
+      })
+      if (purgeLocal) {
+        try {
+          const localEntries = await fs.readdir(stripTrailingSlash(cacheDir), {
+            withFileTypes: true,
+          })
+          await Promise.all(
+            localEntries.map(async (entry) => {
+              if (
+                !suffixes.some(
+                  (suffix) =>
+                    suffix === entry.name ||
+                    suffix.startsWith(`${entry.name}/`),
+                )
+              ) {
+                const localPath = path.join(cacheDir, entry.name)
+                log(`Removing ${highlight(localPath)} as no longer on server`)
+                if (entry.isDirectory()) {
+                  await fs.rmdir(localPath, {
+                    recursive: true,
+                  })
+                } else {
+                  await fs.unlink(localPath)
                 }
-              }),
-            )
-          } catch (e) {
-            if (e.code !== 'ENOENT') {
-              throw e
-            }
+              }
+            }),
+          )
+        } catch (e) {
+          if (e.code !== 'ENOENT') {
+            throw e
           }
         }
-        await Promise.all(
-          suffixes.map(async (suffix) => {
-            await sync.file({
-              s3Path: s3Dir + suffix,
-              cachePath: path.join(cacheDir, suffix),
-            })
-          }),
-        )
       }
+      await Promise.all(
+        suffixes.map(async (suffix) => {
+          await sync.file({
+            s3Path: s3Dir + suffix,
+            cachePath: path.join(cacheDir, suffix),
+          })
+        }),
+      )
     },
   }
   return sync
