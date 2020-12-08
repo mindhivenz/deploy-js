@@ -3,6 +3,7 @@ import log from 'fancy-log'
 import { createWriteStream, promises as fs, Stats } from 'fs'
 import memoize from 'lodash/memoize'
 import path from 'path'
+import pLimit from 'p-limit'
 import PluginError from 'plugin-error'
 import stream from 'stream'
 import { promisify } from 'util'
@@ -51,6 +52,9 @@ export default ({
     useAccelerateEndpoint,
   })
 
+  const headLimit = pLimit(16)
+  const getLimit = pLimit(8)
+
   const sync = {
     file: memoize(
       async ({ s3Path, cachePath }: IPathPair) => {
@@ -71,7 +75,7 @@ export default ({
         }
         let head: S3.HeadObjectOutput
         try {
-          head = await s3.headObject(s3Params).promise()
+          head = await headLimit(() => s3.headObject(s3Params).promise())
         } catch (e) {
           if (e.code === 'NotFound') {
             throw new PluginError(
@@ -95,11 +99,13 @@ export default ({
               cachePath,
             )} of ${sizeMiB}MiB because: ${updateReason}`,
           )
-          await streamFinished(
-            s3
-              .getObject(s3Params)
-              .createReadStream()
-              .pipe(createWriteStream(cachePath)),
+          await getLimit(() =>
+            streamFinished(
+              s3
+                .getObject(s3Params)
+                .createReadStream()
+                .pipe(createWriteStream(cachePath)),
+            ),
           )
         } else {
           if (verbose) {
