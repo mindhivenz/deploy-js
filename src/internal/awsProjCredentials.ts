@@ -8,20 +8,15 @@ import {
 } from './awsAccounts'
 import './awsConfig'
 import { master, masterIsRole } from './awsMasterCredentials'
+import { IProjOptions } from './awsProjOptions'
 import {
   MAX_CHAINED_ROLE_SESSION_SECONDS,
   MAX_SESSION_SECONDS,
 } from './awsSession'
 import { commandLine, highlight } from './colors'
 
-export interface IOptions {
-  proj: string
-  stage: string
-  fullDurationSession?: boolean
-}
-
 export class ProjCredentials extends AWS.ChainableTemporaryCredentials {
-  constructor(private readonly projOptions: IOptions) {
+  constructor(private readonly projOptions: IProjOptions) {
     super({ masterCredentials: master, stsConfig: {} })
   }
 
@@ -64,11 +59,11 @@ export class ProjCredentials extends AWS.ChainableTemporaryCredentials {
 }
 
 const credentialsFactory = (
-  options: IOptions,
+  options: IProjOptions,
 ): AWS.ChainableTemporaryCredentials => new ProjCredentials(options)
 
 export const projCredentialsFactory = memoize(
   credentialsFactory,
-  ({ fullDurationSession = false, proj, stage }: IOptions) =>
+  ({ fullDurationSession = false, proj, stage }: IProjOptions) =>
     `${proj}/${stage}/${fullDurationSession}`,
 ) as typeof credentialsFactory

@@ -2,6 +2,9 @@ import fetch from 'node-fetch'
 import cfDeploy from 'gulp-cf-deploy'
 import awsServiceOptions from './awsServiceOptions'
 import buildSrc from './buildSrc'
+import { IRegionalProjOptions } from './internal/awsProjOptions'
+
+export const datadogForwarderStackName = 'datadog-forwarder'
 
 const fetchForwarderTemplate = async () => {
   const res = await fetch(
@@ -13,24 +16,23 @@ const fetchForwarderTemplate = async () => {
   return res.text()
 }
 
-interface IOptions {
-  proj: string
-  stage: string
-  region: string
+interface IOptions extends IRegionalProjOptions {
   apiKeySecretArn: string
 }
 
-export default ({ proj, stage, region, apiKeySecretArn }: IOptions) => () =>
-  buildSrc('template.yaml', fetchForwarderTemplate()).pipe(
-    cfDeploy(
-      awsServiceOptions({ proj, stage, region }),
-      {
-        Capabilities: ['CAPABILITY_AUTO_EXPAND', 'CAPABILITY_IAM'],
-        StackName: 'datadog-forwarder',
-      },
-      {
-        DdApiKey: 'Not used - in SSM',
-        DdApiKeySecretArn: apiKeySecretArn,
-      },
-    ),
-  )
+export default ({ apiKeySecretArn, ...projOptions }: IOptions) => {
+  return () =>
+    buildSrc('template.yaml', fetchForwarderTemplate()).pipe(
+      cfDeploy(
+        awsServiceOptions(projOptions),
+        {
+          Capabilities: ['CAPABILITY_AUTO_EXPAND', 'CAPABILITY_IAM'],
+          StackName: datadogForwarderStackName,
+        },
+        {
+          DdApiKey: 'Not used - in SSM',
+          DdApiKeySecretArn: apiKeySecretArn,
+        },
+      ),
+    )
+}

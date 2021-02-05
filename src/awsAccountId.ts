@@ -1,8 +1,9 @@
 import AWS from 'aws-sdk'
 import memoize from 'lodash/memoize'
-import { IOptions, projCredentialsFactory } from './internal/awsProjCredentials'
+import { projCredentialsFactory } from './internal/awsProjCredentials'
+import { IProjOptions } from './internal/awsProjOptions'
 
-const getAccountId = async (options: IOptions): Promise<string> => {
+const getAccountId = async (options: IProjOptions): Promise<string> => {
   const credentials = projCredentialsFactory(options)
   const sts = new AWS.STS({ credentials })
   const result = await sts.getCallerIdentity({}).promise()

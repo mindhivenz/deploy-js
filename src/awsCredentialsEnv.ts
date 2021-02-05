@@ -1,8 +1,6 @@
 import { credentialsEnv } from './internal/awsEnv'
-import {
-  IOptions as IProjOptions,
-  projCredentialsFactory,
-} from './internal/awsProjCredentials'
+import { projCredentialsFactory } from './internal/awsProjCredentials'
+import { IProjOptions } from './internal/awsProjOptions'
 
 interface IOptions extends IProjOptions {
   region?: string
