@@ -11,7 +11,7 @@ const stackOptions = {
   Capabilities: ['CAPABILITY_AUTO_EXPAND', 'CAPABILITY_IAM'],
 }
 
-export default () => async (options: IRegionalProjOptions) => {
+export default (options: IRegionalProjOptions) => async () => {
   const cloudFormation = new CloudFormation(awsServiceOptions(options))
   let exists: boolean
   try {
