@@ -20,7 +20,7 @@ export default async (path: string) => {
               ),
             )
           } else {
-            resolve()
+            resolve(undefined)
           }
         },
       )
