@@ -10,7 +10,7 @@ interface DatadogServerlessProps {
   env?: string
 }
 
-class DatadogServerlessMacro extends Construct {
+export class DatadogServerlessMacro extends Construct {
   constructor(stack: Stack, id: string, props: DatadogServerlessProps = {}) {
     super(stack, id)
     new CfnMapping(stack, 'Datadog', {
