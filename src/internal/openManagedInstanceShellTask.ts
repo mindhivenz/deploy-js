@@ -1,4 +1,5 @@
 import { SSM } from 'aws-sdk'
+import { InstanceInformation } from 'aws-sdk/clients/ssm'
 import sortBy from 'lodash/sortBy'
 import { prompt } from 'prompts'
 import awsCredentialsEnv from '../awsCredentialsEnv'
@@ -19,17 +20,30 @@ export const openManagedInstanceShellTask = (opts: IOptions) => async () => {
   }
   const serviceOpts = awsServiceOptions(sessionOpts)
   const ssm = new SSM(serviceOpts)
-  const instances = await ssm.describeInstanceInformation().promise()
-  const choices = instances.InstanceInformationList?.map((inst) => ({
+  const instances: InstanceInformation[] = []
+  let token: string | undefined
+  do {
+    const instanceResult = await ssm
+      .describeInstanceInformation({
+        NextToken: token,
+        MaxResults: 50,
+      })
+      .promise()
+    if (instanceResult.InstanceInformationList) {
+      instances.push(...instanceResult.InstanceInformationList)
+    }
+    token = instanceResult.NextToken
+  } while (token)
+  if (instances.length === 0) {
+    throw new PluginError('open:shell', 'No instances found')
+  }
+  const choices = instances.map((inst) => ({
     title:
       inst.PingStatus === 'Online'
         ? inst.ComputerName
         : `${inst.ComputerName} (${inst.PingStatus})`,
     value: inst.InstanceId,
   }))
-  if (!choices) {
-    throw new PluginError('open:shell', 'No instances found')
-  }
   const answers = await prompt({
     type: 'autocomplete',
     name: 'instanceId',
