@@ -1,4 +1,4 @@
-import { commandLine } from './internal/colors'
+import { commandLine } from './colors'
 import { dockerLoginArgs, IOptions } from './internal/ecr'
 
 // tslint:disable:no-console

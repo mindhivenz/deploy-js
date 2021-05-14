@@ -5,7 +5,7 @@ import memoize from 'lodash/memoize'
 
 import ensureGitUpToDate from './ensureGitUpToDate'
 import execFile from './execFile'
-import { highlight } from './internal/colors'
+import { highlight } from './colors'
 import { yarnVersionBumpArgs } from './internal/yarnVersionBumpArgs'
 import readJson from './readJson'
 

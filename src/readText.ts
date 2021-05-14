@@ -1,6 +1,6 @@
 import fs from 'fs'
 import PluginError from 'plugin-error'
-import { highlight, task } from './internal/colors'
+import { highlight, task } from './colors'
 
 export interface IOptions {
   taskNameToCreate?: string

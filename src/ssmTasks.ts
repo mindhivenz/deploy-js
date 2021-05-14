@@ -5,7 +5,7 @@ import log from 'fancy-log'
 import { task } from 'gulp'
 import awsServiceOptions from './awsServiceOptions'
 import eyamlEncode, { IOptions as EyamlOptions } from './eyamlEncode'
-import { highlight } from './internal/colors'
+import { highlight } from './colors'
 import { nodeRoleName } from './internal/sharedNames'
 
 interface IOptions extends EyamlOptions {

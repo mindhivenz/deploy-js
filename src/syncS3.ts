@@ -9,7 +9,7 @@ import stream from 'stream'
 import { promisify } from 'util'
 import { IServiceOpts } from './awsServiceOptions'
 import { globalArgs } from './internal/args'
-import { highlight, url } from './internal/colors'
+import { highlight, url } from './colors'
 
 const streamFinished = promisify(stream.finished)
 

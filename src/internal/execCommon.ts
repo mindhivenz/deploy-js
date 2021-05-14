@@ -5,7 +5,7 @@ import path from 'path'
 import PluginError from 'plugin-error'
 import shellEscape from 'shell-escape'
 import { globalArgs } from './args'
-import { commandLine, dim, error } from './colors'
+import { commandLine, dim, error } from '../colors'
 
 const { verbose } = globalArgs.argv
 

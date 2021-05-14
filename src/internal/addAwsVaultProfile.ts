@@ -8,7 +8,7 @@ import {
   accessTargetRoleArn,
   resolveAccount,
 } from './awsAccounts'
-import { commandLine, highlight, toCopy } from './colors'
+import { commandLine, highlight, toCopy } from '../colors'
 
 const awsConfigFilePath = () => path.join(os.homedir(), '.aws', 'config')
 

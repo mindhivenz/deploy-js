@@ -3,7 +3,7 @@ import PluginError from 'plugin-error'
 import shell, { ExecOutputReturnValue } from 'shelljs'
 import camelCase from 'lodash/camelCase'
 import { globalArgs } from './internal/args'
-import { commandLine } from './internal/colors'
+import { commandLine } from './colors'
 
 const gitUserName = once(() => {
   if (process.env.CI) {

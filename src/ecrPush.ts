@@ -1,5 +1,5 @@
 import log from 'fancy-log'
-import { highlight } from './internal/colors'
+import { highlight } from './colors'
 import awsCredentialsEnv from './awsCredentialsEnv'
 import ecrImageRepo from './ecrImageRepo'
 import execFile from './execFile'

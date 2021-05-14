@@ -2,7 +2,7 @@ import log from 'fancy-log'
 import gulp from 'gulp'
 import devName from './devName'
 import addAwsVaultProfile from './internal/addAwsVaultProfile'
-import { toCopy } from './internal/colors'
+import { toCopy } from './colors'
 import openAwsConsoleTask from './internal/openAwsConsoleTask'
 import { openManagedInstanceShellTask } from './internal/openManagedInstanceShellTask'
 

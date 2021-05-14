@@ -4,7 +4,7 @@ import { task } from 'gulp'
 import PluginError from 'plugin-error'
 import eyamlEncode, { IOptions } from './eyamlEncode'
 import { master } from './internal/awsMasterCredentials'
-import { toCopy } from './internal/colors'
+import { toCopy } from './colors'
 import { readStdInSecretText } from './secrets'
 
 export default (options: IOptions) => {

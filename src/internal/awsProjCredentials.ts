@@ -13,7 +13,7 @@ import {
   MAX_CHAINED_ROLE_SESSION_SECONDS,
   MAX_SESSION_SECONDS,
 } from './awsSession'
-import { commandLine, highlight } from './colors'
+import { commandLine, highlight } from '../colors'
 
 export class ProjCredentials extends AWS.ChainableTemporaryCredentials {
   constructor(private readonly projOptions: IProjOptions) {
