@@ -22,7 +22,10 @@ export default ({
   region,
   urlParts = {},
 }: IOptions) => async () => {
-  const { verbose } = globalArgs.argv
+  const { open: wantOpen, verbose } = globalArgs.option('open', {
+    boolean: true,
+    default: true,
+  }).argv
   const credentials = projCredentialsFactory({
     fullDurationSession: true,
     proj,
@@ -60,8 +63,10 @@ export default ({
       SigninToken: federationResult.SigninToken,
     },
   )}`
-  if (verbose) {
+  if (!wantOpen || verbose) {
     log(`Sign in: ${url(target)}`)
   }
-  await open(target)
+  if (wantOpen) {
+    await open(target)
+  }
 }
