@@ -1,3 +1,5 @@
+import log from 'fancy-log'
+import { highlight } from './internal/colors'
 import awsCredentialsEnv from './awsCredentialsEnv'
 import ecrImageRepo from './ecrImageRepo'
 import execFile from './execFile'
@@ -28,4 +30,5 @@ export default async ({
     },
     pipeOutput: true,
   })
+  log(`Pushed ${highlight(localImageTag)} -> ${highlight(ecrImageTag)}`)
 }
