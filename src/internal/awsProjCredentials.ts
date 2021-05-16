@@ -1,6 +1,7 @@
 import AWS from 'aws-sdk'
 import log from 'fancy-log'
 import memoize from 'lodash/memoize'
+import { commandLine, highlight } from '../colors'
 import {
   accessRoleSessionName,
   accessTargetRoleArn,
@@ -13,7 +14,6 @@ import {
   MAX_CHAINED_ROLE_SESSION_SECONDS,
   MAX_SESSION_SECONDS,
 } from './awsSession'
-import { commandLine, highlight } from '../colors'
 
 export class ProjCredentials extends AWS.ChainableTemporaryCredentials {
   constructor(private readonly projOptions: IProjOptions) {
@@ -58,9 +58,10 @@ export class ProjCredentials extends AWS.ChainableTemporaryCredentials {
   }
 }
 
-const credentialsFactory = (
-  options: IProjOptions,
-): AWS.ChainableTemporaryCredentials => new ProjCredentials(options)
+const credentialsFactory = (options: IProjOptions): AWS.Credentials =>
+  process.env.EC2_PROJ_CREDENTIALS
+    ? new AWS.EC2MetadataCredentials()
+    : new ProjCredentials(options)
 
 export const projCredentialsFactory = memoize(
   credentialsFactory,
