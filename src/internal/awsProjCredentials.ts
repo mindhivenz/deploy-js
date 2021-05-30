@@ -61,6 +61,8 @@ export class ProjCredentials extends AWS.ChainableTemporaryCredentials {
 const credentialsFactory = (options: IProjOptions): AWS.Credentials =>
   process.env.EC2_PROJ_CREDENTIALS
     ? new AWS.EC2MetadataCredentials()
+    : process.env.SSM_PROJ_CREDENTIALS
+    ? new AWS.SharedIniFileCredentials()
     : new ProjCredentials(options)
 
 export const projCredentialsFactory = memoize(
