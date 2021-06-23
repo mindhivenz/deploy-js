@@ -69,8 +69,10 @@ export const resolveAccount = async ({ proj, stage }: IOptions) => {
 
 export const accessTargetRoleName = 'ops'
 
-export const accessTargetRoleArn = (accountId: string) =>
-  `arn:aws:iam::${accountId}:role/${accessTargetRoleName}`
+export const accessTargetRoleArn = (
+  accountId: string,
+  roleName: string = accessTargetRoleName,
+) => `arn:aws:iam::${accountId}:role/${roleName}`
 
 const accentuateAccountName = (name: string) =>
   name.replace('production', 'PRODUCTION')
