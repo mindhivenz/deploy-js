@@ -42,8 +42,13 @@ export default (options: IOptions) => async () => {
   const separator = config.endsWith('\n\n') ? '' : '\n'
   fs.appendFileSync(awsConfigFilePath(), `${separator}${iniProfile}\n`)
   log(
-    `Profile created. Now you can: ${commandLine(
-      `aws-vault exec ${profileName} -- ...`,
-    )}`,
+    [
+      `Profile created. Now you can: ${commandLine(
+        `aws-vault exec ${profileName} -- ...`,
+      )}`,
+      `Note: if you are restricted to a certain role you need to change the role name in ${highlight(
+        awsConfigFilePath(),
+      )}`,
+    ].join('\n'),
   )
 }
