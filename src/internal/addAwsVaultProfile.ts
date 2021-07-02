@@ -4,8 +4,7 @@ import os from 'os'
 import path from 'path'
 import PluginError from 'plugin-error'
 import { commandLine, highlight, toCopy } from '../colors'
-import { resolveAccount } from './awsAccounts'
-import { awsVaultProfile } from './awsVaultProfile'
+import { awsVaultProfile, IOptions } from './awsVaultProfile'
 
 const awsConfigFilePath = () => path.join(os.homedir(), '.aws', 'config')
 
@@ -26,20 +25,8 @@ const existingConfigContent = () => {
   }
 }
 
-export interface IOptions {
-  proj: string
-  stage: string
-  region: string
-  roleName?: string
-}
-
 export default (options: IOptions) => async () => {
-  const account = await resolveAccount(options)
-  const { profileName, header, iniProfile } = awsVaultProfile({
-    ...options,
-    accountId: account.Id!,
-    accountName: account.Name!,
-  })
+  const { profileName, header, iniProfile } = await awsVaultProfile(options)
   const config = existingConfigContent()
   if (config.includes(header)) {
     log(

@@ -1,13 +1,8 @@
-import { accessRoleSessionName, accessTargetRoleArn } from './awsAccounts'
-
-interface IOptions {
-  proj: string
-  stage: string
-  region: string
-  accountId: string
-  accountName: string
-  roleName?: string
-}
+import {
+  accessRoleSessionName,
+  accessTargetRoleArn,
+  resolveAccount,
+} from './awsAccounts'
 
 interface IResult {
   profileName: string
@@ -15,26 +10,39 @@ interface IResult {
   iniProfile: string
 }
 
-export const awsVaultProfile = ({
+export interface IOptions {
+  proj: string
+  stage: string
+  region?: string
+  roleName?: string
+}
+
+export const awsVaultProfile = async ({
   proj,
   stage,
   region,
-  accountId,
-  accountName,
   roleName,
-}: IOptions): IResult => {
-  const profileName =
-    stage === 'dev' ? stage : stage === 'production' ? proj : `${proj}-${stage}`
+}: IOptions): Promise<IResult> => {
+  const profileNameParts =
+    stage === 'dev' ? [stage] : stage === 'production' ? [proj] : [proj, stage]
+  if (roleName) {
+    profileNameParts.push(roleName)
+  }
+  const profileName = profileNameParts.join('-')
   const header = `[profile ${profileName}]`
+  const account = await resolveAccount({ proj, stage })
+  const iniProfile = [
+    header,
+    'source_profile = mindhive-ops',
+    `role_arn = ${accessTargetRoleArn(account.Id!, roleName)}`,
+    `role_session_name = ${accessRoleSessionName(account.Name!)}`,
+  ]
+  if (region) {
+    iniProfile.push(`region = ${region}`)
+  }
   return {
     profileName,
     header,
-    iniProfile: [
-      header,
-      'source_profile = mindhive-ops',
-      `role_arn = ${accessTargetRoleArn(accountId, roleName)}`,
-      `role_session_name = ${accessRoleSessionName(accountName)}`,
-      `region = ${region}`,
-    ].join('\n'),
+    iniProfile: iniProfile.join('\n'),
   }
 }

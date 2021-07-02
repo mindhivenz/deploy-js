@@ -13,7 +13,7 @@ interface IOptions {
   stage: string
 }
 
-const groupNameCombinations = ({ proj }: { proj: string }) => {
+const groupNameCombinations = (proj: string) => {
   const projParts = proj.split('-')
   return range(projParts.length, 0, -1).map((i) =>
     projParts.slice(0, i).join('-'),
@@ -24,9 +24,7 @@ export const devsOwnAccountName = (name: string) => publicStageName('dev', name)
 
 const accountNameCombinations = ({ proj, stage }: IOptions) => {
   const stagePublic = publicStageName(stage)
-  const result = groupNameCombinations({ proj }).map(
-    (g) => `${g}-${stagePublic}`,
-  )
+  const result = groupNameCombinations(proj).map((g) => `${g}-${stagePublic}`)
   if (stage === 'dev') {
     result.push(devsOwnAccountName(devName()))
   }
