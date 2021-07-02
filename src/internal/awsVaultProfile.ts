@@ -15,6 +15,7 @@ export interface IOptions {
   stage: string
   region?: string
   roleName?: string
+  devName?: string
 }
 
 export const awsVaultProfile = async ({
@@ -22,6 +23,7 @@ export const awsVaultProfile = async ({
   stage,
   region,
   roleName,
+  devName,
 }: IOptions): Promise<IResult> => {
   const profileNameParts =
     stage === 'dev' ? [stage] : stage === 'production' ? [proj] : [proj, stage]
@@ -30,12 +32,12 @@ export const awsVaultProfile = async ({
   }
   const profileName = profileNameParts.join('-')
   const header = `[profile ${profileName}]`
-  const account = await resolveAccount({ proj, stage })
+  const account = await resolveAccount({ proj, stage, devName })
   const iniProfile = [
     header,
     'source_profile = mindhive-ops',
     `role_arn = ${accessTargetRoleArn(account.Id!, roleName)}`,
-    `role_session_name = ${accessRoleSessionName(account.Name!)}`,
+    `role_session_name = ${accessRoleSessionName(account.Name!, devName)}`,
   ]
   if (region) {
     iniProfile.push(`region = ${region}`)

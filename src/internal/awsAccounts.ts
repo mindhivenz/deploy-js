@@ -2,7 +2,7 @@ import AWS from 'aws-sdk'
 import once from 'lodash/once'
 import range from 'lodash/range'
 import PluginError from 'plugin-error'
-import devName from '../devName'
+import defaultDevName from '../devName'
 import publicStageName from '../publicStageName'
 import { master } from './awsMasterCredentials'
 
@@ -11,6 +11,7 @@ const pluginName = '@mindhive/deploy/awsAccounts'
 interface IOptions {
   proj: string
   stage: string
+  devName?: string
 }
 
 const groupNameCombinations = (proj: string) => {
@@ -22,11 +23,11 @@ const groupNameCombinations = (proj: string) => {
 
 export const devsOwnAccountName = (name: string) => publicStageName('dev', name)
 
-const accountNameCombinations = ({ proj, stage }: IOptions) => {
-  const stagePublic = publicStageName(stage)
+const accountNameCombinations = ({ proj, stage, devName }: IOptions) => {
+  const stagePublic = publicStageName(stage, devName)
   const result = groupNameCombinations(proj).map((g) => `${g}-${stagePublic}`)
   if (stage === 'dev') {
-    result.push(devsOwnAccountName(devName()))
+    result.push(devsOwnAccountName(devName || defaultDevName()))
   }
   return result
 }
@@ -48,9 +49,9 @@ const listAccounts = once(async () => {
   return accounts
 })
 
-export const resolveAccount = async ({ proj, stage }: IOptions) => {
+export const resolveAccount = async (options: IOptions) => {
   const accounts = await listAccounts()
-  const namePrecedence = accountNameCombinations({ proj, stage })
+  const namePrecedence = accountNameCombinations(options)
   const account = namePrecedence
     .map((name) => accounts.find((a) => a.Name === name))
     .find(Boolean)
@@ -75,6 +76,9 @@ export const accessTargetRoleArn = (
 const accentuateAccountName = (name: string) =>
   name.replace('production', 'PRODUCTION')
 
-export const accessRoleSessionName = (accountName: string): string => {
-  return `${accentuateAccountName(accountName)}-${devName()}`
+export const accessRoleSessionName = (
+  accountName: string,
+  devName?: string,
+): string => {
+  return `${accentuateAccountName(accountName)}-${devName || defaultDevName()}`
 }
