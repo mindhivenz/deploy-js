@@ -38,7 +38,7 @@ export class ProjCredentials extends AWS.ChainableTemporaryCredentials {
     }
     const account = await resolveAccount(this.projOptions)
     params.RoleArn = accessTargetRoleArn(account.Id!)
-    params.RoleSessionName = accessRoleSessionName(account)
+    params.RoleSessionName = accessRoleSessionName(account.Name!)
     if (this.projOptions.fullDurationSession) {
       const chainedRoles = await masterIsRole()
       if (chainedRoles) {

@@ -77,9 +77,6 @@ export const accessTargetRoleArn = (
 const accentuateAccountName = (name: string) =>
   name.replace('production', 'PRODUCTION')
 
-export const accessRoleSessionName = (
-  account: AWS.Organizations.Account,
-): string => {
-  const accountName = accentuateAccountName(account.Name!)
-  return `${accountName}-${devName()}`
+export const accessRoleSessionName = (accountName: string): string => {
+  return `${accentuateAccountName(accountName)}-${devName()}`
 }
