@@ -37,7 +37,11 @@ export const awsVaultProfile = async ({
     header,
     'source_profile = mindhive-ops',
     `role_arn = ${accessTargetRoleArn(account.Id!, roleName)}`,
-    `role_session_name = ${accessRoleSessionName(account.Name!, devName)}`,
+    `role_session_name = ${accessRoleSessionName({
+      accountName: account.Name!,
+      devName,
+      roleName,
+    })}`,
   ]
   if (region) {
     iniProfile.push(`region = ${region}`)

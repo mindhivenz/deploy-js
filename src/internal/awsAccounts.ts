@@ -76,9 +76,23 @@ export const accessTargetRoleArn = (
 const accentuateAccountName = (name: string) =>
   name.replace('production', 'PRODUCTION')
 
-export const accessRoleSessionName = (
-  accountName: string,
-  devName?: string,
-): string => {
-  return `${accentuateAccountName(accountName)}-${devName || defaultDevName()}`
+interface ISessionNameOptions {
+  accountName: string
+  devName?: string
+  roleName?: string
+}
+
+export const accessRoleSessionName = ({
+  accountName,
+  devName,
+  roleName,
+}: ISessionNameOptions): string => {
+  const parts = [
+    accentuateAccountName(accountName),
+    devName || defaultDevName(),
+  ]
+  if (roleName) {
+    parts.push(roleName)
+  }
+  return parts.join('-')
 }
