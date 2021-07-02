@@ -3,12 +3,8 @@ import fs from 'fs'
 import os from 'os'
 import path from 'path'
 import PluginError from 'plugin-error'
-import {
-  accessRoleSessionName,
-  accessTargetRoleArn,
-  resolveAccount,
-} from './awsAccounts'
 import { commandLine, highlight, toCopy } from '../colors'
+import { awsVaultProfile, IOptions } from './awsVaultProfile'
 
 const awsConfigFilePath = () => path.join(os.homedir(), '.aws', 'config')
 
@@ -29,27 +25,10 @@ const existingConfigContent = () => {
   }
 }
 
-interface IOptions {
-  proj: string
-  stage: string
-  region: string
-}
-
-export default ({ proj, stage, region }: IOptions) => async () => {
-  const profileName =
-    stage === 'dev' ? stage : stage === 'production' ? proj : `${proj}-${stage}`
-  const profileHeader = `[profile ${profileName}]`
-  const account = await resolveAccount({ proj, stage })
-  const roleArn = accessTargetRoleArn(account.Id!)
-  const iniProfile = [
-    profileHeader,
-    'source_profile = mindhive-ops',
-    `role_arn = ${roleArn}`,
-    `role_session_name = ${accessRoleSessionName(account)}`,
-    `region = ${region}`,
-  ].join('\n')
+export default (options: IOptions) => async () => {
+  const { profileName, header, iniProfile } = await awsVaultProfile(options)
   const config = existingConfigContent()
-  if (config.includes(profileHeader)) {
+  if (config.includes(header)) {
     log(
       [
         `You already have a profile called ${highlight(profileName)}.`,
