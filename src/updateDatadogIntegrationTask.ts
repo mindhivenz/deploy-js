@@ -7,10 +7,8 @@ const stackName = 'datadog'
 
 export default (options: IRegionalProjOptions) => async () => {
   const cloudFormation = new CloudFormation(awsServiceOptions(options))
-  let exists: boolean
   try {
     await cloudFormation.describeStacks({ StackName: stackName }).promise()
-    exists = true
   } catch (e) {
     if (e.code !== 'ValidationError') {
       throw e
