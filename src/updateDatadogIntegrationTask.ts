@@ -1,12 +1,12 @@
 import { CloudFormation } from 'aws-sdk'
 import PluginError from 'plugin-error'
-import awsServiceOptions from './awsServiceOptions'
+import awsServiceOptions, { IServiceOpts } from './awsServiceOptions'
 import { IRegionalProjOptions } from './internal/awsProjOptions'
 
 const stackName = 'datadog'
 
-export default (options: IRegionalProjOptions) => async () => {
-  const cloudFormation = new CloudFormation(awsServiceOptions(options))
+export const updateDatadogIntegrationTask = async (options: IServiceOpts) => {
+  const cloudFormation = new CloudFormation(options)
   try {
     await cloudFormation.describeStacks({ StackName: stackName }).promise()
   } catch (e) {
@@ -38,4 +38,8 @@ export default (options: IRegionalProjOptions) => async () => {
       Capabilities: ['CAPABILITY_NAMED_IAM', 'CAPABILITY_AUTO_EXPAND'],
     })
     .promise()
+}
+
+export default (options: IRegionalProjOptions) => async () => {
+  await updateDatadogIntegrationTask(awsServiceOptions(options))
 }
