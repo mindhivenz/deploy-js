@@ -5,7 +5,7 @@ import { IRegionalProjOptions } from './internal/awsProjOptions'
 
 const stackName = 'datadog'
 
-export const updateDatadogIntegrationTask = async (options: IServiceOpts) => {
+export const updateDatadogIntegration = async (options: IServiceOpts) => {
   const cloudFormation = new CloudFormation(options)
   try {
     await cloudFormation.describeStacks({ StackName: stackName }).promise()
@@ -41,5 +41,5 @@ export const updateDatadogIntegrationTask = async (options: IServiceOpts) => {
 }
 
 export default (options: IRegionalProjOptions) => async () => {
-  await updateDatadogIntegrationTask(awsServiceOptions(options))
+  await updateDatadogIntegration(awsServiceOptions(options))
 }
