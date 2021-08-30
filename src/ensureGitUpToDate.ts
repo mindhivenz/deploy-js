@@ -28,7 +28,10 @@ export default async (
       options,
     )
   } catch (e) {
-    throw new PluginError(pluginName, 'You have uncommitted changes: commit')
+    throw new PluginError(
+      pluginName,
+      'You have uncommitted changes or need to pull',
+    )
   }
   await execFile('git', ['remote', 'update'], options)
   const local = await execFile('git', ['rev-parse', '@'], options)
