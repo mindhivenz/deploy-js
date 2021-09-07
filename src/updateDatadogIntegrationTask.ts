@@ -5,8 +5,20 @@ import { IRegionalProjOptions } from './internal/awsProjOptions'
 
 const stackName = 'datadog'
 
-export const updateDatadogIntegration = async (options: IServiceOpts) => {
-  const cloudFormation = new CloudFormation(options)
+interface IOpts {
+  serviceOpts: IServiceOpts
+  cloudSecurityPostureManagement?: boolean
+}
+
+interface ITaskOpts extends IRegionalProjOptions {
+  cloudSecurityPostureManagement?: boolean
+}
+
+export const updateDatadogIntegration = async ({
+  serviceOpts,
+  cloudSecurityPostureManagement = false,
+}: IOpts) => {
+  const cloudFormation = new CloudFormation(serviceOpts)
   try {
     await cloudFormation.describeStacks({ StackName: stackName }).promise()
   } catch (e) {
@@ -32,7 +44,7 @@ export const updateDatadogIntegration = async (options: IServiceOpts) => {
         },
         {
           ParameterKey: 'CloudSecurityPostureManagementPermissions',
-          ParameterValue: 'true',
+          ParameterValue: cloudSecurityPostureManagement ? 'true' : 'false',
         },
       ],
       Capabilities: ['CAPABILITY_NAMED_IAM', 'CAPABILITY_AUTO_EXPAND'],
@@ -40,6 +52,12 @@ export const updateDatadogIntegration = async (options: IServiceOpts) => {
     .promise()
 }
 
-export default (options: IRegionalProjOptions) => async () => {
-  await updateDatadogIntegration(awsServiceOptions(options))
+export default ({
+  cloudSecurityPostureManagement,
+  ...projOpts
+}: ITaskOpts) => async () => {
+  await updateDatadogIntegration({
+    serviceOpts: awsServiceOptions(projOpts),
+    cloudSecurityPostureManagement,
+  })
 }
