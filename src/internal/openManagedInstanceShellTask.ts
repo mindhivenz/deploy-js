@@ -39,9 +39,8 @@ export const openManagedInstanceShellTask = (opts: IOptions) => async () => {
   }
   const choices = instances.map((inst) => ({
     title:
-      inst.PingStatus === 'Online'
-        ? inst.ComputerName
-        : `${inst.ComputerName} (${inst.PingStatus})`,
+      (inst.ComputerName || inst.InstanceId) +
+      (inst.PingStatus === 'Online' ? '' : ` (${inst.PingStatus})`),
     value: inst.InstanceId,
   }))
   const answers = await prompt({
