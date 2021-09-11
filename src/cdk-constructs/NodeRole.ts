@@ -1,16 +1,8 @@
-import {
-  ManagedPolicy,
-  Role,
-  RoleProps,
-  ServicePrincipal,
-} from '@aws-cdk/aws-iam'
+import { Role, RoleProps, ServicePrincipal } from '@aws-cdk/aws-iam'
 import { Construct } from '@aws-cdk/core'
 import { nodeRoleName } from '../internal/sharedNames'
+import { ssmAgentManagedPolicies } from '../internal/ssmAgent'
 
-export const ssmAgentManagedPolicies = [
-  ManagedPolicy.fromAwsManagedPolicyName('AmazonSSMManagedInstanceCore'),
-  ManagedPolicy.fromAwsManagedPolicyName('CloudWatchAgentServerPolicy'),
-]
 const ssmPrincipal = new ServicePrincipal('ssm.amazonaws.com')
 
 interface NodeRoleProps extends Omit<RoleProps, 'assumedBy' | 'roleName'> {
