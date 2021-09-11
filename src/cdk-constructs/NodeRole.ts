@@ -7,7 +7,7 @@ import {
 import { Construct } from '@aws-cdk/core'
 import { nodeRoleName } from '../internal/sharedNames'
 
-const ssmAgentPolicies = [
+export const ssmAgentManagedPolicies = [
   ManagedPolicy.fromAwsManagedPolicyName('AmazonSSMManagedInstanceCore'),
   ManagedPolicy.fromAwsManagedPolicyName('CloudWatchAgentServerPolicy'),
 ]
@@ -26,7 +26,7 @@ export class NodeRole extends Role {
     super(scope, id, {
       assumedBy: ssmPrincipal,
       description: `Role for ${customer} SSM managed instances`,
-      managedPolicies: [...ssmAgentPolicies, ...managedPolicies],
+      managedPolicies: [...ssmAgentManagedPolicies, ...managedPolicies],
       roleName: nodeRoleName(customer),
       ...props,
     })
