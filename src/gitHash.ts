@@ -8,7 +8,7 @@ interface IOptions {
 export default async (
   repoPath?: string,
   { gitUpToDate = false }: IOptions = {},
-) => {
+): Promise<string> => {
   if (gitUpToDate) {
     await ensureGitUpToDate(repoPath, {
       pluginName: '@mindhive/deploy/gitHash',
