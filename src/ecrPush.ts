@@ -47,9 +47,8 @@ export default async ({
       pipeOutput: true,
     })
   }
-  log(
-    `Pushed ${highlight(localImageTag)} -> ${highlight(
-      `${repo}:${tags.join(',')}`,
-    )}`,
-  )
+  const conciseRemotes = tags
+    .map((tag, i) => highlight(i === 0 ? `${repo}:${tag}` : `:${tag}`))
+    .join(', ')
+  log(`Pushed ${highlight(localImageTag)} -> ${conciseRemotes}`)
 }
