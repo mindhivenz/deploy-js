@@ -28,7 +28,7 @@ export default async ({
   const tags = remoteImageTag ? [remoteImageTag] : []
   if (tagWithGitHash) {
     const hash = await gitHash(gitRepoPath, { gitUpToDate: true })
-    tags.push(hash)
+    tags.push(`git-${hash}`)
   } else {
     if (tags.length === 0) {
       tags.push('latest')
