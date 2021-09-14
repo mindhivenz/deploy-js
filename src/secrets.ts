@@ -90,6 +90,25 @@ export const setSecretJson = async (ref: ISecretRef, secretObj: object) => {
   await setSecretText(ref, JSON.stringify(secretObj))
 }
 
+interface ReadStdInOrPromptTextOpts {
+  prompt: string
+}
+
+export const readStdInOrPromptText = async ({
+  prompt: message,
+}: ReadStdInOrPromptTextOpts): Promise<string> => {
+  const raw = await getStdin()
+  if (raw) {
+    return raw.trim()
+  }
+  const answer = await prompt({
+    type: 'text',
+    name: 'raw',
+    message,
+  })
+  return answer.raw as string
+}
+
 export const readStdInSecretText = async (): Promise<string> => {
   const raw = await getStdin()
   if (raw) {

@@ -5,7 +5,7 @@ import PluginError from 'plugin-error'
 import eyamlEncode, { IOptions } from './eyamlEncode'
 import { master } from './internal/awsMasterCredentials'
 import { toCopy } from './colors'
-import { readStdInSecretText } from './secrets'
+import { readStdInOrPromptText, readStdInSecretText } from './secrets'
 
 export default (options: IOptions) => {
   task('encrypt:secret:control', async () => {
@@ -15,7 +15,9 @@ export default (options: IOptions) => {
   })
 
   task('decrypt:secret', async () => {
-    let input = await readStdInSecretText()
+    let input = await readStdInOrPromptText({
+      prompt: "Encoded secret (starts with 'ENC[')",
+    })
     if (input.startsWith('ENC[')) {
       const match = input.match(/^ENC\[KMS,(.*)]$/)
       if (!match || !match[1]) {
