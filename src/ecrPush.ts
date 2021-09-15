@@ -18,18 +18,18 @@ interface IOptions extends IEcrOptions {
 export default async ({
   localImageTag,
   repoName,
-  remoteImageTag,
+  remoteImageTag = 'latest',
   tagWithGitHash = false,
   gitRepoPath,
   ...ecrOptions
 }: IOptions) => {
   const repo = await ecrImageRepo({ name: repoName, ...ecrOptions })
   await setEcrCredentialHelper(ecrOptions)
-  const tags = remoteImageTag ? [remoteImageTag] : []
+  const tags = [remoteImageTag]
   if (tagWithGitHash) {
     const hash = await gitHash(gitRepoPath, { gitUpToDate: true })
     const hashTag =
-      !remoteImageTag || remoteImageTag === 'latest'
+      remoteImageTag === 'latest'
         ? `git-${hash}`
         : `${remoteImageTag}-git-${hash}`
     tags.push(hashTag)
