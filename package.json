@@ -21,7 +21,7 @@
     "plugin-error": "^1.0.1",
     "prompts": "^2.3.2",
     "shell-escape": "^0.2.0",
-    "shelljs": "^0.8.1",
+    "shelljs": "^0.8.5",
     "stream-to-promise": "^2.2.0",
     "vinyl-buffer": "^1.0.1",
     "vinyl-source-stream": "^2.0.0",
