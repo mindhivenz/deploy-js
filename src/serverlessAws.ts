@@ -35,18 +35,13 @@ const task = async ({
   const credentialsEnv = await awsCredentialsEnv({ proj, stage, region })
   return await execFile(
     'serverless',
-    [
-      ...command.split(/\s+/),
-      ...serializeServerlessArgs({
-        stageLocal: stage,
-        stagePublic: publicStageName(stage),
-        ...args,
-      }),
-    ],
+    [...command.split(/\s+/), ...serializeServerlessArgs(args)],
     {
       env: {
         ...env,
         ...credentialsEnv,
+        STAGE_LOCAL: stage,
+        STAGE_PUBLIC: publicStageName(stage),
       },
       ...options,
     },
