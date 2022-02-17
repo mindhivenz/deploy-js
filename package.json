@@ -14,7 +14,7 @@
     "hash-mod": "^0.0.5",
     "into-stream": "^5.0.0",
     "lodash": "^4.17.4",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.7",
     "nodecredstash": "^2.0.0",
     "open": "^7.0.3",
     "p-limit": "^3.1.0",
