@@ -24,6 +24,8 @@ export default memoize(
       return 'Ignoring git state'
     }
     const options = { cwd: repoPath, captureOutput: true }
+    // status needed sometimes to update git
+    await execFile('git', ['status'], options)
     try {
       await execFile(
         'git',
