@@ -38,7 +38,7 @@ const bumpVersion = async (
   if (gitUpToDate) {
     await ensureGitUpToDate(repoPath, { pluginName })
   }
-  const yarnArgs = yarnVersionBumpArgs()
+  const yarnArgs = await yarnVersionBumpArgs()
   const sameVersion = !yarnArgs.length
   if (sameVersion) {
     return readPackageVersion()

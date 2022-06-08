@@ -7,8 +7,6 @@ import shellEscape from 'shell-escape'
 import { globalArgs } from './args'
 import { commandLine, dim, error } from '../colors'
 
-const { verbose } = globalArgs.argv
-
 const nodeModulesBinDirs = async (cwd: string): Promise<string[]> => {
   const paths: string[] = []
   let currentDir = cwd
@@ -47,18 +45,22 @@ export const execCommand = async (
     env: passedEnv = process.env,
     pipeInput = false,
     captureOutput = false,
-    pipeOutput = !!verbose,
+    pipeOutput,
     okExitCodes = [0],
   }: IExecOpts = {},
 ): Promise<string> => {
-  const binDirs = await nodeModulesBinDirs(cwd)
+  const argv = await globalArgs.argv
+  if (pipeOutput === undefined) {
+    pipeOutput = !!argv.verbose
+  }
+  const binDirs = await nodeModulesBinDirs(String(cwd))
   const env = { ...passedEnv }
   env.PATH = [...binDirs, ...(env.PATH ? [env.PATH] : [])].join(path.delimiter)
 
   const commandDescription = (): string =>
     commandLine(shellEscape([command, ...args]))
 
-  if (verbose) {
+  if (argv.verbose) {
     log(commandDescription())
   }
   return await new Promise<string>((resolve, reject) => {
@@ -123,7 +125,7 @@ export const execCommand = async (
       .on('close', (code, signal) => {
         if (signal) {
           rejectWith(`Exited with signal ${signal}`)
-        } else if (!okExitCodes.includes(code)) {
+        } else if (code && !okExitCodes.includes(code)) {
           rejectWith(`Exited with code ${code}`)
         } else {
           resolve(captureOutput ? concatBuffers(stdOutBuffers) : '')

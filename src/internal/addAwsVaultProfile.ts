@@ -1,3 +1,4 @@
+import { AWSError } from 'aws-sdk'
 import log from 'fancy-log'
 import fs from 'fs'
 import os from 'os'
@@ -13,7 +14,7 @@ const existingConfigContent = () => {
   try {
     return fs.readFileSync(configPath, 'utf8')
   } catch (e) {
-    if (e.code === 'ENOENT') {
+    if ((e as AWSError).code === 'ENOENT') {
       throw new PluginError(
         'addAwsVaultProfile',
         `It appears you don't have AWS credentials setup. No existing aws config at: ${configPath}`,

@@ -1,4 +1,4 @@
-import { CloudFormation } from 'aws-sdk'
+import { AWSError, CloudFormation } from 'aws-sdk'
 import awsServiceOptions from './awsServiceOptions'
 import { IRegionalProjOptions } from './internal/awsProjOptions'
 
@@ -18,7 +18,7 @@ export default (options: IRegionalProjOptions) => async () => {
     await cloudFormation.describeStacks({ StackName: stackName }).promise()
     exists = true
   } catch (e) {
-    if (e.code !== 'ValidationError') {
+    if ((e as AWSError).code !== 'ValidationError') {
       throw e
     }
     exists = false

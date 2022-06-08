@@ -1,4 +1,4 @@
-import { S3 } from 'aws-sdk'
+import { AWSError, S3 } from 'aws-sdk'
 import log from 'fancy-log'
 import { createWriteStream, promises as fs, Stats } from 'fs'
 import memoize from 'lodash/memoize'
@@ -10,6 +10,7 @@ import { promisify } from 'util'
 import { IServiceOpts } from './awsServiceOptions'
 import { globalArgs } from './internal/args'
 import { highlight, url } from './colors'
+import ErrnoException = NodeJS.ErrnoException
 
 const streamFinished = promisify(stream.finished)
 
@@ -58,12 +59,12 @@ export default ({
   const sync = {
     file: memoize(
       async ({ s3Path, cachePath }: IPathPair) => {
-        const { verbose } = globalArgs.argv
+        const { verbose } = await globalArgs.argv
         let stat: Stats | null
         try {
           stat = await fs.stat(cachePath)
         } catch (e) {
-          if (e.code !== 'ENOENT') {
+          if ((e as ErrnoException).code !== 'ENOENT') {
             throw e
           }
           await fs.mkdir(path.dirname(cachePath), { recursive: true })
@@ -77,7 +78,7 @@ export default ({
         try {
           head = await headLimit(() => s3.headObject(s3Params).promise())
         } catch (e) {
-          if (e.code === 'NotFound') {
+          if ((e as AWSError).code === 'NotFound') {
             throw new PluginError(
               '@mindhive/deploy/syncS3',
               `S3 object not found in bucket: ${bucket}, path: ${s3Path}`,
@@ -125,7 +126,7 @@ export default ({
           .listObjectsV2({ Bucket: bucket, Prefix: s3Dir })
           .promise()
       } catch (e) {
-        if (e.code === 'NotFound') {
+        if ((e as AWSError).code === 'NotFound') {
           throw new PluginError(
             '@mindhive/deploy/syncS3',
             `No S3 objects not found under bucket: ${bucket}, prefix: ${s3Dir}`,
@@ -177,7 +178,7 @@ export default ({
             }),
           )
         } catch (e) {
-          if (e.code !== 'ENOENT') {
+          if ((e as ErrnoException).code !== 'ENOENT') {
             throw e
           }
         }

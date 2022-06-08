@@ -9,7 +9,7 @@ interface IOptions {
 export default async ({ pipeOutput = false, packageDir }: IOptions) => {
   await execFile(
     'yarn',
-    ['publish', '--non-interactive', ...yarnVersionBumpArgs()],
+    ['publish', '--non-interactive', ...(await yarnVersionBumpArgs())],
     {
       cwd: packageDir,
       pipeOutput,

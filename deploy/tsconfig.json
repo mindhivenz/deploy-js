@@ -1,8 +1,3 @@
 {
-  "extends": "@mindhive/tsconfig",
-  "compilerOptions": {
-    "target": "es2017",
-    "module": "commonjs",
-    "esModuleInterop": true
-  }
+  "extends": "@tsconfig/node16/tsconfig.json"
 }

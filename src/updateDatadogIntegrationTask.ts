@@ -1,4 +1,4 @@
-import { CloudFormation } from 'aws-sdk'
+import { AWSError, CloudFormation } from 'aws-sdk'
 import PluginError from 'plugin-error'
 import awsServiceOptions, { IServiceOpts } from './awsServiceOptions'
 import { IRegionalProjOptions } from './internal/awsProjOptions'
@@ -22,7 +22,7 @@ export const updateDatadogIntegration = async ({
   try {
     await cloudFormation.describeStacks({ StackName: stackName }).promise()
   } catch (e) {
-    if (e.code !== 'ValidationError') {
+    if ((e as AWSError).code !== 'ValidationError') {
       throw e
     }
     throw new PluginError(
@@ -52,12 +52,10 @@ export const updateDatadogIntegration = async ({
     .promise()
 }
 
-export default ({
-  cloudSecurityPostureManagement,
-  ...projOpts
-}: ITaskOpts) => async () => {
-  await updateDatadogIntegration({
-    serviceOpts: awsServiceOptions(projOpts),
-    cloudSecurityPostureManagement,
-  })
-}
+export default ({ cloudSecurityPostureManagement, ...projOpts }: ITaskOpts) =>
+  async () => {
+    await updateDatadogIntegration({
+      serviceOpts: awsServiceOptions(projOpts),
+      cloudSecurityPostureManagement,
+    })
+  }

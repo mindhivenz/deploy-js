@@ -15,7 +15,7 @@ export default async ({
   srcPackageDir,
   distPackageDir,
 }: IOptions) => {
-  const versionBumpArgs = yarnVersionBumpArgs()
+  const versionBumpArgs = await yarnVersionBumpArgs()
   if (versionBumpArgs.length) {
     await execFile(
       'yarn',

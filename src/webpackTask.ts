@@ -18,6 +18,6 @@ export default (config: Configuration) => (done: () => void) => {
       done()
     })
   } catch (e) {
-    throw new PluginError('webpack', e)
+    throw new PluginError('webpack', e as Error)
   }
 }

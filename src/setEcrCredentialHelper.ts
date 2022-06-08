@@ -26,7 +26,7 @@ export default async (options: IOptions) => {
   let originalRaw: string | null = null
   try {
     originalRaw = (await fs.readFile(configPath, {
-      encoding: 'UTF-8',
+      encoding: 'utf-8',
     })) as string
   } catch (e) {
     log.info(`No existing ${configPath}, will create one...`)
@@ -52,7 +52,7 @@ export default async (options: IOptions) => {
   }
   config.credHelpers[host] = CRED_HELPER
   await fs.writeFile(configPath, JSON.stringify(config, null, '\t'), {
-    encoding: 'UTF-8',
+    encoding: 'utf-8',
     mode: 0o600,
   })
 }

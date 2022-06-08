@@ -25,4 +25,4 @@ const gitUserName = once(() => {
 })
 
 export default (): string =>
-  (globalArgs.argv.devName as string) || gitUserName()
+  (globalArgs.parseSync().devName as string) || gitUserName()

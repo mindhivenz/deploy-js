@@ -17,6 +17,6 @@ export default async (secret: string, { proj, region }: IOptions) => {
       Plaintext: secret,
     })
     .promise()
-  const encoded = Buffer.from(encryptResult.CiphertextBlob!).toString('base64')
+  const encoded = encryptResult.CiphertextBlob!.toString('base64')
   return `ENC[KMS,${encoded}]`
 }
