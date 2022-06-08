@@ -45,7 +45,7 @@ export default ({ proj, stage, region, urlParts = {} }: IOptions) =>
         `Failed getting signin token: ${federationResponse.statusText}`,
       )
     }
-    const federationResult = await federationResponse.json()
+    const federationResult = (await federationResponse.json()) as any
     const destinationUrl = new URL(
       `https://${region}.console.aws.amazon.com/console/home?region=${region}#`,
     )

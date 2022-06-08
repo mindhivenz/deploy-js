@@ -1,6 +1,6 @@
 import { spawn, SpawnOptions } from 'child_process'
 import log from 'fancy-log'
-import findUp from 'find-up'
+import { findUp } from 'find-up'
 import path from 'path'
 import PluginError from 'plugin-error'
 import shellEscape from 'shell-escape'
