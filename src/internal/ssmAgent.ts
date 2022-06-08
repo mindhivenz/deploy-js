@@ -1,6 +1,8 @@
-import { ManagedPolicy } from '@aws-cdk/aws-iam'
+import { aws_iam } from 'aws-cdk-lib'
 
 export const ssmAgentManagedPolicies = [
-  ManagedPolicy.fromAwsManagedPolicyName('AmazonSSMManagedInstanceCore'),
-  ManagedPolicy.fromAwsManagedPolicyName('CloudWatchAgentServerPolicy'),
+  aws_iam.ManagedPolicy.fromAwsManagedPolicyName(
+    'AmazonSSMManagedInstanceCore',
+  ),
+  aws_iam.ManagedPolicy.fromAwsManagedPolicyName('CloudWatchAgentServerPolicy'),
 ]

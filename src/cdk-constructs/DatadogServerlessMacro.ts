@@ -1,7 +1,6 @@
 /* tslint:disable no-unused-expression */
-import { Function as LambdaFunction } from '@aws-cdk/aws-lambda'
-import { CfnSubscriptionFilter } from '@aws-cdk/aws-logs'
-import { CfnMapping, Construct, Stack } from '@aws-cdk/core'
+import { CfnMapping, Stack, aws_logs, aws_lambda } from 'aws-cdk-lib'
+import { Construct } from 'constructs'
 import importDatadogForwarderArn from './importDatadogForwarderArn'
 
 interface DatadogServerlessProps {
@@ -33,11 +32,15 @@ export class DatadogServerlessMacro extends Construct {
     stack.addTransform('DatadogServerless')
   }
 
-  monitorFunction(func: LambdaFunction) {
-    new CfnSubscriptionFilter(this, `${func.node.id}-DatadogSubscription`, {
-      filterPattern: '',
-      logGroupName: func.logGroup.logGroupName,
-      destinationArn: importDatadogForwarderArn(),
-    })
+  monitorFunction(func: aws_lambda.Function) {
+    new aws_logs.CfnSubscriptionFilter(
+      this,
+      `${func.node.id}-DatadogSubscription`,
+      {
+        filterPattern: '',
+        logGroupName: func.logGroup.logGroupName,
+        destinationArn: importDatadogForwarderArn(),
+      },
+    )
   }
 }
