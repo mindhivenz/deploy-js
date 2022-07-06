@@ -2,14 +2,14 @@ import { AWSError, S3 } from 'aws-sdk'
 import log from 'fancy-log'
 import { createWriteStream, promises as fs, Stats } from 'fs'
 import memoize from 'lodash/memoize'
-import path from 'path'
 import pLimit from 'p-limit'
+import path from 'path'
 import PluginError from 'plugin-error'
 import stream from 'stream'
 import { promisify } from 'util'
 import { IServiceOpts } from './awsServiceOptions'
-import { globalArgs } from './internal/args'
 import { highlight, url } from './colors'
+import { globalArgs } from './internal/args'
 import ErrnoException = NodeJS.ErrnoException
 
 const streamFinished = promisify(stream.finished)
@@ -120,28 +120,36 @@ export default ({
     dir: async ({ s3Path, cachePath, purgeLocal }: IDirOptions) => {
       const s3Dir = ensureTrailingSlash(s3Path)
       const cacheDir = ensureTrailingSlash(cachePath)
-      let listResult: S3.ListObjectsV2Output
-      try {
-        listResult = await s3
-          .listObjectsV2({ Bucket: bucket, Prefix: s3Dir })
-          .promise()
-      } catch (e) {
-        if ((e as AWSError).code === 'NotFound') {
-          throw new PluginError(
-            '@mindhive/deploy/syncS3',
-            `No S3 objects not found under bucket: ${bucket}, prefix: ${s3Dir}`,
-          )
+      const contents: S3.Object[] = []
+      let token: string | undefined
+      do {
+        try {
+          const listResult = await s3
+            .listObjectsV2({
+              Bucket: bucket,
+              Prefix: s3Dir,
+              ContinuationToken: token,
+            })
+            .promise()
+          if (listResult.Contents) {
+            contents.push(...listResult.Contents)
+          }
+          token = listResult.NextContinuationToken
+        } catch (e) {
+          if ((e as AWSError).code === 'NotFound') {
+            throw new PluginError(
+              '@mindhive/deploy/syncS3',
+              `No S3 objects not found under bucket: ${bucket}, prefix: ${s3Dir}`,
+            )
+          }
+          throw e
         }
-        throw e
-      }
-      if (listResult.IsTruncated) {
-        throw new Error('Not implemented yet: paginated results')
-      }
-      if (!listResult.Contents || !listResult.Contents.length) {
+      } while (token)
+      if (!contents.length) {
         log(`Remote ${url(`s3://${bucket}/${s3Dir}`)} is empty`)
         return
       }
-      const suffixes = listResult.Contents.flatMap(({ Key }) => {
+      const suffixes = contents.flatMap(({ Key }) => {
         if (!Key) {
           return []
         }
