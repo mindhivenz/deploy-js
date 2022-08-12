@@ -13,6 +13,7 @@ export const credentialsEnv = async (
     AWS_ACCESS_KEY_ID: credentials.accessKeyId,
     AWS_SECRET_ACCESS_KEY: credentials.secretAccessKey,
     AWS_SESSION_TOKEN: credentials.sessionToken,
+    AWS_SECURITY_TOKEN: credentials.sessionToken,
     ...(region && { AWS_REGION: region }),
   }
 }
