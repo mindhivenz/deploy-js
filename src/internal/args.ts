@@ -15,3 +15,8 @@ export const globalArgs = yargs
     defaultDescription: 'your git username',
     string: true,
   })
+  .option('ignore-git', {
+    describe: 'Ignore git remote',
+    group,
+    boolean: true,
+  })
