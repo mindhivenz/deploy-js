@@ -61,7 +61,7 @@ export const execCommand = async (
     commandLine(shellEscape([command, ...args]))
 
   if (argv.verbose) {
-    log(commandDescription())
+    log(`${dim(`${cwd}`)}: ${commandDescription()}`)
   }
   return await new Promise<string>((resolve, reject) => {
     const stdOutBuffers: Buffer[] = []
