@@ -19,10 +19,12 @@ const clean = () => del(distDir)
 
 export const build = () => tsProj.src().pipe(tsProj()).pipe(dest(distDir))
 
-const copy = () =>
+const copyCfn = () =>
   src(`${srcDir}/cfn/**/*`, { base: srcDir, buffer: false }).pipe(dest(distDir))
 
-export const dist = series(clean, parallel(build, copy))
+const copyScript = () => src(`script/*`, { buffer: false }).pipe(dest(distDir))
+
+export const dist = series(clean, parallel(build, copyCfn, copyScript))
 
 const gitUpToDate = () => ensureGitUpToDate()
 
