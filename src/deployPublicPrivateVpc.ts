@@ -1,4 +1,4 @@
-import gulp from 'gulp'
+import { src } from 'gulp'
 import cfDeploy from 'gulp-cf-deploy'
 import jsonEditor from 'gulp-json-editor'
 import rename from 'gulp-rename'
@@ -46,8 +46,7 @@ export default ({
   azCount = stage === 'dev' ? 1 : 2,
   ipPrefix = cidr16HashedPrefix(proj),
 }: IOptions) =>
-  gulp
-    .src(path.join(__dirname, `cfn/vpc-${azCount}.cfn.yaml`))
+  src(path.join(__dirname, `cfn/vpc-${azCount}.cfn.yaml`))
     .pipe(
       cfDeploy(awsServiceOptions({ proj, stage, region }), `${proj}-vpc`, {
         ipPrefix,

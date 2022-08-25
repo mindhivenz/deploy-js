@@ -1,5 +1,5 @@
 import del from 'del'
-import gulp from 'gulp'
+import { src, dest, series, parallel } from 'gulp'
 import ts from 'gulp-typescript'
 import path from 'path'
 import ensureGitUpToDate from '../src/ensureGitUpToDate'
@@ -17,14 +17,12 @@ const tsProj = ts.createProject('src/tsconfig.json')
 
 const clean = () => del(distDir)
 
-export const build = () => tsProj.src().pipe(tsProj()).pipe(gulp.dest(distDir))
+export const build = () => tsProj.src().pipe(tsProj()).pipe(dest(distDir))
 
 const copy = () =>
-  gulp
-    .src(`${srcDir}/cfn/**/*`, { base: srcDir, buffer: false })
-    .pipe(gulp.dest(distDir))
+  src(`${srcDir}/cfn/**/*`, { base: srcDir, buffer: false }).pipe(dest(distDir))
 
-export const dist = gulp.series(clean, gulp.parallel(build, copy))
+export const dist = series(clean, parallel(build, copy))
 
 const gitUpToDate = () => ensureGitUpToDate()
 
@@ -33,7 +31,7 @@ const publish = () =>
 
 const push = () => gitPush(projectDir)
 
-export const release = gulp.series(gitUpToDate, dist, publish, push)
+export const release = series(gitUpToDate, dist, publish, push)
 
 export const testOpen = openAwsConsoleTask({
   proj: 'devops',

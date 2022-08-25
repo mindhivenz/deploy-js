@@ -1,4 +1,4 @@
-import gulp from 'gulp'
+import { dest, src } from 'gulp'
 import path from 'path'
 import streamToPromise from 'stream-to-promise'
 import execFile from './execFile'
@@ -27,9 +27,9 @@ export default async ({
     )
   }
   await streamToPromise(
-    gulp
-      .src(path.join(srcPackageDir, 'package.json'), { buffer: false })
-      .pipe(gulp.dest(distPackageDir)),
+    src(path.join(srcPackageDir, 'package.json'), { buffer: false }).pipe(
+      dest(distPackageDir),
+    ),
   )
   await execFile('yarn', ['publish', '--non-interactive'], {
     cwd: distPackageDir,
