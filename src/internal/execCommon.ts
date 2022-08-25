@@ -4,7 +4,7 @@ import findUp from 'find-up'
 import path from 'path'
 import PluginError from 'plugin-error'
 import shellEscape from 'shell-escape'
-import { globalArgs } from './args'
+import { globalArgs, parseArgs } from './args'
 import { commandLine, dim, error } from '../colors'
 
 const nodeModulesBinDirs = async (cwd: string): Promise<string[]> => {
@@ -49,7 +49,7 @@ export const execCommand = async (
     okExitCodes = [0],
   }: IExecOpts = {},
 ): Promise<string> => {
-  const argv = await globalArgs.argv
+  const argv = parseArgs(globalArgs)
   if (pipeOutput === undefined) {
     pipeOutput = !!argv.verbose
   }

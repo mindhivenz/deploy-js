@@ -3,7 +3,7 @@ import * as path from 'path'
 import PluginError from 'plugin-error'
 import log from 'fancy-log'
 import execFile from './execFile'
-import { globalArgs } from './internal/args'
+import { globalArgs, parseArgs } from './internal/args'
 
 // Based off: https://stackoverflow.com/a/3278427/3424884
 
@@ -16,7 +16,7 @@ export default memoize(
     repoPath: string = process.cwd(),
     { pluginName = '@mindhive/deploy/ensureGitUpToDate' }: IOptions = {},
   ): Promise<string> => {
-    const { ignoreGit } = await globalArgs.argv
+    const { ignoreGit } = parseArgs(globalArgs)
     if (ignoreGit) {
       log('Ignoring git state')
       return 'Ignoring git state'

@@ -2,7 +2,7 @@ import once from 'lodash/once'
 import PluginError from 'plugin-error'
 import shell, { ExecOutputReturnValue } from 'shelljs'
 import camelCase from 'lodash/camelCase'
-import { globalArgs } from './internal/args'
+import { globalArgs, parseArgs } from './internal/args'
 import { commandLine } from './colors'
 
 const gitUserName = once(() => {
@@ -16,7 +16,7 @@ const gitUserName = once(() => {
   if (!name) {
     throw new PluginError(
       '@mindhive/deploy/devName',
-      `You need to set your git user name. Such as: ${commandLine(
+      `You need to set your git username. Such as: ${commandLine(
         'git config --global user.name "John Doe"',
       )}`,
     )
@@ -24,5 +24,4 @@ const gitUserName = once(() => {
   return name
 })
 
-export default (): string =>
-  (globalArgs.parseSync().devName as string) || gitUserName()
+export default (): string => parseArgs(globalArgs).devName || gitUserName()

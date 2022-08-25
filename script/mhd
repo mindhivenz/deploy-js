@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Find project deploy directory and run gulp tasks in there
+# Extra args are packaged into an environment var to be parsed by src/internal/args.ts
+
+set -e
+ancestor_dir=$(git rev-parse --show-toplevel)
+project_dir=${ancestor_dir%%-control}
+cd "${project_dir}/deploy" > /dev/null
+vault_opts=""
+mhd_args=""
+if [[ $# == 0 ]]; then
+  gulp_args="--tasks  --compact-tasks"
+elif [[ $1 =~ ^--.* ]]; then
+  gulp_args="$*"
+else
+  gulp_args="$1"
+  shift
+  IFS=$'\t'
+  mhd_args="$*"
+fi
+if [[ $gulp_args =~ ^open:.* ]]; then
+  vault_opts="--no-session"
+fi
+# shellcheck disable=SC2086
+TS_NODE_TRANSPILE_ONLY=true MHD_ARGS="$mhd_args" \
+  aws-vault exec $vault_opts mindhive-ops -- \
+  node_modules/.bin/gulp $gulp_args

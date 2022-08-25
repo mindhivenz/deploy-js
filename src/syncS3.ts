@@ -9,7 +9,7 @@ import stream from 'stream'
 import { promisify } from 'util'
 import { IServiceOpts } from './awsServiceOptions'
 import { highlight, url } from './colors'
-import { globalArgs } from './internal/args'
+import { globalArgs, parseArgs } from './internal/args'
 import ErrnoException = NodeJS.ErrnoException
 
 const streamFinished = promisify(stream.finished)
@@ -59,7 +59,7 @@ export default ({
   const sync = {
     file: memoize(
       async ({ s3Path, cachePath }: IPathPair) => {
-        const { verbose } = await globalArgs.argv
+        const { verbose } = parseArgs(globalArgs)
         let stat: Stats | null
         try {
           stat = await fs.stat(cachePath)

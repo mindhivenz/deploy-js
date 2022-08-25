@@ -1,9 +1,9 @@
 import log from 'fancy-log'
 import execFile from './execFile'
-import { globalArgs } from './internal/args'
+import { globalArgs, parseArgs } from './internal/args'
 
 export default async (repoPath?: string, remote: string = 'origin') => {
-  const { ignoreGit } = await globalArgs.argv
+  const { ignoreGit } = parseArgs(globalArgs)
   if (ignoreGit) {
     log('Not pushing')
     return

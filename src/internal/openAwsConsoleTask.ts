@@ -5,7 +5,7 @@ import fetch from 'node-fetch'
 import log from 'fancy-log'
 import { URL } from 'url'
 import { url } from '../colors'
-import { globalArgs } from './args'
+import { globalArgs, parseArgs } from './args'
 import { projCredentialsFactory } from './awsProjCredentials'
 import { MAX_SESSION_SECONDS } from './awsSession'
 
@@ -18,10 +18,12 @@ interface IOptions {
 
 export default ({ proj, stage, region, urlParts = {} }: IOptions) =>
   async () => {
-    const { open: wantOpen, verbose } = await globalArgs.option('open', {
-      boolean: true,
-      default: true,
-    }).argv
+    const { open: wantOpen, verbose } = parseArgs(
+      globalArgs.option('open', {
+        boolean: true,
+        default: true,
+      }),
+    )
     const credentials = projCredentialsFactory({
       fullDurationSession: true,
       proj,
