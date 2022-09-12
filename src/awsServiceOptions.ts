@@ -1,6 +1,6 @@
 import { Credentials } from 'aws-sdk'
 import { projCredentialsFactory } from './internal/awsProjCredentials'
-import { IRegionalProjOptions } from './internal/awsProjOptions'
+import { IRegionalProjOptions } from './awsProjOptions'
 
 export interface IServiceOpts {
   credentials: Credentials

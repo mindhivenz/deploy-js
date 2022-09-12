@@ -1,7 +1,7 @@
 import AWS from 'aws-sdk'
 import memoize from 'lodash/memoize'
 import { projCredentialsFactory } from './internal/awsProjCredentials'
-import { IProjOptions } from './internal/awsProjOptions'
+import { IProjOptions } from './awsProjOptions'
 
 const getAccountId = async (options: IProjOptions): Promise<string> => {
   const credentials = projCredentialsFactory(options)

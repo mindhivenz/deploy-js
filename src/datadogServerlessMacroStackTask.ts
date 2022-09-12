@@ -1,6 +1,6 @@
 import { AWSError, CloudFormation } from 'aws-sdk'
 import awsServiceOptions from './awsServiceOptions'
-import { IRegionalProjOptions } from './internal/awsProjOptions'
+import { IRegionalProjOptions } from './awsProjOptions'
 
 const stackName = 'datadog-serverless-macro'
 

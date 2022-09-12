@@ -9,7 +9,7 @@ import {
 } from './awsAccounts'
 import './awsConfig'
 import { master, masterIsRole } from './awsMasterCredentials'
-import { IProjOptions } from './awsProjOptions'
+import { IProjOptions } from '../awsProjOptions'
 import {
   MAX_CHAINED_ROLE_SESSION_SECONDS,
   MAX_SESSION_SECONDS,

@@ -1,7 +1,7 @@
 import { AWSError, CloudFormation } from 'aws-sdk'
 import PluginError from 'plugin-error'
 import awsServiceOptions, { IServiceOpts } from './awsServiceOptions'
-import { IRegionalProjOptions } from './internal/awsProjOptions'
+import { IRegionalProjOptions } from './awsProjOptions'
 
 const stackName = 'datadog'
 
