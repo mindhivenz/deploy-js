@@ -43,9 +43,5 @@ export const openManagedInstanceShellTask =
     if (!answers.instanceId) {
       return
     }
-    await ssmInteractiveCommand(
-      opts,
-      answers.instanceId,
-      'command="sudo -i -u root"',
-    )
+    await ssmInteractiveCommand(opts, answers.instanceId, 'sudo -i -u root')
   }

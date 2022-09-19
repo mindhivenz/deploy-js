@@ -25,7 +25,7 @@ export const ssmInteractiveCommand = async (
         ...['--target', instanceId],
         // REVISIT: an alternative is to use the new ShellProfile of SSM-SessionManagerRunShell in agent 3.0
         ...['--document-name', 'AWS-StartInteractiveCommand'],
-        ...['--parameters', command],
+        ...['--parameters', `command="${command}"`],
       ],
       {
         env: {
