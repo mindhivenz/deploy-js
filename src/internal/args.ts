@@ -20,11 +20,18 @@ export const globalArgs = yargs
   })
   .option('ignore-git', { describe: 'Ignore git remote', group, boolean: true })
 
-export const parseArgs = <T>(args: Argv<T>) => {
+interface IParseOpts {
+  complete?: boolean
+}
+
+export const parseArgs = <T>(
+  args: Argv<T>,
+  { complete = true }: IParseOpts = {},
+) => {
   if (ARGS_ENV_VAR in process.env) {
     const argsEnvValue = process.env[ARGS_ENV_VAR]
     const argsEnv = argsEnvValue ? argsEnvValue.split(ARG_SEPARATOR) : []
-    return args.strict(true).parseSync(argsEnv)
+    return args.strict(complete).parseSync(argsEnv)
   } else {
     const argsProcess = process.argv.slice(2)
     return args.strict(false).parseSync(argsProcess)

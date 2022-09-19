@@ -49,7 +49,7 @@ export const execCommand = async (
     okExitCodes = [0],
   }: IExecOpts = {},
 ): Promise<string> => {
-  const argv = parseArgs(globalArgs)
+  const argv = parseArgs(globalArgs, { complete: false })
   if (pipeOutput === undefined) {
     pipeOutput = !!argv.verbose
   }

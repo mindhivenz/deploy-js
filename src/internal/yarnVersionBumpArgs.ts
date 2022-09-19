@@ -21,6 +21,7 @@ export const yarnVersionBumpArgs = (): string[] => {
         boolean: true,
         group,
       }),
+    { complete: false },
   )
   const versionBumpOptions = ['same', 'major', 'minor', 'patch'] as const
   const versionBump = versionBumpOptions.find((v) => argv[v] === true) ?? 'same'

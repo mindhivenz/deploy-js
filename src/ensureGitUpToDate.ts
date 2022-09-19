@@ -16,7 +16,7 @@ export default memoize(
     repoPath: string = process.cwd(),
     { pluginName = '@mindhive/deploy/ensureGitUpToDate' }: IOptions = {},
   ): Promise<string> => {
-    const { ignoreGit } = parseArgs(globalArgs)
+    const { ignoreGit } = parseArgs(globalArgs, { complete: false })
     if (ignoreGit) {
       log('Ignoring git state')
       return 'Ignoring git state'

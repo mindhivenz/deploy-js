@@ -3,7 +3,7 @@ import execFile from './execFile'
 import { globalArgs, parseArgs } from './internal/args'
 
 export default async (repoPath?: string, remote: string = 'origin') => {
-  const { ignoreGit } = parseArgs(globalArgs)
+  const { ignoreGit } = parseArgs(globalArgs, { complete: false })
   if (ignoreGit) {
     log('Not pushing')
     return

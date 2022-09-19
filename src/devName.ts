@@ -24,4 +24,5 @@ const gitUserName = once(() => {
   return name
 })
 
-export default (): string => parseArgs(globalArgs).devName || gitUserName()
+export default (): string =>
+  parseArgs(globalArgs, { complete: false }).devName || gitUserName()
