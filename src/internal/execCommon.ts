@@ -31,7 +31,13 @@ export interface IExecOpts extends Pick<SpawnOptions, 'cwd' | 'env'> {
   okExitCodes?: number[]
 }
 
-export interface IInternalExecOpts {
+export interface IExecResult {
+  stdOut: string
+  stdErr: string
+  exitCode: number | null
+}
+
+interface IInternalExecOpts {
   shell: boolean
   pluginName: string
 }
@@ -48,7 +54,7 @@ export const execCommand = async (
     pipeOutput,
     okExitCodes = [0],
   }: IExecOpts = {},
-): Promise<string> => {
+): Promise<IExecResult> => {
   const argv = parseArgs(globalArgs, { complete: false })
   if (pipeOutput === undefined) {
     pipeOutput = !!argv.verbose
@@ -63,7 +69,7 @@ export const execCommand = async (
   if (argv.verbose) {
     log(`${dim(`${cwd}`)}: ${commandDescription()}`)
   }
-  return await new Promise<string>((resolve, reject) => {
+  return await new Promise<IExecResult>((resolve, reject) => {
     const stdOutBuffers: Buffer[] = []
     const stdErrBuffers: Buffer[] = []
     let rejected = false
@@ -128,7 +134,11 @@ export const execCommand = async (
         } else if (code && !okExitCodes.includes(code)) {
           rejectWith(`Exited with code ${code}`)
         } else {
-          resolve(captureOutput ? concatBuffers(stdOutBuffers) : '')
+          resolve({
+            stdOut: captureOutput ? concatBuffers(stdOutBuffers) : '',
+            stdErr: captureOutput ? concatBuffers(stdErrBuffers) : '',
+            exitCode: code,
+          })
         }
       })
     if ((captureOutput || !pipeOutput) && subProcess.stdout) {

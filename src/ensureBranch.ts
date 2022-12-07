@@ -4,7 +4,7 @@ import execFile from './execFile'
 const pluginName = '@mindhive/deploy/ensureBranch'
 
 export default async (requiredBranch: string, repoPath?: string) => {
-  const actualBranch = await execFile(
+  const { stdOut: actualBranch } = await execFile(
     'git',
     ['rev-parse', '--abbrev-ref', 'HEAD'],
     { cwd: repoPath, captureOutput: true },

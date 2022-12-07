@@ -37,12 +37,20 @@ export default memoize(
       )
     }
     await execFile('git', ['remote', 'update'], options)
-    const local = await execFile('git', ['rev-parse', '@'], options)
-    const remote = await execFile('git', ['rev-parse', '@{u}'], options)
+    const { stdOut: local } = await execFile('git', ['rev-parse', '@'], options)
+    const { stdOut: remote } = await execFile(
+      'git',
+      ['rev-parse', '@{u}'],
+      options,
+    )
     if (local === remote) {
       return 'Up to date'
     }
-    const base = await execFile('git', ['merge-base', '@', '@{u}'], options)
+    const { stdOut: base } = await execFile(
+      'git',
+      ['merge-base', '@', '@{u}'],
+      options,
+    )
     if (local === base) {
       throw new PluginError(pluginName, 'You are behind origin: pull')
     } else if (remote === base) {

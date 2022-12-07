@@ -14,8 +14,9 @@ export default async (
       pluginName: '@mindhive/deploy/gitHash',
     })
   }
-  return await execFile('git', ['rev-parse', '--short', 'HEAD'], {
+  const { stdOut } = await execFile('git', ['rev-parse', '--short', 'HEAD'], {
     cwd: repoPath,
     captureOutput: true,
   })
+  return stdOut
 }

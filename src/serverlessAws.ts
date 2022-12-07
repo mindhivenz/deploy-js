@@ -33,7 +33,7 @@ const task = async ({
   ...options
 }: IServerlessCommand): Promise<string> => {
   const credentialsEnv = await awsCredentialsEnv({ proj, stage, region })
-  return await execFile(
+  const { stdOut } = await execFile(
     'serverless',
     [...command.split(/\s+/), ...serializeServerlessArgs(args)],
     {
@@ -46,6 +46,7 @@ const task = async ({
       ...options,
     },
   )
+  return stdOut
 }
 
 type IFixedServerlessOptions = Pick<
@@ -58,12 +59,12 @@ type ICurriedServerlessOptions = Pick<
   Exclude<keyof IServerlessCommand, keyof IFixedServerlessOptions>
 >
 
-export const taskFactory = (fixedOptions: IFixedServerlessOptions) => (
-  options: ICurriedServerlessOptions,
-) =>
-  task({
-    ...fixedOptions,
-    ...options,
-  })
+export const taskFactory =
+  (fixedOptions: IFixedServerlessOptions) =>
+  (options: ICurriedServerlessOptions) =>
+    task({
+      ...fixedOptions,
+      ...options,
+    })
 
 export default task

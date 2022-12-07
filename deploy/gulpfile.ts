@@ -41,4 +41,6 @@ export const testOpen = openAwsConsoleTask({
   stage: 'production',
 })
 
-export const testExec = () => execFile('echo', ['hello', 'world'], {})
+export const testExec = async () => {
+  await execFile('echo', ['hello', 'world'], {})
+}
