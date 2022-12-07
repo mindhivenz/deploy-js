@@ -1,6 +1,6 @@
 {
   "name": "@mindhive/deploy",
-  "version": "4.8.2",
+  "version": "5.0.0",
   "license": "MIT",
   "dependencies": {
     "ansi-colors": "^4.1.1",
