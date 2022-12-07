@@ -1,6 +1,7 @@
 import log from 'fancy-log'
-import { highlight } from './colors'
+import PluginError from 'plugin-error'
 import awsCredentialsEnv from './awsCredentialsEnv'
+import { highlight } from './colors'
 import ecrImageRepo from './ecrImageRepo'
 import execFile from './execFile'
 import gitHash from './gitHash'
@@ -32,6 +33,19 @@ export default async ({
       remoteImageTag === 'latest'
         ? `git-${hash}`
         : `${remoteImageTag}-git-${hash}`
+    const { exitCode } = await execFile(
+      'docker',
+      ['manifest', 'inspect', `${repo}:${hashTag}`],
+      { okExitCodes: [0, 1] },
+    )
+    if (exitCode === 0) {
+      throw new PluginError(
+        '@mindhive/deploy/ecrPush',
+        `There is already an image with git hashtag: ${highlight(
+          localImageTag,
+        )}`,
+      )
+    }
     tags.push(hashTag)
   } else {
     if (tags.length === 0) {
