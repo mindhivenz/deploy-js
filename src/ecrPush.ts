@@ -46,7 +46,7 @@ export default async ({
         )}`,
       )
     }
-    tags.push(hashTag)
+    tags.splice(0, 0, hashTag)
   } else {
     if (tags.length === 0) {
       tags.push('latest')
