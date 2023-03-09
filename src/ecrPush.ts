@@ -49,7 +49,7 @@ export default async ({
       throw new PluginError(
         '@mindhive/deploy/ecrPush',
         `There is already an image with git hashtag: ${highlight(
-          localImageTag,
+          `${repo}:${hashTag}`,
         )}`,
       )
     }
