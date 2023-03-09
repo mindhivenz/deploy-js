@@ -27,6 +27,7 @@ export default async ({
   const repo = await ecrImageRepo({ name: repoName, ...ecrOptions })
   await setEcrCredentialHelper(ecrOptions)
   const tags = [remoteImageTag]
+  const awsEnv = await awsCredentialsEnv(ecrOptions)
   if (tagWithGitHash) {
     const hash = await gitHash(gitRepoPath, { gitUpToDate: true })
     const hashTag =
@@ -36,7 +37,13 @@ export default async ({
     const { exitCode } = await execFile(
       'docker',
       ['manifest', 'inspect', `${repo}:${hashTag}`],
-      { okExitCodes: [0, 1] },
+      {
+        env: {
+          ...process.env,
+          ...awsEnv,
+        },
+        okExitCodes: [0, 1],
+      },
     )
     if (exitCode === 0) {
       throw new PluginError(
@@ -55,7 +62,6 @@ export default async ({
   for (const tag of tags) {
     await execFile('docker', ['tag', localImageTag, `${repo}:${tag}`])
   }
-  const awsEnv = await awsCredentialsEnv(ecrOptions)
   for (const tag of tags) {
     await execFile('docker', ['push', `${repo}:${tag}`], {
       env: {
