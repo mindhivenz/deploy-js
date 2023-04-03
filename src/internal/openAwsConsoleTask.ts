@@ -18,11 +18,19 @@ interface IOptions {
 
 export default ({ proj, stage, region, urlParts = {} }: IOptions) =>
   async () => {
-    const { open: wantOpen, verbose } = parseArgs(
-      globalArgs.option('open', {
-        boolean: true,
-        default: true,
-      }),
+    const {
+      open: wantOpen,
+      verbose,
+      safari,
+    } = parseArgs(
+      globalArgs
+        .option('open', {
+          type: 'boolean',
+          default: true,
+        })
+        .option('safari', {
+          type: 'boolean',
+        }),
     )
     const credentials = projCredentialsFactory({
       fullDurationSession: true,
@@ -65,6 +73,8 @@ export default ({ proj, stage, region, urlParts = {} }: IOptions) =>
       log(`Sign in: ${url(target)}`)
     }
     if (wantOpen) {
-      await open(target)
+      await open(target, {
+        app: safari ? { name: 'safari' } : undefined,
+      })
     }
   }
