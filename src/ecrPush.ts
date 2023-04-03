@@ -53,7 +53,7 @@ export default async ({
         )}`,
       )
     }
-    tags.splice(0, 0, hashTag)
+    tags.push(hashTag) // Put hashTag last to ensure if it's put it will be latest
   } else {
     if (tags.length === 0) {
       tags.push('latest')
@@ -61,8 +61,6 @@ export default async ({
   }
   for (const tag of tags) {
     await execFile('docker', ['tag', localImageTag, `${repo}:${tag}`])
-  }
-  for (const tag of tags) {
     await execFile('docker', ['push', `${repo}:${tag}`], {
       env: {
         ...process.env,
