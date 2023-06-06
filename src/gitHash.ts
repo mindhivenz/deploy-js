@@ -18,5 +18,5 @@ export default async (
     cwd: repoPath,
     captureOutput: true,
   })
-  return stdOut
+  return `git-${stdOut.trim()}`
 }
