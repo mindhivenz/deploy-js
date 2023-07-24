@@ -16,7 +16,7 @@ const requiredDomainSuffix = '.mindhive.cloud'
 export default ({
   domainName,
   cloudFrontDomainName,
-  stackName = `dns-${domainName.replace('.', '-')}`,
+  stackName = `dns-${domainName.replaceAll('.', '-')}`,
 }: IOptions) => {
   if (!domainName.endsWith(requiredDomainSuffix)) {
     throw new PluginError(
