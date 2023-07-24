@@ -4,39 +4,48 @@ import { IRegionalProjOptions } from './awsProjOptions'
 import awsServiceOptions from './awsServiceOptions'
 
 interface IOpts extends IRegionalProjOptions {
-  cdkStack?: string
+  stackName?: string
 }
 
 const pluginName = 'getCloudFormationOutputs'
 
 export default async <T extends string>(
   names: T[],
-  { cdkStack, ...serviceOpts }: IOpts,
+  { stackName, ...serviceOpts }: IOpts,
 ): Promise<Record<T, string>> => {
   const cloudFormation = new CloudFormation(awsServiceOptions(serviceOpts))
-  const exportsResult = await cloudFormation.listExports().promise()
-  const exports = exportsResult.Exports
-  if (!exports) {
-    throw new PluginError(pluginName, `No exports returned in result`)
+  const outputs: Record<string, string | undefined> = {}
+  if (stackName) {
+    const stackResult = await cloudFormation
+      .describeStacks({ StackName: stackName })
+      .promise()
+    stackResult.Stacks?.forEach((stack) => {
+      stack.Outputs?.forEach((output) => {
+        if (output.OutputKey) {
+          outputs[output.OutputKey] = output.OutputValue
+        }
+      })
+    })
+  } else {
+    const exportsResult = await cloudFormation.listExports().promise()
+    exportsResult.Exports?.forEach((exp) => {
+      if (exp.Name) {
+        outputs[exp.Name] = exp.Value
+      }
+    })
   }
   return Object.fromEntries(
     names.map((name) => {
-      const matchName = cdkStack ? `${cdkStack}.${name}` : name
-      const nameExport = exports.find((exp) => exp.Name === name)
-      if (!nameExport) {
+      const value = outputs[name]
+      if (!value) {
         throw new PluginError(
           pluginName,
-          `No CloudFormation output found named: "${name}"`,
+          `No ${
+            stackName ? `${stackName} stack output` : 'CLoudFormation export'
+          } found named: "${name}"`,
         )
       }
-      const value = nameExport.Value
-      if (value == null) {
-        throw new PluginError(
-          pluginName,
-          `CloudFormation output: "${name}" has no value`,
-        )
-      }
-      return [name, nameExport.Value]
+      return [name, value]
     }),
   ) as Record<T, string>
 }
