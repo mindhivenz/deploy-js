@@ -3,13 +3,17 @@ import PluginError from 'plugin-error'
 import { IRegionalProjOptions } from './awsProjOptions'
 import awsServiceOptions from './awsServiceOptions'
 
+interface IOpts extends IRegionalProjOptions {
+  cdkStack?: string
+}
+
 const pluginName = 'getCloudFormationOutputs'
 
 export default async <T extends string>(
   names: T[],
-  opts: IRegionalProjOptions,
+  { cdkStack, ...serviceOpts }: IOpts,
 ): Promise<Record<T, string>> => {
-  const cloudFormation = new CloudFormation(awsServiceOptions(opts))
+  const cloudFormation = new CloudFormation(awsServiceOptions(serviceOpts))
   const exportsResult = await cloudFormation.listExports().promise()
   const exports = exportsResult.Exports
   if (!exports) {
@@ -17,6 +21,7 @@ export default async <T extends string>(
   }
   return Object.fromEntries(
     names.map((name) => {
+      const matchName = cdkStack ? `${cdkStack}.${name}` : name
       const nameExport = exports.find((exp) => exp.Name === name)
       if (!nameExport) {
         throw new PluginError(
