@@ -31,9 +31,7 @@ export default async ({
   if (tagWithGitHash) {
     const hash = await gitHash(gitRepoPath, { gitUpToDate: true })
     const hashTag =
-      remoteImageTag === 'latest'
-        ? `git-${hash}`
-        : `${remoteImageTag}-git-${hash}`
+      remoteImageTag === 'latest' ? hash : `${remoteImageTag}-${hash}`
     const { exitCode } = await execFile(
       'docker',
       ['manifest', 'inspect', `${repo}:${hashTag}`],
