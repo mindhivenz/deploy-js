@@ -4,6 +4,8 @@ import {
   resolveAccount,
 } from './awsAccounts'
 
+const mindhiveOpsAwsProfileName = `mindhive-ops`
+
 interface IResult {
   profileName: string
   header: string
@@ -35,7 +37,7 @@ export const awsVaultProfile = async ({
   const account = await resolveAccount({ proj, stage, devName })
   const iniProfile = [
     header,
-    'source_profile = mindhive-ops',
+    `source_profile = ${mindhiveOpsAwsProfileName}`,
     `role_arn = ${accessTargetRoleArn(account.Id!, roleName)}`,
     `role_session_name = ${accessRoleSessionName({
       accountName: account.Name!,
