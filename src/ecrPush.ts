@@ -51,11 +51,8 @@ export default async ({
         )}`,
       )
     }
-    tags.push(hashTag) // Put hashTag last to ensure if it's put it will be latest
-  } else {
-    if (tags.length === 0) {
-      tags.push('latest')
-    }
+    // Put hashTag first to ensure if remoteImageTag is added, then the git hash has to as well
+    tags.splice(0, 0, hashTag)
   }
   for (const tag of tags) {
     await execFile('docker', ['tag', localImageTag, `${repo}:${tag}`])
