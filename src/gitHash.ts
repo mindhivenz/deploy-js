@@ -32,7 +32,7 @@ export default async (
   )
   const parts = ['git', hashOut.trim()]
   if (!['master', 'main', 'production'].includes(branchOut.trim())) {
-    parts.push(branchOut.trim())
+    parts.push(branchOut.trim().replace(/[^a-zA-Z0-9-_.]/g, '_'))
   }
   return parts.join('-')
 }
