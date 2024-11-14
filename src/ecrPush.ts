@@ -25,7 +25,9 @@ export default async ({
   ...ecrOptions
 }: IOptions) => {
   const repo = await ecrImageRepo({ name: repoName, ...ecrOptions })
-  await setEcrCredentialHelper(ecrOptions)
+  if (!process.env.CI) {
+    await setEcrCredentialHelper(ecrOptions)
+  }
   const tags = [remoteImageTag]
   const awsEnv = await awsCredentialsEnv(ecrOptions)
   if (tagWithGitHash) {
