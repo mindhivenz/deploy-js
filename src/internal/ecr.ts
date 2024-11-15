@@ -4,10 +4,10 @@ export interface IRepoHostOptions {
   proj: string
   region: string
   stage: string
-  overrideAccountId?: string
 }
 
 export const repoHost = async (options: IRepoHostOptions) => {
-  const accountId = options.overrideAccountId || (await awsAccountId(options))
+  const overrideAccountId = process.env.ECR_ACCOUNT_ID
+  const accountId = overrideAccountId || (await awsAccountId(options))
   return `${accountId}.dkr.ecr.${options.region}.amazonaws.com`
 }
