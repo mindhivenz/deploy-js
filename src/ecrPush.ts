@@ -5,10 +5,10 @@ import { highlight } from './colors'
 import ecrImageRepo from './ecrImageRepo'
 import execFile from './execFile'
 import gitHash from './gitHash'
-import { IOptions as IEcrOptions } from './internal/ecr'
+import { IRepoHostOptions } from './internal/ecr'
 import setEcrCredentialHelper from './setEcrCredentialHelper'
 
-interface IOptions extends IEcrOptions {
+interface IOptions extends IRepoHostOptions {
   localImageTag: string
   repoName: string
   remoteImageTag?: string
@@ -22,14 +22,14 @@ export default async ({
   remoteImageTag = 'latest',
   tagWithGitHash = false,
   gitRepoPath,
-  ...ecrOptions
+  ...repoHostOptions
 }: IOptions) => {
-  const repo = await ecrImageRepo({ name: repoName, ...ecrOptions })
+  const repo = await ecrImageRepo({ name: repoName, ...repoHostOptions })
   if (!process.env.CI) {
-    await setEcrCredentialHelper(ecrOptions)
+    await setEcrCredentialHelper(repoHostOptions)
   }
   const tags = [remoteImageTag]
-  const awsEnv = await awsCredentialsEnv(ecrOptions)
+  const awsEnv = await awsCredentialsEnv(repoHostOptions)
   if (tagWithGitHash) {
     const hash = await gitHash(gitRepoPath, { gitUpToDate: true })
     const hashTag =

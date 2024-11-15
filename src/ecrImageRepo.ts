@@ -1,6 +1,6 @@
-import { IOptions as IEcrOptions, repoHost } from './internal/ecr'
+import { IRepoHostOptions, repoHost } from './internal/ecr'
 
-interface IOptions extends IEcrOptions {
+interface IOptions extends IRepoHostOptions {
   name: string
 }
 

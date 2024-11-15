@@ -5,7 +5,7 @@ import path from 'path'
 import PluginError from 'plugin-error'
 import execFile from './execFile'
 
-import { IOptions, repoHost } from './internal/ecr'
+import { IRepoHostOptions, repoHost } from './internal/ecr'
 
 const CRED_HELPER = 'ecr-login'
 
@@ -20,7 +20,7 @@ const checkCredentialHelperInstalled = async () => {
   }
 }
 
-export default async (options: IOptions) => {
+export default async (options: IRepoHostOptions) => {
   const host = await repoHost(options)
   const configPath = path.join(os.homedir(), '.docker', 'config.json')
   let originalRaw: string | null = null
