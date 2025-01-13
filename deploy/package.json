@@ -1,6 +1,6 @@
 {
-  "name": "deploy",
-  "version": "0.0.1",
+  "name": "@mindhive/deploy",
+  "version": "0.0.6",
   "license": "MIT",
   "devDependencies": {
     "@types/gulp": "^4.0.5",
