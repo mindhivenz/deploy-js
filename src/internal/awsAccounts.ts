@@ -39,19 +39,16 @@ const listAccounts = once(async () => {
     region: 'us-east-1',
   })
   let nextToken = undefined
-  let allAccounts = []
+  let allAccounts: AWS.Organizations.Account[] = []
   do {
-    const listResult = await orgs
+    const listResult: AWS.Organizations.Types.ListAccountsResponse = await orgs
       .listAccounts({
         NextToken: nextToken,
       })
       .promise()
-
-    if (!listResult.Accounts) {
-      throw new Error('Unexpectedly no accounts')
+    if (listResult?.Accounts) {
+      allAccounts.push(...listResult.Accounts)
     }
-
-    allAccounts = [...allAccounts, ...listResult.Accounts]
     nextToken = listResult.NextToken
   } while (nextToken)
 
