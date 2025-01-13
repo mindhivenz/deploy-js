@@ -38,15 +38,27 @@ const listAccounts = once(async () => {
     credentials: master,
     region: 'us-east-1',
   })
-  const listResult = await orgs.listAccounts().promise()
-  if (listResult.NextToken) {
-    throw new Error('Not implemented yet: handling paginated results')
-  }
-  const accounts = listResult.Accounts
-  if (!accounts) {
+  let nextToken = undefined
+  let allAccounts = []
+  do {
+    const listResult = await orgs
+      .listAccounts({
+        NextToken: nextToken,
+      })
+      .promise()
+
+    if (!listResult.Accounts) {
+      throw new Error('Unexpectedly no accounts')
+    }
+
+    allAccounts = [...allAccounts, ...listResult.Accounts]
+    nextToken = listResult.NextToken
+  } while (nextToken)
+
+  if (!allAccounts) {
     throw new Error('listAccounts unexpectedly did not return Accounts')
   }
-  return accounts
+  return allAccounts
 })
 
 export const resolveAccount = async (options: IOptions) => {
