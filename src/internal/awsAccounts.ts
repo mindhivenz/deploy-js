@@ -38,8 +38,8 @@ const listAccounts = once(async () => {
     credentials: master,
     region: 'us-east-1',
   })
-  let nextToken = undefined
-  let allAccounts: AWS.Organizations.Account[] = []
+  let nextToken
+  const allAccounts: AWS.Organizations.Account[] = []
   do {
     const listResult: AWS.Organizations.Types.ListAccountsResponse = await orgs
       .listAccounts({
