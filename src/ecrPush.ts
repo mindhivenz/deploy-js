@@ -1,9 +1,9 @@
 import log from 'fancy-log'
-import PluginError from 'plugin-error'
 import awsCredentialsEnv from './awsCredentialsEnv'
 import { highlight } from './colors'
 import ecrImageRepo from './ecrImageRepo'
 import execFile from './execFile'
+import gitBranch from './gitBranch'
 import gitHash from './gitHash'
 import { IRepoHostOptions } from './internal/ecr'
 import setEcrCredentialHelper from './setEcrCredentialHelper'
@@ -19,7 +19,7 @@ interface IOptions extends IRepoHostOptions {
 export default async ({
   localImageTag,
   repoName,
-  remoteImageTag = 'latest',
+  remoteImageTag = '',
   tagWithGitHash = false,
   gitRepoPath,
   ...repoHostOptions
@@ -28,34 +28,26 @@ export default async ({
   if (!process.env.CI) {
     await setEcrCredentialHelper(repoHostOptions)
   }
-  const tags = [remoteImageTag]
+  const tags = []
   const awsEnv = await awsCredentialsEnv(repoHostOptions)
+
+  if (remoteImageTag) {
+    tags.push(remoteImageTag)
+  }
+
+  const branch = await gitBranch(gitRepoPath, { gitUpToDate: true })
+  if (['master', 'main', 'production'].includes(branch)) {
+    tags.push("latest")
+  } else {
+    tags.push(branch.replace(/[^a-zA-Z0-9-_.]/g, '_').substring(0, 128))
+  }
+
   if (tagWithGitHash) {
-    const hash = await gitHash(gitRepoPath, { gitUpToDate: true })
-    const hashTag =
-      remoteImageTag === 'latest' ? hash : `${remoteImageTag}-${hash}`
-    const { exitCode } = await execFile(
-      'docker',
-      ['manifest', 'inspect', `${repo}:${hashTag}`],
-      {
-        env: {
-          ...process.env,
-          ...awsEnv,
-        },
-        okExitCodes: [0, 1],
-      },
-    )
-    if (exitCode === 0) {
-      throw new PluginError(
-        '@mindhive/deploy/ecrPush',
-        `There is already an image with git hashtag: ${highlight(
-          `${repo}:${hashTag}`,
-        )}`,
-      )
-    }
-    // Put hashTag first to ensure if remoteImageTag is added, then the git hash has to as well
+    const hashTag = await gitHash(gitRepoPath, { gitUpToDate: true })
+    // Put hashTag first to ensure if latest is added, then the git hash is already ther
     tags.splice(0, 0, hashTag)
   }
+
   for (const tag of tags) {
     await execFile('docker', ['tag', localImageTag, `${repo}:${tag}`])
     await execFile('docker', ['push', `${repo}:${tag}`], {

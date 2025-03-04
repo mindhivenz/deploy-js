@@ -14,15 +14,14 @@ export default async (
       pluginName: '@mindhive/deploy/gitHash',
     })
   }
-  const { stdOut: hashOut } = await execFile(
+  const { stdOut: branchOut } = await execFile(
     'git',
-    ['rev-parse', '--short', 'HEAD'],
+    ['rev-parse', '--abbrev-ref', 'HEAD'],
     {
       cwd: repoPath,
       captureOutput: true,
     },
   )
-  const parts = ['git', hashOut.trim()]
 
-  return parts.join('-')
+  return branchOut.trim()
 }
