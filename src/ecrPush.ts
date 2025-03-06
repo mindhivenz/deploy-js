@@ -44,7 +44,24 @@ export default async ({
 
   if (tagWithGitHash) {
     const hashTag = await gitHash(gitRepoPath, { gitUpToDate: true })
-    // Put hashTag first to ensure if latest is added, then the git hash is already ther
+    const { exitCode } = await execFile(
+      'docker',
+      ['manifest', 'inspect', `${repo}:${hashTag}`],
+      {
+        env: {
+          ...process.env,
+          ...awsEnv,
+        },
+        okExitCodes: [0, 1],
+      },
+    )
+    if (exitCode === 0) {
+      log(`There is already an image with git hashtag: ${highlight(
+        `${repo}:${hashTag}`,
+      )}`,
+      )
+    }
+    // Put hashTag first to ensure if latest is added, then the git hash is already there
     tags.splice(0, 0, hashTag)
   }
 
