@@ -73,8 +73,5 @@
     "constructs": {
       "optional": true
     }
-  },
-  "scripts": {
-    "build": "yarn install; npx tsc -p src/tsconfig.json --outDir dist; cp -r dist/*"
   }
 }
