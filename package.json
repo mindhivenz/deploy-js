@@ -75,6 +75,6 @@
     }
   },
   "scripts": {
-    "build": "yarn install; npx tsc -p src/tsconfig.json --outDir dist; cp -r dist/* ."
+    "build": "yarn install; npx tsc -p src/tsconfig.json --outDir dist; cp -r dist/* .; cp -r src/cfn/* .; cp -r script/* ."
   }
 }
