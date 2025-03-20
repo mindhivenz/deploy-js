@@ -14,6 +14,8 @@ interface IOptions extends IRepoHostOptions {
   remoteImageTag?: string
   tagWithGitHash?: boolean
   gitRepoPath?: string
+  pushLatest?: boolean
+  dryRun?: boolean
 }
 
 export default async ({
@@ -22,8 +24,13 @@ export default async ({
   remoteImageTag = '',
   tagWithGitHash = false,
   gitRepoPath,
+  pushLatest = true,
+  dryRun = false,
   ...repoHostOptions
 }: IOptions) => {
+  if (dryRun) {
+    log("Running a dryrun")
+  }
   const repo = await ecrImageRepo({ name: repoName, ...repoHostOptions })
   if (!process.env.CI) {
     await setEcrCredentialHelper(repoHostOptions)
@@ -36,10 +43,10 @@ export default async ({
   }
 
   const branch = await gitBranch(gitRepoPath, { gitUpToDate: true })
-  if (['master', 'main', 'production'].includes(branch)) {
+  if (pushLatest && ['master', 'main', 'production'].includes(branch)) {
     tags.push("latest")
   } else {
-    tags.push(branch.replace(/[^a-zA-Z0-9-_.]/g, '_').substring(0, 128))
+    tags.push(`ci-${branch.replace(/[^a-zA-Z0-9-_.]/g, '_').substring(0, 125)}`)
   }
 
   if (tagWithGitHash) {
@@ -67,13 +74,17 @@ export default async ({
 
   for (const tag of tags) {
     await execFile('docker', ['tag', localImageTag, `${repo}:${tag}`])
-    await execFile('docker', ['push', `${repo}:${tag}`], {
-      env: {
-        ...process.env,
-        ...awsEnv,
-      },
-      pipeOutput: true,
-    })
+    if (dryRun) {
+      log(`Dryrun, would've pushed: ${repo}:${tag}`)
+    } else {
+      await execFile('docker', ['push', `${repo}:${tag}`], {
+        env: {
+          ...process.env,
+          ...awsEnv,
+        },
+        pipeOutput: true,
+      })
+    }
   }
   const conciseRemotes = tags
     .map((tag, i) => highlight(i === 0 ? `${repo}:${tag}` : `:${tag}`))
