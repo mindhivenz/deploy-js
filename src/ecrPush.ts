@@ -29,7 +29,7 @@ export default async ({
   ...repoHostOptions
 }: IOptions) => {
   if (dryRun) {
-    log("Running a dryrun")
+    log("Running in dry run mode")
   }
   const repo = await ecrImageRepo({ name: repoName, ...repoHostOptions })
   if (!process.env.CI) {
@@ -75,7 +75,7 @@ export default async ({
   for (const tag of tags) {
     await execFile('docker', ['tag', localImageTag, `${repo}:${tag}`])
     if (dryRun) {
-      log(`Dryrun, would've pushed: ${repo}:${tag}`)
+      log(`Run in dry run mode, would have pushed: ${repo}:${tag}`)
     } else {
       await execFile('docker', ['push', `${repo}:${tag}`], {
         env: {
