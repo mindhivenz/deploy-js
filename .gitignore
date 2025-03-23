@@ -1,0 +1,8 @@
+node_modules
+npm-debug.log
+yarn-error.log
+dist/
+/.idea/workspace.xml
+/.idea/libraries/
+/.idea/markdown-navigator*
+/.idea/aws.xml
