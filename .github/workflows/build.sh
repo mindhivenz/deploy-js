@@ -27,6 +27,7 @@ else
   git checkout -b $release_branch release
 fi
 
+echo "wtf"
 # exit
 
 # # Make dist
