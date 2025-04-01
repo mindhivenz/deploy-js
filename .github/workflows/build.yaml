@@ -12,9 +12,6 @@ permissions:
 jobs:
   run_unit_tests:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: grader
 
     steps:
       - uses: actions/checkout@v4
