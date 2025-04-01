@@ -1,12 +1,11 @@
 #!/bin/bash
 
-# Function to display usage information
 usage() {
   echo "Usage: $0 <tag> [--push]"
   exit 1
 }
 
-# Check for at least one argument
+# Ensure one or more arguments
 if [[ $# -lt 1 ]]; then
   usage
 fi
@@ -15,17 +14,16 @@ fi
 TAG=""
 PUSH=false
 
-# Loop through arguments
+# Parse Args
 while [[ $# -gt 0 ]]; do
   case "$1" in
   --push)
     PUSH=true
-    shift # Remove --push from arguments
+    shift
     ;;
   *)
-    # Assume it's the tag
     TAG="$1"
-    shift # Remove tag from arguments
+    shift
     ;;
   esac
 done
@@ -42,11 +40,13 @@ TAG="${TAG#v}"
 echo "Tag: $TAG"
 echo "Push: $PUSH"
 
+# Set branches
 current_branch=$(git branch --show-current)
 echo "Current branch: $current_branch"
-
 release_branch="release/$current_branch"
 echo "Release branch: $release_branch"
+
+# Create version change on current branch
 
 yarn version --no-git-tag-version --new-version $TAG
 
@@ -60,6 +60,8 @@ else
   echo "Would push"
 fi
 
+# Create version change and tag on release branch
+
 git checkout $release_branch
 yarn version --new-version $TAG
 
@@ -69,5 +71,3 @@ if [ "$push" = true ]; then
 else
   echo "Would push $TAG"
 fi
-
-git ls-remote --tags origin

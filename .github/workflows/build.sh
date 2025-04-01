@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Parse Args
 for arg in "$@"; do
   if [ "$arg" == "--push" ]; then
@@ -5,17 +7,20 @@ for arg in "$@"; do
   fi
 done
 
-#  Set release branch
-current_branch=$(git branch --show-current)
+# Display results
+echo "Push: $PUSH"
 
+# Set branches
+current_branch=$(git branch --show-current)
+echo "Current branch: $current_branch"
 release_branch=release/${current_branch}
+echo "Release branch: $release_branch"
 
 # Create dist
 mhd dist
 cp package.json dist/
 
 # Checkout the release branch
-
 if git show-ref --verify --quiet refs/heads/$release_branch; then
   echo "Checking out existing $release_branch."
   git checkout $release_branch
@@ -25,7 +30,7 @@ else
   git checkout -b $release_branch release/master
 fi
 
-# Make dist
+# Clear root dir and move dist to root
 find . \
   -o -path 'dist' -prune \
   -o -name '.gitignore' -prune \
@@ -39,6 +44,7 @@ mv dist/* .
 git add -A
 git commit -m "Release"
 
+# Push commit
 if [ "$push" = true ]; then
   echo "Pushing to origin/$release_branch"
   git push origin/$release_branch
