@@ -25,20 +25,17 @@ else
   git checkout -b $release_branch release/master
 fi
 
-echo "wtf"
-# exit
+# Make dist
+find . -mindepth 1 -maxdepth 1 ! -name 'dist' ! -name '.gitignore' ! -name 'node_modules' ! -name 'deploy/node_modules' ! -name '.git' -exec rm -rf {} +
+mv dist/* .
 
-# # Make dist
-# find . -mindepth 1 -maxdepth 1 ! -name 'dist' ! -name '.gitignore' ! -name 'node_modules' ! -name 'deploy/node_modules' ! -name '.git' -exec rm -rf {} +
-# mv dist/* .
+# Make commit
+git add -A
+git commit -m "Release"
 
-# # Make commit
-# git add -A
-# git commit -m "Release"
-
-# if [ "$push" = true ]; then
-#   echo "Pushing to origin/$$release_branch"
-#   git push origin/$$release_branch
-# else
-#   echo "Would push to origin/$$release_branch"
-# fi
+if [ "$push" = true ]; then
+  echo "Pushing to origin/$$release_branch"
+  git push origin/$$release_branch
+else
+  echo "Would push to origin/$$release_branch"
+fi
