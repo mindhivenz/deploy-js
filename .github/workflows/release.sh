@@ -55,7 +55,7 @@ yarn version --no-git-tag-version --new-version $TAG
 git add package.json
 git commit -m "v$TAG"
 
-if [ "$push" = true ]; then
+if [ "$PUSH" = true ]; then
   echo "Pushing to origin"
   git push origin
 else
@@ -67,7 +67,7 @@ fi
 git checkout $release_branch
 yarn version --new-version $TAG
 
-if [ "$push" = true ]; then
+if [ "$PUSH" = true ]; then
   echo "Pushing tag"
   git push origin $TAG
 else

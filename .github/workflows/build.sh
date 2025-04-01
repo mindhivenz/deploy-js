@@ -2,11 +2,22 @@
 
 set -eux
 
+usage() {
+  echo "Usage: $0 [--push]"
+  exit 1
+}
+
+# Initialize variables
+PUSH=false
+
 # Parse Args
-for arg in "$@"; do
-  if [ "$arg" == "--push" ]; then
-    push=true
-  fi
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+  --push)
+    PUSH=true
+    shift
+    ;;
+  esac
 done
 
 # Display results
@@ -47,7 +58,7 @@ git add -A
 git commit -m "Release"
 
 # Push commit
-if [ "$push" = true ]; then
+if [ "$PUSH" = true ]; then
   echo "Pushing to origin/$release_branch"
   git push origin/$release_branch
 else
