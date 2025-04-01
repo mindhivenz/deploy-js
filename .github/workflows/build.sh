@@ -41,6 +41,7 @@ if git show-ref --verify --quiet refs/heads/$release_branch; then
   git checkout $release_branch
 else
   echo "Creating and checking out $release_branch from release."
+  git fetch origin release/master:release/master
   git checkout -b $release_branch release/master
 fi
 
