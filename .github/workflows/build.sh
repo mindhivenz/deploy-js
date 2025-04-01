@@ -17,7 +17,7 @@ release_branch=release/${current_branch}
 echo "Release branch: $release_branch"
 
 # Create dist
-mhd dist
+node_modules/.bin/gulp dist
 cp package.json dist/
 
 # Checkout the release branch
