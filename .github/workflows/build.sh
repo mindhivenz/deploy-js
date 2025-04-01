@@ -26,7 +26,13 @@ else
 fi
 
 # Make dist
-find . -mindepth 1 -maxdepth 1 ! -name 'dist' ! -name '.gitignore' ! -name 'node_modules' ! -name 'deploy/node_modules' ! -name '.git' -exec rm -rf {} +
+find . \
+  -o -path 'dist' -prune \
+  -o -name '.gitignore' -prune \
+  -o -path 'node_modules' -prune \
+  -o -path 'deploy/node_modules' -prune \
+  -o -name '.git' -prune \
+  -exec rm -rf {} +
 mv dist/* .
 
 # Make commit
