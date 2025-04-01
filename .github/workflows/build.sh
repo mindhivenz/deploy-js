@@ -6,7 +6,7 @@ cp package.json dist/
 
 git checkout release
 
-find . -mindepth 1 -maxdepth 1 ! -name 'dist' ! -name '.gitignore' ! -name '**node_modules' ! -name '.git' -exec rm -rf {} +
+find . -mindepth 1 -maxdepth 1 ! -name 'dist' ! -name '.gitignore' ! -name 'node_modules' ! -name 'deploy/node_modules' ! -name '.git' -exec rm -rf {} +
 
 mv dist/* .
 
