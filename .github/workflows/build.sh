@@ -33,6 +33,8 @@ echo "Release branch: $release_branch"
 script/mhd dist
 cp package.json dist/
 
+echo $(git diff)
+
 # Checkout the release branch
 if git show-ref --verify --quiet refs/heads/$release_branch; then
   echo "Checking out existing $release_branch."
@@ -52,8 +54,6 @@ find . \
   -o -name '.git' -prune \
   -exec rm -rf {} +
 mv dist/* .
-
-echo $(git diff)
 
 # Make commit
 git add -A
