@@ -1,0 +1,49 @@
+# Exercise the unit tests
+
+name: Build deploy-js dist
+
+on:
+  workflow_dispatch: {}
+  push: {}
+
+permissions:
+  contents: read
+
+jobs:
+  run_unit_tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: grader
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v4
+        id: yarn-cache
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install node dependencies
+        working-directory: deploy
+        run: |
+          corepack enable
+          yarn install --immutable --inline-builds
+
+      - name: Run build
+        run: |
+          bash ${{ github.workspace }}.github/workflows/build.sh
