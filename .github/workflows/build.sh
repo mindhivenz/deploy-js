@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -eux
+
 # Parse Args
 for arg in "$@"; do
   if [ "$arg" == "--push" ]; then

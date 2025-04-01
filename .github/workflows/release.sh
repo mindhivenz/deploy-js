@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -eux
+
 usage() {
   echo "Usage: $0 <tag> [--push]"
   exit 1
