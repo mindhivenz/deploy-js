@@ -19,7 +19,7 @@ release_branch=release/${current_branch}
 echo "Release branch: $release_branch"
 
 # Create dist
-deploy/node_modules/.bin/gulp dist
+node_modules/.bin/gulp dist
 cp package.json dist/
 
 # Checkout the release branch

@@ -36,10 +36,10 @@ jobs:
             ${{ runner.os }}-yarn-
 
       - name: Install node dependencies
-        working-directory: deploy
         run: |
           corepack enable
           yarn install --immutable --inline-builds
+          yarn install --immutable --inline-builds --cwd deploy
 
       - name: Run build
         run: |
