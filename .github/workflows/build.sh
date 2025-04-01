@@ -1,16 +1,36 @@
-# Build
+for arg in "$@"; do
+  if [ "$arg" == "--dry-run" ]; then
+    dry_run=true
+  fi
+done
+
+# Create dist
 
 mhd dist
-
 cp package.json dist/
 
-git checkout release
+#  Checkout release branch
 
+current_branch=$(git branch --show-current)
+if [ "$current_branch" == "master" ]; then
+  release_branch=release
+else
+  release_branch=release/${current_branch}
+fi
+
+git checkout -b ${release_branch}
+
+# Make dist
 find . -mindepth 1 -maxdepth 1 ! -name 'dist' ! -name '.gitignore' ! -name 'node_modules' ! -name 'deploy/node_modules' ! -name '.git' -exec rm -rf {} +
-
 mv dist/* .
 
+# Make commit
 git add -A
-git commit -m "Release ${TAG_VERSION}"
+git commit -m "Release"
 
-# git push origin/release
+if [ "$dry_run" = true ]; then
+  echo "Would push to origin/$release_branch"
+else
+  echo "Pushing to origin/$release_branch"
+  git push origin/$release_branch
+fi
