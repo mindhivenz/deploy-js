@@ -48,10 +48,10 @@ echo "Current branch: $current_branch"
 release_branch="release/$current_branch"
 echo "Release branch: $release_branch"
 
-yarn version --no-git-tag-version --new-version $TAG_VERSION
+yarn version --no-git-tag-version --new-version $TAG
 
 git add package.json
-git commit -m "v$TAG_VERSION"
+git commit -m "v$TAG"
 
 if [ "$push" = true ]; then
   echo "Pushing to origin"
@@ -61,13 +61,13 @@ else
 fi
 
 git checkout $release_branch
-yarn version --new-version $TAG_VERSION
+yarn version --new-version $TAG
 
 if [ "$push" = true ]; then
   echo "Pushing tag"
-  git push origin $TAG_VERSION
+  git push origin $TAG
 else
-  echo "Would push $TAG_VERSION"
+  echo "Would push $TAG"
 fi
 
 git ls-remote --tags origin
