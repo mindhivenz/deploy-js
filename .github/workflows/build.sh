@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# set -eux
+set -eux
 
 usage() {
   echo "Usage: $0 [--push]"
