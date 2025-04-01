@@ -48,6 +48,10 @@ echo "Current branch: $current_branch"
 release_branch="release/$current_branch"
 echo "Release branch: $release_branch"
 
+# Change directory to the project root
+project_root=$(git rev-parse --show-toplevel)
+cd "$project_root"
+
 # Create version change on current branch
 
 yarn version --no-git-tag-version --new-version $TAG
