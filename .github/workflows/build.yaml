@@ -40,6 +40,10 @@ jobs:
         run: |
           corepack enable
           yarn install --immutable --inline-builds
+      
+      - name: Add mhd to path
+        run: |
+          PATH=$PATH:${{ github.workspace }}/script/mhd
 
       - name: Run build
         run: |
