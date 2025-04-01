@@ -53,6 +53,8 @@ find . \
   -exec rm -rf {} +
 mv dist/* .
 
+echo $(git diff)
+
 # Make commit
 git add -A
 git commit -m "Release"
