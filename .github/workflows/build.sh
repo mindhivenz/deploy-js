@@ -7,11 +7,8 @@ done
 
 #  Set release branch
 current_branch=$(git branch --show-current)
-if [ "$current_branch" == "master" ]; then
-  release_branch=release
-else
-  release_branch=release/${current_branch}
-fi
+
+release_branch=release/${current_branch}
 
 # Create dist
 mhd dist
@@ -25,7 +22,7 @@ if git show-ref --verify --quiet refs/heads/$release_branch; then
 else
   echo "Creating and checking out $release_branch from release."
   git checkout release
-  git checkout -b $release_branch
+  git checkout -b $release_branch release/master
 fi
 
 echo "wtf"
