@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eux
+# set -eux
 
 usage() {
   echo "Usage: $0 [--push]"
@@ -47,11 +47,11 @@ fi
 
 # Clear root dir and move dist to root
 find . \
-  \( -path 'dist' -prune \) -o \
-  \( -name '.gitignore' -prune \) -o \
-  \( -path 'node_modules' -prune \) -o \
-  \( -path 'deploy/node_modules' -prune \) -o \
-  \( -name '.git' -prune \) -o \
+  -o -path 'dist' -prune \
+  -o -name '.gitignore' -prune \
+  -o -path 'node_modules' -prune \
+  -o -path 'deploy/node_modules' -prune \
+  -o -name '.git' -prune \
   -exec rm -rf {} +
 mv dist/* .
 
