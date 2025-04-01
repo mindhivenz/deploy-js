@@ -12,6 +12,6 @@ git commit -m "v$TAG_VERSION"
 git checkout release
 yarn version --new-version $TAG_VERSION
 
-git push origin $TAG_VERSION
+# git push origin $TAG_VERSION
 
 git ls-remote --tags origin
