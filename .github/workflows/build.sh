@@ -29,12 +29,8 @@ echo "Current branch: $current_branch"
 release_branch=release/${current_branch}
 echo "Release branch: $release_branch"
 
-# Change directory to the project root
-project_root=$(git rev-parse --show-toplevel)
-cd "$project_root"
-
 # Create dist
-node_modules/.bin/gulp dist
+script/mhd dist
 cp package.json dist/
 
 # Checkout the release branch
