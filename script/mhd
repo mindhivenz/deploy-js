@@ -21,13 +21,12 @@ fi
 if [[ $gulp_args =~ ^open:.* ]]; then
   vault_opts="--duration=1h"
 fi
-# shellcheck disable=SC2086
-TS_NODE_TRANSPILE_ONLY=true
-MHD_ARGS="$mhd_args"
 
 if [ "$CI" = "true" ]; then
-  node_modules/.bin/gulp $gulp_args
+  # shellcheck disable=SC2086
+  TS_NODE_TRANSPILE_ONLY=true MHD_ARGS="$mhd_args" node_modules/.bin/gulp $gulp_args
 else
-  aws-vault exec $vault_opts mindhive-ops -- \
+  # shellcheck disable=SC2086
+  TS_NODE_TRANSPILE_ONLY=true MHD_ARGS="$mhd_args" aws-vault exec $vault_opts mindhive-ops -- \
     node_modules/.bin/gulp $gulp_args
 fi
