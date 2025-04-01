@@ -34,8 +34,8 @@ git add -A
 git commit -m "Release"
 
 if [ "$push" = true ]; then
-  echo "Pushing to origin/$$release_branch"
-  git push origin/$$release_branch
+  echo "Pushing to origin/$release_branch"
+  git push origin/$release_branch
 else
-  echo "Would push to origin/$$release_branch"
+  echo "Would push to origin/$release_branch"
 fi
