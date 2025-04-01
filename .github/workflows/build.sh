@@ -1,22 +1,21 @@
+# Parse Args
 for arg in "$@"; do
   if [ "$arg" == "--push" ]; then
     push=true
   fi
 done
 
-# Create dist
-
-mhd dist
-cp package.json dist/
-
-#  Checkout release branch
-
+#  Set release branch
 current_branch=$(git branch --show-current)
 if [ "$current_branch" == "master" ]; then
   release_branch=release
 else
   release_branch=release/${current_branch}
 fi
+
+# Create dist
+mhd dist
+cp package.json dist/
 
 # Checkout the release branch
 if git show-ref --verify --quiet refs/heads/$release_branch; then
