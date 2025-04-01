@@ -1,6 +1,6 @@
 for arg in "$@"; do
-  if [ "$arg" == "--dry-run" ]; then
-    dry_run=true
+  if [ "$arg" == "--push" ]; then
+    push=true
   fi
 done
 
@@ -28,9 +28,9 @@ mv dist/* .
 git add -A
 git commit -m "Release"
 
-if [ "$dry_run" = true ]; then
-  echo "Would push to origin/$release_branch"
-else
+if [ "$push" = true ]; then
   echo "Pushing to origin/$release_branch"
   git push origin/$release_branch
+else
+  echo "Would push to origin/$release_branch"
 fi
