@@ -4,7 +4,8 @@ name: Build deploy-js dist
 
 on:
   workflow_dispatch: {}
-  push: {}
+  push:
+    branches-ignore: release/*
 
 permissions:
   contents: read
