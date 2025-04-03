@@ -62,7 +62,7 @@ git commit -m "Release"
 # Push commit
 if [ "$PUSH" = true ]; then
   echo "Pushing $release_branch"
-  git push --set-upstream origin $release_branch
+  git push origin -u HEAD
 else
   echo "Would push $release_branch"
 fi
