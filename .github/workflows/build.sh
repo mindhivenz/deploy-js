@@ -47,11 +47,11 @@ fi
 
 # Clear root dir and move dist to root
 find . \
-  -o -path 'dist' -prune \
-  -o -name '.gitignore' -prune \
-  -o -path 'node_modules' -prune \
-  -o -path 'deploy/node_modules' -prune \
-  -o -name '.git' -prune \
+  -type f \
+  -not \( -path '*/dist/*' \
+  -o -name '.gitignore' \
+  -o -path '*/node_modules/*' \
+  -o -path '*/.git/*' \) \
   -exec rm -rf {} +
 mv dist/* .
 
