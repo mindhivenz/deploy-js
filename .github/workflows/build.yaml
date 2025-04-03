@@ -49,5 +49,7 @@ jobs:
           yarn install --immutable --inline-builds --cwd deploy
 
       - name: Run build
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           bash ${{ github.workspace }}/.github/workflows/build.sh --push
