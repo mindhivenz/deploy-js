@@ -31,7 +31,7 @@ echo "Release branch: $release_branch"
 
 # Create dist
 script/mhd dist
-cp package.json dist/
+mv package.json dist/
 
 echo $(git diff)
 
