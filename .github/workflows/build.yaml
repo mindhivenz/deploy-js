@@ -50,4 +50,4 @@ jobs:
 
       - name: Run build
         run: |
-          bash ${{ github.workspace }}/.github/workflows/build.sh
+          bash ${{ github.workspace }}/.github/workflows/build.sh --push
