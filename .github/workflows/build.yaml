@@ -21,7 +21,7 @@ jobs:
 
       - name: debug
         run:
-          git branch
+          git branch -a
 
       - name: Setup git
         run: |
