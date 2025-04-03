@@ -61,8 +61,8 @@ git commit -m "Release"
 
 # Push commit
 if [ "$PUSH" = true ]; then
-  echo "Pushing to origin $release_branch"
-  git push origin $release_branch
+  echo "Pushing $release_branch"
+  git push origin
 else
-  echo "Would push to origin $release_branch"
+  echo "Would push $release_branch"
 fi
