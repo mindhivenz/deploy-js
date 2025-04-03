@@ -28,5 +28,3 @@ export default (options: IRegionalProjOptions) => async () => {
     : cloudFormation.createStack(stackOptions)
   await request.promise()
 }
-
-// Change
