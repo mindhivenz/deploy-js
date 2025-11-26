@@ -5,6 +5,7 @@ import { commandLine, highlight } from '../colors'
 import {
   accessRoleSessionName,
   accessTargetRoleArn,
+  accessTargetRoleName,
   resolveAccount,
 } from './awsAccounts'
 import './awsConfig'
@@ -14,10 +15,16 @@ import {
   MAX_CHAINED_ROLE_SESSION_SECONDS,
   MAX_SESSION_SECONDS,
 } from './awsSession'
+import { IUserOptions } from '../awsUserOptions'
 
 export class ProjCredentials extends AWS.ChainableTemporaryCredentials {
   constructor(private readonly projOptions: IProjOptions) {
     super({ masterCredentials: master, stsConfig: {} })
+  }
+
+  private _getUserRole(): string {
+    const role = process.env.MHD_ROLE ?? accessTargetRoleName
+    return role
   }
 
   public refresh(callback: (err: AWS.AWSError) => void): void {
@@ -37,7 +44,7 @@ export class ProjCredentials extends AWS.ChainableTemporaryCredentials {
       return
     }
     const account = await resolveAccount(this.projOptions)
-    params.RoleArn = accessTargetRoleArn(account.Id!) // TODO This defaults to Ops role, we need to change to take a user specific default role. Can't pull from cloud-master as that would be cyclic
+    params.RoleArn = accessTargetRoleArn(account.Id!, this._getUserRole()) // TODO This defaults to Ops role, we need to change to take a user specific default role. Can't pull from cloud-master as that would be cyclic
     params.RoleSessionName = accessRoleSessionName({
       accountName: account.Name!,
     })
@@ -67,7 +74,7 @@ const credentialsFactory = (options: IProjOptions): AWS.Credentials =>
     ? new AWS.EC2MetadataCredentials()
     : process.env.SSM_PROJ_CREDENTIALS
     ? new AWS.SharedIniFileCredentials()
-    : new ProjCredentials(options)
+    : new ProjCredentials(projPptions, userOptions)
 
 export const projCredentialsFactory = memoize(
   credentialsFactory,
