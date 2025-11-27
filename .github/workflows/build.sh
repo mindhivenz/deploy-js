@@ -54,6 +54,8 @@ find . \
 mv dist/* .
 
 
+echo $(git diff)
+
 if git diff-index --quiet HEAD --; then
     echo "No changes to commit."
     exit 0
