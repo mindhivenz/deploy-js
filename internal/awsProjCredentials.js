@@ -8,6 +8,7 @@ const aws_sdk_1 = __importDefault(require("aws-sdk"));
 const fancy_log_1 = __importDefault(require("fancy-log"));
 const memoize_1 = __importDefault(require("lodash/memoize"));
 const colors_1 = require("../colors");
+const userRoleName_1 = require("../userRoleName");
 const awsAccounts_1 = require("./awsAccounts");
 require("./awsConfig");
 const awsMasterCredentials_1 = require("./awsMasterCredentials");
@@ -30,7 +31,7 @@ class ProjCredentials extends aws_sdk_1.default.ChainableTemporaryCredentials {
             return;
         }
         const account = await (0, awsAccounts_1.resolveAccount)(this.projOptions);
-        params.RoleArn = (0, awsAccounts_1.accessTargetRoleArn)(account.Id);
+        params.RoleArn = (0, awsAccounts_1.accessTargetRoleArn)(account.Id, userRoleName_1.userRoleName);
         params.RoleSessionName = (0, awsAccounts_1.accessRoleSessionName)({
             accountName: account.Name,
         });

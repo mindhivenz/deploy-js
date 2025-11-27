@@ -63,7 +63,7 @@ const resolveAccount = async (options) => {
 };
 exports.resolveAccount = resolveAccount;
 exports.accessTargetRoleName = 'ops';
-const accessTargetRoleArn = (accountId, roleName = exports.accessTargetRoleName) => `arn:aws:iam::${accountId}:role/${roleName}`;
+const accessTargetRoleArn = (accountId, roleName) => `arn:aws:iam::${accountId}:role/${roleName}`;
 exports.accessTargetRoleArn = accessTargetRoleArn;
 const accentuateAccountName = (name) => name.replace('production', 'PRODUCTION');
 const accessRoleSessionName = ({ accountName, devName, roleName, }) => {
