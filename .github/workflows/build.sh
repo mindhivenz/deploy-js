@@ -19,7 +19,6 @@ while [[ $# -gt 0 ]]; do
     ;;
   *)
     usage
-    shift
     ;;
   esac
 done
