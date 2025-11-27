@@ -58,6 +58,11 @@ find . \
   -exec rm -rf {} +
 mv dist/* .
 
+if git diff-index --quiet HEAD --; then
+    echo "No changes to commit."
+    exit 0
+fi
+
 # Make commit
 git add -A
 git commit -m "Release"
