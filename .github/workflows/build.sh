@@ -53,10 +53,7 @@ find . \
   -exec rm -rf {} +
 mv dist/* .
 
-
 echo $(git diff)
-
-echo "helloo"
 
 if git diff-index --quiet HEAD --; then
     echo "No changes to commit."
