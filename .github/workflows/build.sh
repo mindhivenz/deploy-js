@@ -33,11 +33,6 @@ echo "Release branch: $release_branch"
 script/mhd dist
 mv package.json dist/
 
-echo $(git diff)
-
-echo $(git show-ref)
-
-
 # Checkout the release branch
 if git show-ref --verify --quiet refs/remotes/origin/$release_branch; then
   echo "Checking out existing $release_branch."
@@ -58,7 +53,6 @@ find . \
   -exec rm -rf {} +
 mv dist/* .
 
-echo $(git diff)
 
 if git diff-index --quiet HEAD --; then
     echo "No changes to commit."
