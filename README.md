@@ -4,7 +4,7 @@
 
 To use a branch version of this package in a project:
 
-- Push branch to github to trigger build job
+- Push branch to GitHub to trigger build job
 - `build.sh` compiles the ts code and pushes to a new branch `release/<your_branch>`
 - Then in your project run:
 

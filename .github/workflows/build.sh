@@ -17,6 +17,10 @@ while [[ $# -gt 0 ]]; do
     PUSH=true
     shift
     ;;
+  *)
+    usage
+    shift
+    ;;
   esac
 done
 
@@ -53,7 +57,7 @@ find . \
   -exec rm -rf {} +
 mv dist/* .
 
-echo $(git diff)
+git diff
 
 if git diff-index --quiet HEAD --; then
     echo "No changes to commit."
