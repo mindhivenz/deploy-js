@@ -44,7 +44,7 @@ export class ProjCredentials extends AWS.ChainableTemporaryCredentials {
       return
     }
     const account = await resolveAccount(this.projOptions)
-    params.RoleArn = accessTargetRoleArn(account.Id!, this._getUserRole()) // TODO This defaults to Ops role, we need to change to take a user specific default role. Can't pull from cloud-master as that would be cyclic
+    params.RoleArn = accessTargetRoleArn(account.Id!, this._getUserRole())
     params.RoleSessionName = accessRoleSessionName({
       accountName: account.Name!,
     })
