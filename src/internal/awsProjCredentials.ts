@@ -15,7 +15,6 @@ import {
   MAX_CHAINED_ROLE_SESSION_SECONDS,
   MAX_SESSION_SECONDS,
 } from './awsSession'
-import { IUserOptions } from '../awsUserOptions'
 
 export class ProjCredentials extends AWS.ChainableTemporaryCredentials {
   constructor(private readonly projOptions: IProjOptions) {
@@ -23,8 +22,7 @@ export class ProjCredentials extends AWS.ChainableTemporaryCredentials {
   }
 
   private _getUserRole(): string {
-    const role = process.env.MHD_ROLE ?? accessTargetRoleName
-    return role
+    return process.env.MHD_ROLE ?? accessTargetRoleName
   }
 
   public refresh(callback: (err: AWS.AWSError) => void): void {
@@ -74,7 +72,7 @@ const credentialsFactory = (options: IProjOptions): AWS.Credentials =>
     ? new AWS.EC2MetadataCredentials()
     : process.env.SSM_PROJ_CREDENTIALS
     ? new AWS.SharedIniFileCredentials()
-    : new ProjCredentials(projPptions, userOptions)
+    : new ProjCredentials(options)
 
 export const projCredentialsFactory = memoize(
   credentialsFactory,
