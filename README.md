@@ -1,0 +1,23 @@
+# deploy-js
+
+## Branch Development
+
+To use a branch version of this package in a project:
+
+- Push branch to GitHub to trigger build job
+- `build.sh` compiles the ts code and pushes to a new branch `release/<your_branch>`
+- Then in your project run:
+
+``` bash
+yarn add git+ssh://git@github.com:mindhivenz/deploy-js.git#release/<your_branch>
+```
+
+The project's `package.json` should be updated with:
+
+``` json
+{
+  "dependencies": {
+    "@mindhive/deploy": "git+ssh://git@github.com:mindhivenz/deploy-js.git#release/<your_branch>"
+  }
+}
+```
