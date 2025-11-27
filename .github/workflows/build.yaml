@@ -20,9 +20,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: debug
-        run: git branch -a
-
       - name: Setup git
         run: |
           # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
