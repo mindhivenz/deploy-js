@@ -5,7 +5,8 @@ name: Build deploy-js dist
 on:
   workflow_dispatch: {}
   push:
-    branches-ignore: release/*
+    branches-ignore:
+      - release/*
 
 permissions:
   contents: write
@@ -20,8 +21,7 @@ jobs:
           fetch-depth: 0
 
       - name: debug
-        run:
-          git branch -a
+        run: git branch -a
 
       - name: Setup git
         run: |
