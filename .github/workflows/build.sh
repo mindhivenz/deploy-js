@@ -37,8 +37,9 @@ echo $(git diff)
 
 echo $(git show-ref)
 
+
 # Checkout the release branch
-if git show-ref --verify --quiet refs/heads/$release_branch; then
+if git show-ref --verify --quiet refs/remotes/origin/$release_branch; then
   echo "Checking out existing $release_branch."
   git checkout $release_branch
 else
