@@ -5,7 +5,7 @@
 set -e
 ancestor_dir=$(git rev-parse --show-toplevel)
 project_dir=${ancestor_dir%%-control}
-cd "${project_dir}/deploy" > /dev/null
+cd "${project_dir}/deploy" >/dev/null
 vault_opts=""
 mhd_args=""
 if [[ $# == 0 ]]; then
@@ -21,7 +21,12 @@ fi
 if [[ $gulp_args =~ ^open:.* ]]; then
   vault_opts="--duration=1h"
 fi
-# shellcheck disable=SC2086
-TS_NODE_TRANSPILE_ONLY=true MHD_ARGS="$mhd_args" \
-  aws-vault exec $vault_opts mindhive-ops -- \
-  node_modules/.bin/gulp $gulp_args
+
+if [ "$CI" = "true" ]; then
+  # shellcheck disable=SC2086
+  TS_NODE_TRANSPILE_ONLY=true MHD_ARGS="$mhd_args" node_modules/.bin/gulp $gulp_args
+else
+  # shellcheck disable=SC2086
+  TS_NODE_TRANSPILE_ONLY=true MHD_ARGS="$mhd_args" aws-vault exec $vault_opts mindhive-ops -- \
+    node_modules/.bin/gulp $gulp_args
+fi
