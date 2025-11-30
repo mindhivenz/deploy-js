@@ -28,7 +28,7 @@ export default ({ proj, stages, region }: IOptions) => {
           type: 'string',
         }),
       )
-      addAwsVaultProfile({
+      await addAwsVaultProfile({
         proj,
         stage,
         region,
@@ -58,7 +58,7 @@ export default ({ proj, stages, region }: IOptions) => {
           type: 'string',
         }),
       )
-      addAwsVaultProfile({
+      await addAwsVaultProfile({
         proj,
         stage,
         region,
