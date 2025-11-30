@@ -18,6 +18,7 @@ export interface IOptions {
   region?: string
   roleName: string
   devName?: string
+  profileName?: string
 }
 
 export const awsVaultProfile = async ({
@@ -26,14 +27,21 @@ export const awsVaultProfile = async ({
   region,
   roleName,
   devName,
+  profileName,
 }: IOptions): Promise<IResult> => {
-  const profileNameParts =
-    stage === 'dev' ? [stage] : stage === 'production' ? [proj] : [proj, stage]
-  if (roleName) {
-    profileNameParts.push(roleName)
+
+  let actualProfileName = profileName
+
+  if(!profileName){
+    const profileNameParts =
+      stage === 'dev' ? [stage] : stage === 'production' ? [proj] : [proj, stage]
+    if (roleName) {
+      profileNameParts.push(roleName)
+    }
+    actualProfileName = profileNameParts.join('-')
   }
-  const profileName = profileNameParts.join('-')
-  const header = `[profile ${profileName}]`
+  
+  const header = `[profile ${actualProfileName}]`
   const account = await resolveAccount({ proj, stage, devName })
   const iniProfile = [
     header,
@@ -49,7 +57,7 @@ export const awsVaultProfile = async ({
     iniProfile.push(`region = ${region}`)
   }
   return {
-    profileName,
+    profileName: actualProfileName,
     header,
     iniProfile: iniProfile.join('\n'),
   }
