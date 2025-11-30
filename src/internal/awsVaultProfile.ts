@@ -30,7 +30,7 @@ export const awsVaultProfile = async ({
   profileName,
 }: IOptions): Promise<IResult> => {
 
-  let actualProfileName = profileName
+  let actualProfileName: string
 
   if(!profileName){
     const profileNameParts =
@@ -39,6 +39,8 @@ export const awsVaultProfile = async ({
       profileNameParts.push(roleName)
     }
     actualProfileName = profileNameParts.join('-')
+  } else {
+    actualProfileName = profileName
   }
   
   const header = `[profile ${actualProfileName}]`

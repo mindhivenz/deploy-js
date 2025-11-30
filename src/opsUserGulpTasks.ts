@@ -57,8 +57,7 @@ export default ({ proj, stages, region }: IOptions) => {
             type: 'string',
           })
         )
-
-        addAwsVaultProfile({ proj, stage, region, roleName: userRoleName, profileName: args.profileName }),
+        addAwsVaultProfile({ proj, stage, region, roleName: userRoleName, profileName: args.profileName })
       }
     )
   }
