@@ -22,7 +22,7 @@ exports.default = ({ proj, stages, region }) => {
             const args = (0, args_1.parseArgs)(args_1.globalArgs.option('profile-name', {
                 type: 'string',
             }));
-            (0, addAwsVaultProfile_1.default)({
+            await (0, addAwsVaultProfile_1.default)({
                 proj,
                 stage,
                 region,
@@ -43,7 +43,7 @@ exports.default = ({ proj, stages, region }) => {
             const args = (0, args_1.parseArgs)(args_1.globalArgs.option('profile-name', {
                 type: 'string',
             }));
-            (0, addAwsVaultProfile_1.default)({
+            await (0, addAwsVaultProfile_1.default)({
                 proj,
                 stage,
                 region,
