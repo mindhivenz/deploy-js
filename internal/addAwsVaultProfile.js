@@ -26,7 +26,6 @@ const existingConfigContent = () => {
     }
 };
 exports.default = (options) => async () => {
-    (0, fancy_log_1.default)(`Adding profile for ${options.profileName}`);
     const { profileName, header, iniProfile } = await (0, awsVaultProfile_1.awsVaultProfile)(options);
     const config = existingConfigContent();
     if (config.includes(header)) {
