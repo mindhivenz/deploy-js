@@ -1,6 +1,6 @@
 {
-  "name": "@mindhivenz/js-deploy",
-  "version": "6.8.0",
+  "name": "@mindhivenz/deploy",
+  "version": "7.0.0",
   "license": "MIT",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
