@@ -1,5 +1,18 @@
 # deploy-js
 
+## GitHub Packages Authentication
+
+Create an `~/.npmrc` and add:
+```
+//npm.pkg.github.com/:_authToken=${GH_TOKEN}
+@mindhivenz:registry=https://npm.pkg.github.com/
+```
+
+Generate a token with:
+```
+gh auth refresh --scopes write:packages
+```
+
 ## Branch Development
 
 To use a branch version of this package in a project:
