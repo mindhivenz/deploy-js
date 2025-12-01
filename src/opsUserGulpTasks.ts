@@ -34,7 +34,7 @@ export default ({ proj, stages, region }: IOptions) => {
         region,
         roleName: userRoleName,
         profileName: args.profileName,
-      })
+      })()
     })
 
     task(
@@ -64,7 +64,7 @@ export default ({ proj, stages, region }: IOptions) => {
         region,
         roleName: userRoleName,
         profileName: args.profileName,
-      })
+      })()
     })
   }
 }
