@@ -16,7 +16,7 @@ export interface IOptions {
   proj: string
   stage: string
   region?: string
-  roleName?: string
+  roleName: string
   devName?: string
 }
 

@@ -3,6 +3,7 @@ import { task } from 'gulp'
 import devName from './devName'
 import addAwsVaultProfile from './internal/addAwsVaultProfile'
 import { toCopy } from './colors'
+import { userRoleName } from './userRoleName'
 import openAwsConsoleTask from './internal/openAwsConsoleTask'
 import { openManagedInstanceShellTask } from './internal/openManagedInstanceShellTask'
 
@@ -20,7 +21,10 @@ export default ({ proj, stages, region }: IOptions) => {
   stages.forEach((stage) => {
     task(`open:aws:${stage}`, openAwsConsoleTask({ proj, stage, region }))
 
-    task(`add:aws-vault:${stage}`, addAwsVaultProfile({ proj, stage, region }))
+    task(
+      `add:aws-vault:${stage}`,
+      addAwsVaultProfile({ proj, stage, region, roleName: userRoleName }),
+    )
 
     task(
       `open:shell:${stage}`,
@@ -37,6 +41,9 @@ export default ({ proj, stages, region }: IOptions) => {
     const stage = 'dev'
     task(`open:aws:${stage}`, openAwsConsoleTask({ proj, stage, region }))
 
-    task(`add:aws-vault:${stage}`, addAwsVaultProfile({ proj, stage, region }))
+    task(
+      `add:aws-vault:${stage}`,
+      addAwsVaultProfile({ proj, stage, region, roleName: userRoleName }),
+    )
   }
 }

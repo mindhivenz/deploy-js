@@ -1,7 +1,9 @@
 import AWS from 'aws-sdk'
 import log from 'fancy-log'
 import memoize from 'lodash/memoize'
+import { IProjOptions } from '../awsProjOptions'
 import { commandLine, highlight } from '../colors'
+import { userRoleName } from '../userRoleName'
 import {
   accessRoleSessionName,
   accessTargetRoleArn,
@@ -9,7 +11,6 @@ import {
 } from './awsAccounts'
 import './awsConfig'
 import { master, masterIsRole } from './awsMasterCredentials'
-import { IProjOptions } from '../awsProjOptions'
 import {
   MAX_CHAINED_ROLE_SESSION_SECONDS,
   MAX_SESSION_SECONDS,
@@ -37,7 +38,7 @@ export class ProjCredentials extends AWS.ChainableTemporaryCredentials {
       return
     }
     const account = await resolveAccount(this.projOptions)
-    params.RoleArn = accessTargetRoleArn(account.Id!)
+    params.RoleArn = accessTargetRoleArn(account.Id!, userRoleName)
     params.RoleSessionName = accessRoleSessionName({
       accountName: account.Name!,
     })
