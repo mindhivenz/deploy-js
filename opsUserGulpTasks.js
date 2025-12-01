@@ -18,18 +18,17 @@ exports.default = ({ proj, stages, region }) => {
     });
     stages.forEach((stage) => {
         (0, gulp_1.task)(`open:aws:${stage}`, (0, openAwsConsoleTask_1.default)({ proj, stage, region }));
-        (0, gulp_1.task)(`add:aws-vault:${stage}`, (done) => {
+        (0, gulp_1.task)(`add:aws-vault:${stage}`, async () => {
             const args = (0, args_1.parseArgs)(args_1.globalArgs.option('profile-name', {
                 type: 'string',
             }));
-            (0, addAwsVaultProfile_1.default)({
+            await (0, addAwsVaultProfile_1.default)({
                 proj,
                 stage,
                 region,
                 roleName: userRoleName_1.userRoleName,
                 profileName: args.profileName,
             });
-            done();
         });
         (0, gulp_1.task)(`open:shell:${stage}`, (0, openManagedInstanceShellTask_1.openManagedInstanceShellTask)({ proj, stage, region }));
         if (stage === 'production') {
@@ -40,18 +39,17 @@ exports.default = ({ proj, stages, region }) => {
     if (!stages.includes('dev')) {
         const stage = 'dev';
         (0, gulp_1.task)(`open:aws:${stage}`, (0, openAwsConsoleTask_1.default)({ proj, stage, region }));
-        (0, gulp_1.task)(`add:aws-vault:${stage}`, (done) => {
+        (0, gulp_1.task)(`add:aws-vault:${stage}`, async () => {
             const args = (0, args_1.parseArgs)(args_1.globalArgs.option('profile-name', {
                 type: 'string',
             }));
-            (0, addAwsVaultProfile_1.default)({
+            await (0, addAwsVaultProfile_1.default)({
                 proj,
                 stage,
                 region,
                 roleName: userRoleName_1.userRoleName,
                 profileName: args.profileName,
             });
-            done();
         });
     }
 };
