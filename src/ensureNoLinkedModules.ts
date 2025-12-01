@@ -6,7 +6,7 @@ import { promisify } from 'util'
 // REVISIT: linked modules OK if linked from same Git tree
 // REVISIT: should check that file: linked packages are in the same Git tree
 
-const pluginName = '@mindhive/deploy/ensureNoLinkedModules'
+const pluginName = '@mindhivenz/deploy/ensureNoLinkedModules'
 
 const readdirAsync = promisify(readdir)
 const lstatAsync = promisify(lstat)
@@ -14,7 +14,7 @@ const lstatAsync = promisify(lstat)
 const checkDir = async (dirPath: string) => {
   const filenames = await readdirAsync(dirPath)
   await Promise.all([
-    ...filenames.map(async f => {
+    ...filenames.map(async (f) => {
       const filePath = join(dirPath, f)
       const stat = await lstatAsync(filePath)
       if (stat.isSymbolicLink()) {
@@ -25,8 +25,8 @@ const checkDir = async (dirPath: string) => {
       }
     }),
     ...filenames
-      .filter(f => f.startsWith('@'))
-      .map(f => checkDir(join(dirPath, f))),
+      .filter((f) => f.startsWith('@'))
+      .map((f) => checkDir(join(dirPath, f))),
   ])
 }
 

@@ -30,7 +30,7 @@ The project's `package.json` should be updated with:
 ``` json
 {
   "dependencies": {
-    "@mindhive/deploy": "git+ssh://git@github.com:mindhivenz/deploy-js.git#release/<your_branch>"
+    "@mindhivenz/deploy": "git+ssh://git@github.com:mindhivenz/deploy-js.git#release/<your_branch>"
   }
 }
 ```

@@ -15,7 +15,7 @@ const gitUserName = once(() => {
   const name = camelCase(execResult.stdout)
   if (!name) {
     throw new PluginError(
-      '@mindhive/deploy/devName',
+      '@mindhivenz/deploy/devName',
       `You need to set your git username. Such as: ${commandLine(
         'git config --global user.name "John Doe"',
       )}`,

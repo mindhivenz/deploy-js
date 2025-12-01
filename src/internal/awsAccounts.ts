@@ -6,7 +6,7 @@ import defaultDevName from '../devName'
 import publicStageName from '../publicStageName'
 import { master } from './awsMasterCredentials'
 
-const pluginName = '@mindhive/deploy/awsAccounts'
+const pluginName = '@mindhivenz/deploy/awsAccounts'
 
 interface IOptions {
   proj: string

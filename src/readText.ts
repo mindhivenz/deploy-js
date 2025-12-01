@@ -10,7 +10,7 @@ export interface IOptions {
 
 export default (
   path: string,
-  { taskNameToCreate, pluginName = '@mindhive/deploy' }: IOptions = {},
+  { taskNameToCreate, pluginName = '@mindhivenz/deploy' }: IOptions = {},
 ) => {
   try {
     return fs.readFileSync(path, 'utf8').trim()
