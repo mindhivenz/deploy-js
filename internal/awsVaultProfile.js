@@ -3,13 +3,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.awsVaultProfile = void 0;
 const awsAccounts_1 = require("./awsAccounts");
 const mindhiveOpsAwsProfileName = `mindhive-ops`;
-const awsVaultProfile = async ({ proj, stage, region, roleName, devName, }) => {
-    const profileNameParts = stage === 'dev' ? [stage] : stage === 'production' ? [proj] : [proj, stage];
-    if (roleName) {
-        profileNameParts.push(roleName);
+const awsVaultProfile = async ({ proj, stage, region, roleName, devName, profileName, }) => {
+    let actualProfileName;
+    if (!profileName) {
+        const profileNameParts = stage === 'dev' ? [stage] : stage === 'production' ? [proj] : [proj, stage];
+        if (roleName) {
+            profileNameParts.push(roleName);
+        }
+        actualProfileName = profileNameParts.join('-');
     }
-    const profileName = profileNameParts.join('-');
-    const header = `[profile ${profileName}]`;
+    else {
+        actualProfileName = profileName;
+    }
+    const header = `[profile ${actualProfileName}]`;
     const account = await (0, awsAccounts_1.resolveAccount)({ proj, stage, devName });
     const iniProfile = [
         header,
@@ -25,7 +31,7 @@ const awsVaultProfile = async ({ proj, stage, region, roleName, devName, }) => {
         iniProfile.push(`region = ${region}`);
     }
     return {
-        profileName,
+        profileName: actualProfileName,
         header,
         iniProfile: iniProfile.join('\n'),
     };

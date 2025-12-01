@@ -7,7 +7,7 @@ interface IOptions {
 export declare const devsOwnAccountName: (name: string) => string;
 export declare const resolveAccount: (options: IOptions) => Promise<AWS.Organizations.Account>;
 export declare const accessTargetRoleName = "ops";
-export declare const accessTargetRoleArn: (accountId: string, roleName?: string) => string;
+export declare const accessTargetRoleArn: (accountId: string, roleName: string) => string;
 interface ISessionNameOptions {
     accountName: string;
     devName?: string;
