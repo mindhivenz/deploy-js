@@ -22,21 +22,19 @@ export default ({ proj, stages, region }: IOptions) => {
   stages.forEach((stage) => {
     task(`open:aws:${stage}`, openAwsConsoleTask({ proj, stage, region }))
 
-    task(`add:aws-vault:${stage}`, (done) => {
+    task(`add:aws-vault:${stage}`, async () => {
       const args = parseArgs(
         globalArgs.option('profile-name', {
           type: 'string',
         }),
       )
-      addAwsVaultProfile({
+      await addAwsVaultProfile({
         proj,
         stage,
         region,
         roleName: userRoleName,
         profileName: args.profileName,
       })
-
-      done()
     })
 
     task(
@@ -54,20 +52,19 @@ export default ({ proj, stages, region }: IOptions) => {
     const stage = 'dev'
     task(`open:aws:${stage}`, openAwsConsoleTask({ proj, stage, region }))
 
-    task(`add:aws-vault:${stage}`, (done) => {
+    task(`add:aws-vault:${stage}`, async () => {
       const args = parseArgs(
         globalArgs.option('profile-name', {
           type: 'string',
         }),
       )
-      addAwsVaultProfile({
+      await addAwsVaultProfile({
         proj,
         stage,
         region,
         roleName: userRoleName,
         profileName: args.profileName,
       })
-      done()
     })
   }
 }
