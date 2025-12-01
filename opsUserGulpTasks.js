@@ -28,7 +28,7 @@ exports.default = ({ proj, stages, region }) => {
                 region,
                 roleName: userRoleName_1.userRoleName,
                 profileName: args.profileName,
-            });
+            })();
         });
         (0, gulp_1.task)(`open:shell:${stage}`, (0, openManagedInstanceShellTask_1.openManagedInstanceShellTask)({ proj, stage, region }));
         if (stage === 'production') {
@@ -49,7 +49,7 @@ exports.default = ({ proj, stages, region }) => {
                 region,
                 roleName: userRoleName_1.userRoleName,
                 profileName: args.profileName,
-            });
+            })();
         });
     }
 };
