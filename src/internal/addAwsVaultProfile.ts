@@ -27,6 +27,7 @@ const existingConfigContent = () => {
 }
 
 export default (options: IOptions) => async () => {
+  log(`Adding profile for ${options.profileName}`)
   const { profileName, header, iniProfile } = await awsVaultProfile(options)
   const config = existingConfigContent()
   if (config.includes(header)) {
