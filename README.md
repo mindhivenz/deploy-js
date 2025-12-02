@@ -2,15 +2,23 @@
 
 ## GitHub Packages Authentication
 
+### Read packages
+
+Create a classic Personal Access Token with scopes `read:packages`
+
 Create an `~/.npmrc` and add:
 ```
-//npm.pkg.github.com/:_authToken=${GH_TOKEN}
+//npm.pkg.github.com/:_authToken=<GH_TOKEN>
 @mindhivenz:registry=https://npm.pkg.github.com/
 ```
 
-Generate a token with:
+### Write packages
+
+Generate a write token with:
+
 ```
 gh auth refresh --scopes write:packages
+npm config set @mindhivenz:registry=https://npm.pkg.github.com/\n//npm.pkg.github.com/:_authToken=$(gh auth token)
 ```
 
 ## Branch Development
