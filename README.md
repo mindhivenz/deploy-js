@@ -18,7 +18,7 @@ Generate a write token with:
 
 ```
 gh auth refresh --scopes write:packages
-npm config set @mindhivenz:registry=https://npm.pkg.github.com/\n//npm.pkg.github.com/:_authToken=$(gh auth token)
+npm config set //npm.pkg.github.com/:_authToken=$(gh auth token)
 ```
 
 ## Branch Development
