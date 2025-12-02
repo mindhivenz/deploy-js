@@ -11,7 +11,7 @@ const plugin_error_1 = __importDefault(require("plugin-error"));
 const devName_1 = __importDefault(require("../devName"));
 const publicStageName_1 = __importDefault(require("../publicStageName"));
 const awsMasterCredentials_1 = require("./awsMasterCredentials");
-const pluginName = '@mindhive/deploy/awsAccounts';
+const pluginName = '@mindhivenz/deploy/awsAccounts';
 const groupNameCombinations = (proj) => {
     const projParts = proj.split('-');
     return (0, range_1.default)(projParts.length, 0, -1).map((i) => projParts.slice(0, i).join('-'));

@@ -9,7 +9,7 @@ const plugin_error_1 = __importDefault(require("plugin-error"));
 const util_1 = require("util");
 // REVISIT: linked modules OK if linked from same Git tree
 // REVISIT: should check that file: linked packages are in the same Git tree
-const pluginName = '@mindhive/deploy/ensureNoLinkedModules';
+const pluginName = '@mindhivenz/deploy/ensureNoLinkedModules';
 const readdirAsync = (0, util_1.promisify)(fs_1.readdir);
 const lstatAsync = (0, util_1.promisify)(fs_1.lstat);
 const checkDir = async (dirPath) => {
@@ -23,8 +23,8 @@ const checkDir = async (dirPath) => {
             }
         }),
         ...filenames
-            .filter(f => f.startsWith('@'))
-            .map(f => checkDir((0, path_1.join)(dirPath, f))),
+            .filter((f) => f.startsWith('@'))
+            .map((f) => checkDir((0, path_1.join)(dirPath, f))),
     ]);
 };
 exports.default = async (path) => {
