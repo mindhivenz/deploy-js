@@ -1,7 +1,7 @@
 import PluginError from 'plugin-error'
 import execFile from './execFile'
 
-const pluginName = '@mindhive/deploy/ensureBranch'
+const pluginName = '@mindhivenz/deploy/ensureBranch'
 
 export default async (requiredBranch: string, repoPath?: string) => {
   const { stdOut: actualBranch } = await execFile(

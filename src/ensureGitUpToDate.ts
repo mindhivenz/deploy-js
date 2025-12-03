@@ -14,7 +14,7 @@ interface IOptions {
 export default memoize(
   async (
     repoPath: string = process.cwd(),
-    { pluginName = '@mindhive/deploy/ensureGitUpToDate' }: IOptions = {},
+    { pluginName = '@mindhivenz/deploy/ensureGitUpToDate' }: IOptions = {},
   ): Promise<string> => {
     const { ignoreGit } = parseArgs(globalArgs, { complete: false })
     if (ignoreGit) {

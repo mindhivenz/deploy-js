@@ -9,7 +9,7 @@ import { highlight } from './colors'
 import { yarnVersionBumpArgs } from './internal/yarnVersionBumpArgs'
 import readJson from './readJson'
 
-const pluginName = '@mindhive/deploy/bumpVersion'
+const pluginName = '@mindhivenz/deploy/bumpVersion'
 
 interface IOptions {
   gitTag?: boolean

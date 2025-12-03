@@ -80,7 +80,7 @@ export default ({
         } catch (e) {
           if ((e as AWSError).code === 'NotFound') {
             throw new PluginError(
-              '@mindhive/deploy/syncS3',
+              '@mindhivenz/deploy/syncS3',
               `S3 object not found in bucket: ${bucket}, path: ${s3Path}`,
             )
           }
@@ -138,7 +138,7 @@ export default ({
         } catch (e) {
           if ((e as AWSError).code === 'NotFound') {
             throw new PluginError(
-              '@mindhive/deploy/syncS3',
+              '@mindhivenz/deploy/syncS3',
               `No S3 objects not found under bucket: ${bucket}, prefix: ${s3Dir}`,
             )
           }
