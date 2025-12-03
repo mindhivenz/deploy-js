@@ -12,7 +12,7 @@ const execFile_1 = __importDefault(require("./execFile"));
 const colors_1 = require("./colors");
 const yarnVersionBumpArgs_1 = require("./internal/yarnVersionBumpArgs");
 const readJson_1 = __importDefault(require("./readJson"));
-const pluginName = '@mindhive/deploy/bumpVersion';
+const pluginName = '@mindhivenz/deploy/bumpVersion';
 const defaultPackagePath = './package.json';
 const bumpVersion = async (packageJsonPath = defaultPackagePath, { gitTag = true, gitUpToDate = true } = {}) => {
     const readPackageVersion = () => {

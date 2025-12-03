@@ -26,7 +26,7 @@ const secretContext = ({ proj, stage }) => ({
     proj,
     stage: secretStageName(stage),
 });
-const secretsPluginName = '@mindhive/deploy/secrets';
+const secretsPluginName = '@mindhivenz/deploy/secrets';
 const getSecretText = async (ref) => {
     const name = secretFqn(ref);
     try {

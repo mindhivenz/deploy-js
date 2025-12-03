@@ -18,7 +18,7 @@ const gitUserName = (0, once_1.default)(() => {
     });
     const name = (0, camelCase_1.default)(execResult.stdout);
     if (!name) {
-        throw new plugin_error_1.default('@mindhive/deploy/devName', `You need to set your git username. Such as: ${(0, colors_1.commandLine)('git config --global user.name "John Doe"')}`);
+        throw new plugin_error_1.default('@mindhivenz/deploy/devName', `You need to set your git username. Such as: ${(0, colors_1.commandLine)('git config --global user.name "John Doe"')}`);
     }
     return name;
 });
