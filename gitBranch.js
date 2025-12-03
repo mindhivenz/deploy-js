@@ -8,7 +8,7 @@ const execFile_1 = __importDefault(require("./execFile"));
 exports.default = async (repoPath, { gitUpToDate = false } = {}) => {
     if (gitUpToDate) {
         await (0, ensureGitUpToDate_1.default)(repoPath, {
-            pluginName: '@mindhive/deploy/gitBranch',
+            pluginName: '@mindhivenz/deploy/gitBranch',
         });
     }
     const { stdOut: branchOut } = await (0, execFile_1.default)('git', ['rev-parse', '--abbrev-ref', 'HEAD'], {

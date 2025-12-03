@@ -58,7 +58,7 @@ exports.default = ({ serviceOpts, bucket, useAccelerateEndpoint = true, }) => {
             }
             catch (e) {
                 if (e.code === 'NotFound') {
-                    throw new plugin_error_1.default('@mindhive/deploy/syncS3', `S3 object not found in bucket: ${bucket}, path: ${s3Path}`);
+                    throw new plugin_error_1.default('@mindhivenz/deploy/syncS3', `S3 object not found in bucket: ${bucket}, path: ${s3Path}`);
                 }
                 throw e;
             }
@@ -104,7 +104,7 @@ exports.default = ({ serviceOpts, bucket, useAccelerateEndpoint = true, }) => {
                 }
                 catch (e) {
                     if (e.code === 'NotFound') {
-                        throw new plugin_error_1.default('@mindhive/deploy/syncS3', `No S3 objects not found under bucket: ${bucket}, prefix: ${s3Dir}`);
+                        throw new plugin_error_1.default('@mindhivenz/deploy/syncS3', `No S3 objects not found under bucket: ${bucket}, prefix: ${s3Dir}`);
                     }
                     throw e;
                 }

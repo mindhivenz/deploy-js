@@ -1,6 +1,6 @@
 import AWS from 'aws-sdk';
-import './awsConfig';
 import { IProjOptions } from '../awsProjOptions';
+import './awsConfig';
 export declare class ProjCredentials extends AWS.ChainableTemporaryCredentials {
     private readonly projOptions;
     constructor(projOptions: IProjOptions);

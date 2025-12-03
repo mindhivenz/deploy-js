@@ -32,7 +32,7 @@ const plugin_error_1 = __importDefault(require("plugin-error"));
 const fancy_log_1 = __importDefault(require("fancy-log"));
 const execFile_1 = __importDefault(require("./execFile"));
 const args_1 = require("./internal/args");
-exports.default = (0, memoize_1.default)(async (repoPath = process.cwd(), { pluginName = '@mindhive/deploy/ensureGitUpToDate' } = {}) => {
+exports.default = (0, memoize_1.default)(async (repoPath = process.cwd(), { pluginName = '@mindhivenz/deploy/ensureGitUpToDate' } = {}) => {
     const { ignoreGit } = (0, args_1.parseArgs)(args_1.globalArgs, { complete: false });
     if (ignoreGit) {
         (0, fancy_log_1.default)('Ignoring git state');
