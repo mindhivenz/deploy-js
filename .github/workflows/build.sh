@@ -40,6 +40,7 @@ mv package.json dist/
 if git show-ref --verify --quiet refs/remotes/origin/$release_branch; then
   echo "Checking out existing $release_branch."
   git checkout $release_branch
+  git pull origin
 else
   echo "Creating and checking out $release_branch from release."
   git fetch origin release/master:release/master

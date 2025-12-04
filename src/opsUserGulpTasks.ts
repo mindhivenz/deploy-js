@@ -6,6 +6,7 @@ import { toCopy } from './colors'
 import { userRoleName } from './userRoleName'
 import openAwsConsoleTask from './internal/openAwsConsoleTask'
 import { openManagedInstanceShellTask } from './internal/openManagedInstanceShellTask'
+import { globalArgs, parseArgs } from './internal/args'
 
 interface IOptions {
   proj: string
@@ -21,10 +22,24 @@ export default ({ proj, stages, region }: IOptions) => {
   stages.forEach((stage) => {
     task(`open:aws:${stage}`, openAwsConsoleTask({ proj, stage, region }))
 
-    task(
-      `add:aws-vault:${stage}`,
-      addAwsVaultProfile({ proj, stage, region, roleName: userRoleName }),
-    )
+    task(`add:aws-vault:${stage}`, async () => {
+      const args = parseArgs(
+        globalArgs
+          .option('profile-name', {
+            type: 'string',
+          })
+          .option('role-name', {
+            type: 'string',
+          }),
+      )
+      await addAwsVaultProfile({
+        proj,
+        stage,
+        region,
+        roleName: args.roleName ?? userRoleName,
+        profileName: args.profileName,
+      })()
+    })
 
     task(
       `open:shell:${stage}`,
@@ -41,9 +56,23 @@ export default ({ proj, stages, region }: IOptions) => {
     const stage = 'dev'
     task(`open:aws:${stage}`, openAwsConsoleTask({ proj, stage, region }))
 
-    task(
-      `add:aws-vault:${stage}`,
-      addAwsVaultProfile({ proj, stage, region, roleName: userRoleName }),
-    )
+    task(`add:aws-vault:${stage}`, async () => {
+      const args = parseArgs(
+        globalArgs
+          .option('profile-name', {
+            type: 'string',
+          })
+          .option('role-name', {
+            type: 'string',
+          }),
+      )
+      await addAwsVaultProfile({
+        proj,
+        stage,
+        region,
+        roleName: args.roleName ?? userRoleName,
+        profileName: args.profileName,
+      })()
+    })
   }
 }
