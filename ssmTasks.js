@@ -11,7 +11,7 @@ const gulp_1 = require("gulp");
 const awsServiceOptions_1 = __importDefault(require("./awsServiceOptions"));
 const eyamlEncode_1 = __importDefault(require("./eyamlEncode"));
 const colors_1 = require("./colors");
-const sharedNames_1 = require("./internal/sharedNames");
+const nodeRoleNames_1 = require("./nodeRoleNames");
 exports.default = ({ proj, region, customers }) => {
     const stage = 'production'; // REVISIT: will we activate nodes in non-production stages?
     customers.forEach((customer) => {
@@ -22,7 +22,7 @@ exports.default = ({ proj, region, customers }) => {
             const activationResult = await ssm
                 .createActivation({
                 ExpirationDate: expiryDate,
-                IamRole: (0, sharedNames_1.nodeRoleName)(customer),
+                IamRole: (0, nodeRoleNames_1.nodeRoleName)(customer),
                 RegistrationLimit: 10,
             })
                 .promise();

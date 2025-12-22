@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NodeRole = void 0;
 const aws_cdk_lib_1 = require("aws-cdk-lib");
-const sharedNames_1 = require("../internal/sharedNames");
+const nodeRoleNames_1 = require("../nodeRoleNames");
 const ssmAgent_1 = require("../internal/ssmAgent");
 const ssmPrincipal = new aws_cdk_lib_1.aws_iam.ServicePrincipal('ssm.amazonaws.com');
 class NodeRole extends aws_cdk_lib_1.aws_iam.Role {
@@ -11,7 +11,7 @@ class NodeRole extends aws_cdk_lib_1.aws_iam.Role {
             assumedBy: ssmPrincipal,
             description: `Role for ${customer} SSM managed instances`,
             managedPolicies: [...ssmAgent_1.ssmAgentManagedPolicies, ...managedPolicies],
-            roleName: (0, sharedNames_1.nodeRoleName)(customer),
+            roleName: (0, nodeRoleNames_1.nodeRoleName)(customer),
             ...props,
         });
     }
