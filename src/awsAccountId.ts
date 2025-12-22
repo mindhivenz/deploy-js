@@ -2,10 +2,14 @@ import AWS from 'aws-sdk'
 import memoize from 'lodash/memoize'
 import { projCredentialsFactory } from './internal/awsProjCredentials'
 import { IProjOptions } from './awsProjOptions'
+import { nearestRegion } from './internal/nearestRegion'
 
 const getAccountId = async (options: IProjOptions): Promise<string> => {
   const credentials = projCredentialsFactory(options)
-  const sts = new AWS.STS({ credentials })
+  const sts = new AWS.STS({
+    credentials,
+    region: nearestRegion,
+  })
   const result = await sts.getCallerIdentity({}).promise()
   if (!result.Account) {
     throw new Error(`Unexpected no account returned`)

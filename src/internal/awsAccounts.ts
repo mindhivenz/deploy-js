@@ -7,6 +7,7 @@ import publicStageName from '../publicStageName'
 import { master } from './awsMasterCredentials'
 
 const pluginName = '@mindhivenz/deploy/awsAccounts'
+const onlyValidAwsOrganizationsRegion = 'us-east-1'
 
 interface IOptions {
   proj: string
@@ -36,7 +37,7 @@ const listAccounts = once(async () => {
   const orgs = new AWS.Organizations({
     apiVersion: '2016-11-28',
     credentials: master,
-    region: 'us-east-1',
+    region: onlyValidAwsOrganizationsRegion,
   })
   let nextToken
   const allAccounts: AWS.Organizations.Account[] = []
