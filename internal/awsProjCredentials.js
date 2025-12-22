@@ -15,7 +15,10 @@ const awsMasterCredentials_1 = require("./awsMasterCredentials");
 const awsSession_1 = require("./awsSession");
 class ProjCredentials extends aws_sdk_1.default.ChainableTemporaryCredentials {
     constructor(projOptions) {
-        super({ masterCredentials: awsMasterCredentials_1.master, stsConfig: {} });
+        super({
+            masterCredentials: awsMasterCredentials_1.master,
+            stsConfig: { stsRegionalEndpoints: 'regional' },
+        });
         this.projOptions = projOptions;
     }
     refresh(callback) {
