@@ -37,7 +37,7 @@ const secretContext = ({ proj, stage }: ISecretContext) => ({
   stage: secretStageName(stage),
 })
 
-const secretsPluginName = '@mindhive/deploy/secrets'
+const secretsPluginName = '@mindhivenz/deploy/secrets'
 
 export const getSecretText = async (ref: ISecretRef) => {
   const name = secretFqn(ref)
@@ -74,9 +74,9 @@ export const setSecretText = async (ref: ISecretRef, secret: string) => {
       context: secretContext(ref),
       name,
       secret,
-      version: ((await secretStash().incrementVersion({
+      version: (await secretStash().incrementVersion({
         name,
-      })) as any) as number,
+      })) as any as number,
     })
   } catch (e) {
     throw new PluginError(

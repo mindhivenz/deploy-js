@@ -6,7 +6,7 @@ export default async (
   opts: IExecOpts = {},
 ): Promise<IExecResult> =>
   await execCommand(
-    { shell: false, pluginName: '@mindhive/deploy/execFile' },
+    { shell: false, pluginName: '@mindhivenz/deploy/execFile' },
     file,
     args,
     opts,

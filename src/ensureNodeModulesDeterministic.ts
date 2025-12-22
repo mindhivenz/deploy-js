@@ -2,7 +2,7 @@ import { execFile } from 'child_process'
 import PluginError from 'plugin-error'
 import ensureNoLinkedModules from './ensureNoLinkedModules'
 
-const pluginName = '@mindhive/deploy/ensureNodeModulesDeterministic'
+const pluginName = '@mindhivenz/deploy/ensureNodeModulesDeterministic'
 
 export default async (path: string) => {
   const checkYarnIntegrity = () =>

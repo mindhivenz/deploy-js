@@ -6,7 +6,7 @@ import defaultDevName from '../devName'
 import publicStageName from '../publicStageName'
 import { master } from './awsMasterCredentials'
 
-const pluginName = '@mindhive/deploy/awsAccounts'
+const pluginName = '@mindhivenz/deploy/awsAccounts'
 
 interface IOptions {
   proj: string
@@ -77,10 +77,8 @@ export const resolveAccount = async (options: IOptions) => {
 
 export const accessTargetRoleName = 'ops'
 
-export const accessTargetRoleArn = (
-  accountId: string,
-  roleName: string = accessTargetRoleName,
-) => `arn:aws:iam::${accountId}:role/${roleName}`
+export const accessTargetRoleArn = (accountId: string, roleName: string) =>
+  `arn:aws:iam::${accountId}:role/${roleName}`
 
 const accentuateAccountName = (name: string) =>
   name.replace('production', 'PRODUCTION')

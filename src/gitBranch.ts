@@ -11,7 +11,7 @@ export default async (
 ): Promise<string> => {
   if (gitUpToDate) {
     await ensureGitUpToDate(repoPath, {
-      pluginName: '@mindhive/deploy/gitBranch',
+      pluginName: '@mindhivenz/deploy/gitBranch',
     })
   }
   const { stdOut: branchOut } = await execFile(
