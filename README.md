@@ -21,6 +21,13 @@ gh auth refresh --scopes write:packages
 npm config set //npm.pkg.github.com/:_authToken=$(gh auth token)
 ```
 
+## How to release
+
+```
+cd deploy
+yarn gulp release --patch|minor|major|same
+```
+
 ## Branch Development
 
 To use a branch version of this package in a project:
