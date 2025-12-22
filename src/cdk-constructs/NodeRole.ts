@@ -1,6 +1,6 @@
 import { aws_iam } from 'aws-cdk-lib'
 import { Construct } from 'constructs'
-import { nodeRoleName } from '../internal/sharedNames'
+import { nodeRoleName } from '../nodeRoleNames'
 import { ssmAgentManagedPolicies } from '../internal/ssmAgent'
 
 const ssmPrincipal = new aws_iam.ServicePrincipal('ssm.amazonaws.com')

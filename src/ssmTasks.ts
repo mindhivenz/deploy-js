@@ -6,7 +6,7 @@ import { task } from 'gulp'
 import awsServiceOptions from './awsServiceOptions'
 import eyamlEncode, { IOptions as EyamlOptions } from './eyamlEncode'
 import { highlight } from './colors'
-import { nodeRoleName } from './internal/sharedNames'
+import { nodeRoleName } from './nodeRoleNames'
 
 interface IOptions extends EyamlOptions {
   customers: string[]
