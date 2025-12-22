@@ -18,7 +18,10 @@ import {
 
 export class ProjCredentials extends AWS.ChainableTemporaryCredentials {
   constructor(private readonly projOptions: IProjOptions) {
-    super({ masterCredentials: master, stsConfig: {} })
+    super({
+      masterCredentials: master,
+      stsConfig: { stsRegionalEndpoints: 'regional' },
+    })
   }
 
   public refresh(callback: (err: AWS.AWSError) => void): void {
