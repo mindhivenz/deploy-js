@@ -12,6 +12,7 @@ const devName_1 = __importDefault(require("../devName"));
 const publicStageName_1 = __importDefault(require("../publicStageName"));
 const awsMasterCredentials_1 = require("./awsMasterCredentials");
 const pluginName = '@mindhivenz/deploy/awsAccounts';
+const onlyValidAwsOrganizationsRegion = 'us-east-1';
 const groupNameCombinations = (proj) => {
     const projParts = proj.split('-');
     return (0, range_1.default)(projParts.length, 0, -1).map((i) => projParts.slice(0, i).join('-'));
@@ -30,7 +31,7 @@ const listAccounts = (0, once_1.default)(async () => {
     const orgs = new aws_sdk_1.default.Organizations({
         apiVersion: '2016-11-28',
         credentials: awsMasterCredentials_1.master,
-        region: 'us-east-1',
+        region: onlyValidAwsOrganizationsRegion,
     });
     let nextToken;
     const allAccounts = [];
