@@ -15,12 +15,15 @@ import {
   MAX_CHAINED_ROLE_SESSION_SECONDS,
   MAX_SESSION_SECONDS,
 } from './awsSession'
+import { nearestRegion } from './nearestRegion'
 
 export class ProjCredentials extends AWS.ChainableTemporaryCredentials {
   constructor(private readonly projOptions: IProjOptions) {
     super({
       masterCredentials: master,
-      stsConfig: { stsRegionalEndpoints: 'regional' },
+      stsConfig: {
+        region: nearestRegion,
+      },
     })
   }
 
