@@ -6,9 +6,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const aws_sdk_1 = __importDefault(require("aws-sdk"));
 const memoize_1 = __importDefault(require("lodash/memoize"));
 const awsProjCredentials_1 = require("./internal/awsProjCredentials");
+const nearestRegion_1 = require("./internal/nearestRegion");
 const getAccountId = async (options) => {
     const credentials = (0, awsProjCredentials_1.projCredentialsFactory)(options);
-    const sts = new aws_sdk_1.default.STS({ credentials });
+    const sts = new aws_sdk_1.default.STS({
+        credentials,
+        region: nearestRegion_1.nearestRegion,
+    });
     const result = await sts.getCallerIdentity({}).promise();
     if (!result.Account) {
         throw new Error(`Unexpected no account returned`);
