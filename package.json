@@ -1,6 +1,6 @@
 {
   "name": "@mindhivenz/deploy",
-  "version": "8.4.0",
+  "version": "8.5.0",
   "license": "MIT",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
