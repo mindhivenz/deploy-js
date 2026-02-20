@@ -7,6 +7,7 @@ interface IStackOps {
   stackName?: string
   cloudSecurityPostureManagement?: boolean
   externalId?: string
+  ddApiKeySecretArn?: string
 }
 
 interface IOpts extends IStackOps {
@@ -20,6 +21,7 @@ export const updateDatadogIntegration = async ({
   stackName = 'datadog',
   cloudSecurityPostureManagement = false,
   externalId,
+  ddApiKeySecretArn,
 }: IOpts) => {
   const cloudFormation = new CloudFormation(serviceOpts)
   try {
@@ -45,7 +47,14 @@ export const updateDatadogIntegration = async ({
             ? { ParameterValue: externalId }
             : { UsePreviousValue: true }),
         },
-        { ParameterKey: 'DdApiKey', UsePreviousValue: true },
+        ...(ddApiKeySecretArn
+          ? [
+              {
+                ParameterKey: 'DdApiKeySecretArn',
+                ParameterValue: ddApiKeySecretArn,
+              },
+            ]
+          : [{ ParameterKey: 'DdApiKey', UsePreviousValue: true }]),
         {
           ParameterKey: 'IAMRoleName',
           ParameterValue: 'DatadogIntegrationRole',
@@ -64,6 +73,7 @@ export default ({
     stackName,
     cloudSecurityPostureManagement,
     externalId,
+    ddApiKeySecretArn,
     ...projOpts
   }: ITaskOpts) =>
   async () => {
@@ -71,6 +81,7 @@ export default ({
       stackName,
       cloudSecurityPostureManagement,
       externalId,
+      ddApiKeySecretArn,
       serviceOpts: awsServiceOptions(projOpts),
     })
   }
