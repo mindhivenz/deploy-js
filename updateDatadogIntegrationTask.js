@@ -7,7 +7,7 @@ exports.updateDatadogIntegration = void 0;
 const aws_sdk_1 = require("aws-sdk");
 const plugin_error_1 = __importDefault(require("plugin-error"));
 const awsServiceOptions_1 = __importDefault(require("./awsServiceOptions"));
-const updateDatadogIntegration = async ({ serviceOpts, stackName = 'DatadogIntegration', cloudSecurityPostureManagement = false, externalId, ddApiKeySecretArn, }) => {
+const updateDatadogIntegration = async ({ serviceOpts, stackName = 'DatadogIntegration', cloudSecurityPostureManagement = false, externalId, ddApiKey, ddApiKeySecretArn, }) => {
     const cloudFormation = new aws_sdk_1.CloudFormation(serviceOpts);
     try {
         await cloudFormation.describeStacks({ StackName: stackName }).promise();
@@ -29,14 +29,16 @@ const updateDatadogIntegration = async ({ serviceOpts, stackName = 'DatadogInteg
                     ? { ParameterValue: externalId }
                     : { UsePreviousValue: true }),
             },
-            ...(ddApiKeySecretArn
-                ? [
-                    {
-                        ParameterKey: 'DdApiKeySecretArn',
-                        ParameterValue: ddApiKeySecretArn,
-                    },
-                ]
-                : [{ ParameterKey: 'DdApiKey', UsePreviousValue: true }]),
+            ...(ddApiKey
+                ? [{ ParameterKey: 'DdApiKey', ParameterValue: ddApiKey }]
+                : ddApiKeySecretArn
+                    ? [
+                        {
+                            ParameterKey: 'DdApiKeySecretArn',
+                            ParameterValue: ddApiKeySecretArn,
+                        },
+                    ]
+                    : [{ ParameterKey: 'DdApiKey', UsePreviousValue: true }]),
             {
                 ParameterKey: 'IAMRoleName',
                 ParameterValue: 'DatadogIntegrationRole',
@@ -51,12 +53,13 @@ const updateDatadogIntegration = async ({ serviceOpts, stackName = 'DatadogInteg
         .promise();
 };
 exports.updateDatadogIntegration = updateDatadogIntegration;
-exports.default = ({ stackName, cloudSecurityPostureManagement, externalId, ddApiKeySecretArn, ...projOpts }) => async () => {
+exports.default = ({ stackName, cloudSecurityPostureManagement, externalId, ddApiKeySecretArn, ddApiKey, ...projOpts }) => async () => {
     await (0, exports.updateDatadogIntegration)({
         stackName,
         cloudSecurityPostureManagement,
         externalId,
         ddApiKeySecretArn,
+        ddApiKey,
         serviceOpts: (0, awsServiceOptions_1.default)(projOpts),
     });
 };
