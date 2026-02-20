@@ -4,7 +4,7 @@ import awsServiceOptions, { IServiceOpts } from './awsServiceOptions'
 import { IRegionalProjOptions } from './awsProjOptions'
 
 interface IStackOps {
-  stackVersion: 'v1' | 'v2'
+  stackName?: string
   cloudSecurityPostureManagement?: boolean
   externalId?: string
 }
@@ -17,12 +17,11 @@ interface ITaskOpts extends IRegionalProjOptions, IStackOps {}
 
 export const updateDatadogIntegration = async ({
   serviceOpts,
-  stackVersion,
+  stackName = 'datadog',
   cloudSecurityPostureManagement = false,
   externalId,
 }: IOpts) => {
   const cloudFormation = new CloudFormation(serviceOpts)
-  const stackName = stackVersion === 'v1' ? 'datadog' : 'DatadogIntegration'
   try {
     await cloudFormation.describeStacks({ StackName: stackName }).promise()
   } catch (e) {
@@ -34,26 +33,19 @@ export const updateDatadogIntegration = async ({
       'You need to manually create the stack first: https://app.datadoghq.com/account/settings#integrations/amazon-web-services',
     )
   }
-  const versionedParams =
-    stackVersion === 'v1'
-      ? [{ ParameterKey: 'DdApiKey', UsePreviousValue: true }]
-      : [
-          { ParameterKey: 'APIKey', UsePreviousValue: true },
-          { ParameterKey: 'APPKey', UsePreviousValue: true },
-        ]
   await cloudFormation
     .updateStack({
       StackName: stackName,
       TemplateURL:
         'https://datadog-cloudformation-template.s3.amazonaws.com/aws/main.yaml',
       Parameters: [
-        ...versionedParams,
         {
           ParameterKey: 'ExternalId',
           ...(externalId
             ? { ParameterValue: externalId }
             : { UsePreviousValue: true }),
         },
+        { ParameterKey: 'DdApiKey', UsePreviousValue: true },
         {
           ParameterKey: 'IAMRoleName',
           ParameterValue: 'DatadogIntegrationRole',
@@ -69,14 +61,14 @@ export const updateDatadogIntegration = async ({
 }
 
 export default ({
-    stackVersion,
+    stackName,
     cloudSecurityPostureManagement,
     externalId,
     ...projOpts
   }: ITaskOpts) =>
   async () => {
     await updateDatadogIntegration({
-      stackVersion,
+      stackName,
       cloudSecurityPostureManagement,
       externalId,
       serviceOpts: awsServiceOptions(projOpts),
