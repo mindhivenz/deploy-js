@@ -7,7 +7,7 @@ exports.updateDatadogIntegration = void 0;
 const aws_sdk_1 = require("aws-sdk");
 const plugin_error_1 = __importDefault(require("plugin-error"));
 const awsServiceOptions_1 = __importDefault(require("./awsServiceOptions"));
-const updateDatadogIntegration = async ({ serviceOpts, cloudSecurityPostureManagement = false, stackVersion, }) => {
+const updateDatadogIntegration = async ({ serviceOpts, stackVersion, cloudSecurityPostureManagement = false, externalId, }) => {
     const cloudFormation = new aws_sdk_1.CloudFormation(serviceOpts);
     const stackName = stackVersion === 'v1' ? 'datadog' : 'DatadogIntegration';
     try {
@@ -20,10 +20,7 @@ const updateDatadogIntegration = async ({ serviceOpts, cloudSecurityPostureManag
         throw new plugin_error_1.default('updateDatadogIntegration', 'You need to manually create the stack first: https://app.datadoghq.com/account/settings#integrations/amazon-web-services');
     }
     const versionedParams = stackVersion === 'v1'
-        ? [
-            { ParameterKey: 'ExternalId', UsePreviousValue: true },
-            { ParameterKey: 'DdApiKey', UsePreviousValue: true },
-        ]
+        ? [{ ParameterKey: 'DdApiKey', UsePreviousValue: true }]
         : [
             { ParameterKey: 'APIKey', UsePreviousValue: true },
             { ParameterKey: 'APPKey', UsePreviousValue: true },
@@ -34,6 +31,12 @@ const updateDatadogIntegration = async ({ serviceOpts, cloudSecurityPostureManag
         TemplateURL: 'https://datadog-cloudformation-template.s3.amazonaws.com/aws/main.yaml',
         Parameters: [
             ...versionedParams,
+            {
+                ParameterKey: 'ExternalId',
+                ...(externalId
+                    ? { ParameterValue: externalId }
+                    : { UsePreviousValue: true }),
+            },
             {
                 ParameterKey: 'IAMRoleName',
                 ParameterValue: 'DatadogIntegrationRole',
@@ -48,10 +51,11 @@ const updateDatadogIntegration = async ({ serviceOpts, cloudSecurityPostureManag
         .promise();
 };
 exports.updateDatadogIntegration = updateDatadogIntegration;
-exports.default = ({ stackVersion, cloudSecurityPostureManagement, ...projOpts }) => async () => {
+exports.default = ({ stackVersion, cloudSecurityPostureManagement, externalId, ...projOpts }) => async () => {
     await (0, exports.updateDatadogIntegration)({
         stackVersion,
         cloudSecurityPostureManagement,
+        externalId,
         serviceOpts: (0, awsServiceOptions_1.default)(projOpts),
     });
 };
