@@ -18,7 +18,7 @@ interface ITaskOpts extends IRegionalProjOptions, IStackOps {}
 
 export const updateDatadogIntegration = async ({
   serviceOpts,
-  stackName = 'datadog',
+  stackName = 'DatadogIntegration',
   cloudSecurityPostureManagement = false,
   externalId,
   ddApiKeySecretArn,
