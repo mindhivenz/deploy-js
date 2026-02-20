@@ -6,6 +6,7 @@ import { IRegionalProjOptions } from './awsProjOptions'
 interface IStackOps {
   stackVersion: 'v1' | 'v2'
   cloudSecurityPostureManagement?: boolean
+  externalId?: string
 }
 
 interface IOpts extends IStackOps {
@@ -16,8 +17,9 @@ interface ITaskOpts extends IRegionalProjOptions, IStackOps {}
 
 export const updateDatadogIntegration = async ({
   serviceOpts,
-  cloudSecurityPostureManagement = false,
   stackVersion,
+  cloudSecurityPostureManagement = false,
+  externalId,
 }: IOpts) => {
   const cloudFormation = new CloudFormation(serviceOpts)
   const stackName = stackVersion === 'v1' ? 'datadog' : 'DatadogIntegration'
@@ -34,10 +36,7 @@ export const updateDatadogIntegration = async ({
   }
   const versionedParams =
     stackVersion === 'v1'
-      ? [
-          { ParameterKey: 'ExternalId', UsePreviousValue: true },
-          { ParameterKey: 'DdApiKey', UsePreviousValue: true },
-        ]
+      ? [{ ParameterKey: 'DdApiKey', UsePreviousValue: true }]
       : [
           { ParameterKey: 'APIKey', UsePreviousValue: true },
           { ParameterKey: 'APPKey', UsePreviousValue: true },
@@ -49,6 +48,12 @@ export const updateDatadogIntegration = async ({
         'https://datadog-cloudformation-template.s3.amazonaws.com/aws/main.yaml',
       Parameters: [
         ...versionedParams,
+        {
+          ParameterKey: 'ExternalId',
+          ...(externalId
+            ? { ParameterValue: externalId }
+            : { UsePreviousValue: true }),
+        },
         {
           ParameterKey: 'IAMRoleName',
           ParameterValue: 'DatadogIntegrationRole',
@@ -66,12 +71,14 @@ export const updateDatadogIntegration = async ({
 export default ({
     stackVersion,
     cloudSecurityPostureManagement,
+    externalId,
     ...projOpts
   }: ITaskOpts) =>
   async () => {
     await updateDatadogIntegration({
       stackVersion,
       cloudSecurityPostureManagement,
+      externalId,
       serviceOpts: awsServiceOptions(projOpts),
     })
   }
