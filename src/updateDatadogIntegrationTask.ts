@@ -3,20 +3,21 @@ import PluginError from 'plugin-error'
 import awsServiceOptions, { IServiceOpts } from './awsServiceOptions'
 import { IRegionalProjOptions } from './awsProjOptions'
 
-const stackName = 'datadog'
+interface IStackOps {
+  stackName?: string
+  cloudSecurityPostureManagement?: boolean
+}
 
-interface IOpts {
+interface IOpts extends IStackOps {
   serviceOpts: IServiceOpts
-  cloudSecurityPostureManagement?: boolean
 }
 
-interface ITaskOpts extends IRegionalProjOptions {
-  cloudSecurityPostureManagement?: boolean
-}
+interface ITaskOpts extends IRegionalProjOptions, IStackOps {}
 
 export const updateDatadogIntegration = async ({
   serviceOpts,
   cloudSecurityPostureManagement = false,
+  stackName = 'datadog',
 }: IOpts) => {
   const cloudFormation = new CloudFormation(serviceOpts)
   try {
@@ -52,10 +53,15 @@ export const updateDatadogIntegration = async ({
     .promise()
 }
 
-export default ({ cloudSecurityPostureManagement, ...projOpts }: ITaskOpts) =>
+export default ({
+    stackName,
+    cloudSecurityPostureManagement,
+    ...projOpts
+  }: ITaskOpts) =>
   async () => {
     await updateDatadogIntegration({
-      serviceOpts: awsServiceOptions(projOpts),
       cloudSecurityPostureManagement,
+      stackName,
+      serviceOpts: awsServiceOptions(projOpts),
     })
   }
