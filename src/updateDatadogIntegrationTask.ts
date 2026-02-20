@@ -34,7 +34,8 @@ export const updateDatadogIntegration = async ({
     }
     throw new PluginError(
       'updateDatadogIntegration',
-      'You need to manually create the stack first: https://app.datadoghq.com/account/settings#integrations/amazon-web-services',
+      "It looks like you haven't created the stack yet: https://app.datadoghq.com/account/settings#integrations/amazon-web-services" +
+        `, or you have the wrong stack name (expected: ${stackName})`,
     )
   }
   await cloudFormation
