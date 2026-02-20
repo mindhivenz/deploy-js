@@ -4,7 +4,7 @@ import awsServiceOptions, { IServiceOpts } from './awsServiceOptions'
 import { IRegionalProjOptions } from './awsProjOptions'
 
 interface IStackOps {
-  stackName?: string
+  stackVersion: 'v1' | 'v2'
   cloudSecurityPostureManagement?: boolean
 }
 
@@ -17,9 +17,10 @@ interface ITaskOpts extends IRegionalProjOptions, IStackOps {}
 export const updateDatadogIntegration = async ({
   serviceOpts,
   cloudSecurityPostureManagement = false,
-  stackName = 'datadog',
+  stackVersion,
 }: IOpts) => {
   const cloudFormation = new CloudFormation(serviceOpts)
+  const stackName = stackVersion === 'v1' ? 'datadog' : 'DatadogIntegration'
   try {
     await cloudFormation.describeStacks({ StackName: stackName }).promise()
   } catch (e) {
@@ -31,14 +32,23 @@ export const updateDatadogIntegration = async ({
       'You need to manually create the stack first: https://app.datadoghq.com/account/settings#integrations/amazon-web-services',
     )
   }
+  const versionedParams =
+    stackVersion === 'v1'
+      ? [
+          { ParameterKey: 'ExternalId', UsePreviousValue: true },
+          { ParameterKey: 'DdApiKey', UsePreviousValue: true },
+        ]
+      : [
+          { ParameterKey: 'APIKey', UsePreviousValue: true },
+          { ParameterKey: 'APPKey', UsePreviousValue: true },
+        ]
   await cloudFormation
     .updateStack({
       StackName: stackName,
       TemplateURL:
         'https://datadog-cloudformation-template.s3.amazonaws.com/aws/main.yaml',
       Parameters: [
-        { ParameterKey: 'ExternalId', UsePreviousValue: true },
-        { ParameterKey: 'DdApiKey', UsePreviousValue: true },
+        ...versionedParams,
         {
           ParameterKey: 'IAMRoleName',
           ParameterValue: 'DatadogIntegrationRole',
@@ -54,14 +64,14 @@ export const updateDatadogIntegration = async ({
 }
 
 export default ({
-    stackName,
+    stackVersion,
     cloudSecurityPostureManagement,
     ...projOpts
   }: ITaskOpts) =>
   async () => {
     await updateDatadogIntegration({
+      stackVersion,
       cloudSecurityPostureManagement,
-      stackName,
       serviceOpts: awsServiceOptions(projOpts),
     })
   }
