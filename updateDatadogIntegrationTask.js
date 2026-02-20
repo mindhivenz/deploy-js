@@ -7,8 +7,7 @@ exports.updateDatadogIntegration = void 0;
 const aws_sdk_1 = require("aws-sdk");
 const plugin_error_1 = __importDefault(require("plugin-error"));
 const awsServiceOptions_1 = __importDefault(require("./awsServiceOptions"));
-const stackName = 'datadog';
-const updateDatadogIntegration = async ({ serviceOpts, cloudSecurityPostureManagement = false, }) => {
+const updateDatadogIntegration = async ({ serviceOpts, cloudSecurityPostureManagement = false, stackName = 'datadog', }) => {
     const cloudFormation = new aws_sdk_1.CloudFormation(serviceOpts);
     try {
         await cloudFormation.describeStacks({ StackName: stackName }).promise();
@@ -40,9 +39,10 @@ const updateDatadogIntegration = async ({ serviceOpts, cloudSecurityPostureManag
         .promise();
 };
 exports.updateDatadogIntegration = updateDatadogIntegration;
-exports.default = ({ cloudSecurityPostureManagement, ...projOpts }) => async () => {
+exports.default = ({ stackName, cloudSecurityPostureManagement, ...projOpts }) => async () => {
     await (0, exports.updateDatadogIntegration)({
-        serviceOpts: (0, awsServiceOptions_1.default)(projOpts),
         cloudSecurityPostureManagement,
+        stackName,
+        serviceOpts: (0, awsServiceOptions_1.default)(projOpts),
     });
 };
