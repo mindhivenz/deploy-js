@@ -7,7 +7,7 @@ exports.updateDatadogIntegration = void 0;
 const aws_sdk_1 = require("aws-sdk");
 const plugin_error_1 = __importDefault(require("plugin-error"));
 const awsServiceOptions_1 = __importDefault(require("./awsServiceOptions"));
-const updateDatadogIntegration = async ({ serviceOpts, stackName = 'datadog', cloudSecurityPostureManagement = false, externalId, ddApiKeySecretArn, }) => {
+const updateDatadogIntegration = async ({ serviceOpts, stackName = 'DatadogIntegration', cloudSecurityPostureManagement = false, externalId, ddApiKeySecretArn, }) => {
     const cloudFormation = new aws_sdk_1.CloudFormation(serviceOpts);
     try {
         await cloudFormation.describeStacks({ StackName: stackName }).promise();
