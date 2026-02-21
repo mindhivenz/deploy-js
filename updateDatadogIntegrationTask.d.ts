@@ -4,7 +4,7 @@ interface IStackOps {
     stackName?: string;
     cloudSecurityPostureManagement?: boolean;
     externalId?: string;
-    ddApiKey?: string;
+    ddApiKeyTextDoNotCommit?: string;
     ddApiKeySecretArn?: string;
 }
 interface IOpts extends IStackOps {
@@ -12,6 +12,6 @@ interface IOpts extends IStackOps {
 }
 interface ITaskOpts extends IRegionalProjOptions, IStackOps {
 }
-export declare const updateDatadogIntegration: ({ serviceOpts, stackName, cloudSecurityPostureManagement, externalId, ddApiKey, ddApiKeySecretArn, }: IOpts) => Promise<void>;
-declare const _default: ({ stackName, cloudSecurityPostureManagement, externalId, ddApiKeySecretArn, ddApiKey, ...projOpts }: ITaskOpts) => () => Promise<void>;
+export declare const updateDatadogIntegration: ({ serviceOpts, stackName, cloudSecurityPostureManagement, externalId, ddApiKeyTextDoNotCommit, ddApiKeySecretArn, }: IOpts) => Promise<void>;
+declare const _default: ({ stackName, cloudSecurityPostureManagement, externalId, ddApiKeySecretArn, ddApiKeyTextDoNotCommit, ...projOpts }: ITaskOpts) => () => Promise<void>;
 export default _default;
