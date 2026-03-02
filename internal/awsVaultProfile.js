@@ -1,12 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.awsVaultProfile = void 0;
+const stages_1 = require("../stages");
 const awsAccounts_1 = require("./awsAccounts");
 const mindhiveOpsAwsProfileName = `mindhive-ops`;
 const awsVaultProfile = async ({ proj, stage, region, roleName, devName, profileName, }) => {
     let actualProfileName;
     if (!profileName) {
-        const profileNameParts = stage === 'dev' ? [stage] : stage === 'production' ? [proj] : [proj, stage];
+        const profileNameParts = stage === stages_1.DEV_OWN_ACCOUNT_STAGE
+            ? [stage]
+            : stage === stages_1.PRODUCTION
+                ? [proj]
+                : [proj, stage];
         if (roleName) {
             profileNameParts.push(roleName);
         }

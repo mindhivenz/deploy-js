@@ -8,6 +8,7 @@ const gulp_1 = require("gulp");
 const devName_1 = __importDefault(require("./devName"));
 const addAwsVaultProfile_1 = __importDefault(require("./internal/addAwsVaultProfile"));
 const colors_1 = require("./colors");
+const stages_1 = require("./stages");
 const userRoleName_1 = require("./userRoleName");
 const openAwsConsoleTask_1 = __importDefault(require("./internal/openAwsConsoleTask"));
 const openManagedInstanceShellTask_1 = require("./internal/openManagedInstanceShellTask");
@@ -40,8 +41,8 @@ exports.default = ({ proj, stages, region }) => {
             (0, gulp_1.task)(`open:shell`, (0, openManagedInstanceShellTask_1.openManagedInstanceShellTask)({ proj, stage, region }));
         }
     });
-    if (!stages.includes('dev')) {
-        const stage = 'dev';
+    if (!stages.includes(stages_1.DEV_OWN_ACCOUNT_STAGE)) {
+        const stage = stages_1.DEV_OWN_ACCOUNT_STAGE;
         (0, gulp_1.task)(`open:aws:${stage}`, (0, openAwsConsoleTask_1.default)({ proj, stage, region }));
         (0, gulp_1.task)(`add:aws-vault:${stage}`, async () => {
             const args = (0, args_1.parseArgs)(args_1.globalArgs

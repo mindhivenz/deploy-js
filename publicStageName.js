@@ -4,4 +4,5 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const devName_1 = __importDefault(require("./devName"));
-exports.default = (stage, devName = (0, devName_1.default)()) => stage === 'dev' ? `dev-${devName}` : stage;
+const stages_1 = require("./stages");
+exports.default = (stage, devName = (0, devName_1.default)()) => stage === stages_1.DEV_OWN_ACCOUNT_STAGE ? `dev-${devName}` : stage;

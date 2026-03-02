@@ -10,6 +10,7 @@ const range_1 = __importDefault(require("lodash/range"));
 const plugin_error_1 = __importDefault(require("plugin-error"));
 const devName_1 = __importDefault(require("../devName"));
 const publicStageName_1 = __importDefault(require("../publicStageName"));
+const stages_1 = require("../stages");
 const awsMasterCredentials_1 = require("./awsMasterCredentials");
 const pluginName = '@mindhivenz/deploy/awsAccounts';
 const onlyValidAwsOrganizationsRegion = 'us-east-1';
@@ -17,12 +18,12 @@ const groupNameCombinations = (proj) => {
     const projParts = proj.split('-');
     return (0, range_1.default)(projParts.length, 0, -1).map((i) => projParts.slice(0, i).join('-'));
 };
-const devsOwnAccountName = (name) => (0, publicStageName_1.default)('dev', name);
+const devsOwnAccountName = (name) => (0, publicStageName_1.default)(stages_1.DEV_OWN_ACCOUNT_STAGE, name);
 exports.devsOwnAccountName = devsOwnAccountName;
 const accountNameCombinations = ({ proj, stage, devName }) => {
     const stagePublic = (0, publicStageName_1.default)(stage, devName);
     const result = groupNameCombinations(proj).map((g) => `${g}-${stagePublic}`);
-    if (stage === 'dev') {
+    if (stage === stages_1.DEV_OWN_ACCOUNT_STAGE) {
         result.push((0, exports.devsOwnAccountName)(devName || (0, devName_1.default)()));
     }
     return result;

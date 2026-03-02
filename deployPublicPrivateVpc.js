@@ -10,6 +10,7 @@ const gulp_rename_1 = __importDefault(require("gulp-rename"));
 const path_1 = __importDefault(require("path"));
 const awsServiceOptions_1 = __importDefault(require("./awsServiceOptions"));
 const cidr16HashedPrefix_1 = __importDefault(require("./cidr16HashedPrefix"));
+const stages_1 = require("./stages");
 /* The following is required in the role launching this (like serverless iamRoleStatements)
 
     - Effect: Allow
@@ -29,7 +30,7 @@ const numberedKeysToArray = (obj, keyPrefix) => {
     }
     return result;
 };
-exports.default = ({ proj, stage, region, azCount = stage === 'dev' ? 1 : 2, ipPrefix = (0, cidr16HashedPrefix_1.default)(proj), }) => (0, gulp_1.src)(path_1.default.join(__dirname, `cfn/vpc-${azCount}.cfn.yaml`))
+exports.default = ({ proj, stage, region, azCount = stage === stages_1.DEV_OWN_ACCOUNT_STAGE ? 1 : 2, ipPrefix = (0, cidr16HashedPrefix_1.default)(proj), }) => (0, gulp_1.src)(path_1.default.join(__dirname, `cfn/vpc-${azCount}.cfn.yaml`))
     .pipe((0, gulp_cf_deploy_1.default)((0, awsServiceOptions_1.default)({ proj, stage, region }), `${proj}-vpc`, {
     ipPrefix,
 }))
