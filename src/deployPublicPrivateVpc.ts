@@ -6,6 +6,7 @@ import path from 'path'
 
 import awsServiceOptions from './awsServiceOptions'
 import cidr16HashedPrefix from './cidr16HashedPrefix'
+import { DEV_OWN_ACCOUNT_STAGE } from './stages'
 
 /* The following is required in the role launching this (like serverless iamRoleStatements)
 
@@ -43,7 +44,7 @@ export default ({
   proj,
   stage,
   region,
-  azCount = stage === 'dev' ? 1 : 2,
+  azCount = stage === DEV_OWN_ACCOUNT_STAGE ? 1 : 2,
   ipPrefix = cidr16HashedPrefix(proj),
 }: IOptions) =>
   src(path.join(__dirname, `cfn/vpc-${azCount}.cfn.yaml`))

@@ -4,6 +4,7 @@ import range from 'lodash/range'
 import PluginError from 'plugin-error'
 import defaultDevName from '../devName'
 import publicStageName from '../publicStageName'
+import { DEV_OWN_ACCOUNT_STAGE } from '../stages'
 import { master } from './awsMasterCredentials'
 
 const pluginName = '@mindhivenz/deploy/awsAccounts'
@@ -22,12 +23,13 @@ const groupNameCombinations = (proj: string) => {
   )
 }
 
-export const devsOwnAccountName = (name: string) => publicStageName('dev', name)
+export const devsOwnAccountName = (name: string) =>
+  publicStageName(DEV_OWN_ACCOUNT_STAGE, name)
 
 const accountNameCombinations = ({ proj, stage, devName }: IOptions) => {
   const stagePublic = publicStageName(stage, devName)
   const result = groupNameCombinations(proj).map((g) => `${g}-${stagePublic}`)
-  if (stage === 'dev') {
+  if (stage === DEV_OWN_ACCOUNT_STAGE) {
     result.push(devsOwnAccountName(devName || defaultDevName()))
   }
   return result

@@ -3,6 +3,7 @@ import { task } from 'gulp'
 import devName from './devName'
 import addAwsVaultProfile from './internal/addAwsVaultProfile'
 import { toCopy } from './colors'
+import { DEV_OWN_ACCOUNT_STAGE } from './stages'
 import { userRoleName } from './userRoleName'
 import openAwsConsoleTask from './internal/openAwsConsoleTask'
 import { openManagedInstanceShellTask } from './internal/openManagedInstanceShellTask'
@@ -52,8 +53,8 @@ export default ({ proj, stages, region }: IOptions) => {
     }
   })
 
-  if (!stages.includes('dev')) {
-    const stage = 'dev'
+  if (!stages.includes(DEV_OWN_ACCOUNT_STAGE)) {
+    const stage = DEV_OWN_ACCOUNT_STAGE
     task(`open:aws:${stage}`, openAwsConsoleTask({ proj, stage, region }))
 
     task(`add:aws-vault:${stage}`, async () => {

@@ -1,3 +1,4 @@
+import { PRODUCTION, DEV_OWN_ACCOUNT_STAGE } from '../stages'
 import {
   accessRoleSessionName,
   accessTargetRoleArn,
@@ -29,12 +30,15 @@ export const awsVaultProfile = async ({
   devName,
   profileName,
 }: IOptions): Promise<IResult> => {
-
   let actualProfileName: string
 
-  if(!profileName){
+  if (!profileName) {
     const profileNameParts =
-      stage === 'dev' ? [stage] : stage === 'production' ? [proj] : [proj, stage]
+      stage === DEV_OWN_ACCOUNT_STAGE
+        ? [stage]
+        : stage === PRODUCTION
+        ? [proj]
+        : [proj, stage]
     if (roleName) {
       profileNameParts.push(roleName)
     }
@@ -42,7 +46,7 @@ export const awsVaultProfile = async ({
   } else {
     actualProfileName = profileName
   }
-  
+
   const header = `[profile ${actualProfileName}]`
   const account = await resolveAccount({ proj, stage, devName })
   const iniProfile = [
