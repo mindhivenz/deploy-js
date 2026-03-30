@@ -11,13 +11,18 @@ const gulp_1 = require("gulp");
 const awsServiceOptions_1 = __importDefault(require("./awsServiceOptions"));
 const eyamlEncode_1 = __importDefault(require("./eyamlEncode"));
 const colors_1 = require("./colors");
+const args_1 = require("./internal/args");
 const nodeRoleNames_1 = require("./nodeRoleNames");
 exports.default = ({ proj, region, customers }) => {
     const stage = 'production'; // REVISIT: will we activate nodes in non-production stages?
     customers.forEach((customer) => {
         const taskName = `generate:ssm-activation:${customer}`;
         (0, gulp_1.task)(taskName, async () => {
-            const ssm = new aws_sdk_1.SSM((0, awsServiceOptions_1.default)({ proj, stage, region }));
+            const { region: overrideRegion } = (0, args_1.parseArgs)(args_1.globalArgs.option('region', {
+                type: 'string',
+            }));
+            const ssmRegion = overrideRegion || region;
+            const ssm = new aws_sdk_1.SSM((0, awsServiceOptions_1.default)({ proj, stage, region: ssmRegion }));
             const expiryDate = (0, date_fns_1.addDays)(new Date(), 7);
             const activationResult = await ssm
                 .createActivation({
@@ -35,7 +40,7 @@ exports.default = ({ proj, region, customers }) => {
                 `${(0, ansi_colors_1.yellow)('hybrid_ssm_agent::activation')}:`,
                 `  ${(0, ansi_colors_1.yellow)('id')}: ${activationResult.ActivationId}`,
                 `  ${(0, ansi_colors_1.yellow)('code')}: ${encodedCode}`,
-                `${(0, ansi_colors_1.yellow)('hybrid_ssm_agent::region')}: ${region}`,
+                `${(0, ansi_colors_1.yellow)('hybrid_ssm_agent::region')}: ${ssmRegion}`,
             ].join('\n'));
         });
     });
