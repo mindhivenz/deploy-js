@@ -1,0 +1,53 @@
+name: Sync deploy-py from deploy-js
+
+# Runs on every push to master (this repo, deploy-js, is the source of truth) and
+# asks Claude Code to port any source changes that have not yet been reflected in
+# the deploy-py Python port. If it finds divergence, it opens a PR on deploy-py.
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  sync-deploy-py:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.MINDHIVE_CICD_GH_APP_ID }}
+          private-key: ${{ secrets.MINDHIVE_CICD_GH_PRIVATE_KEY }}
+          owner: mindhivenz
+          # App must be installed on both repos:
+          #  - deploy-js: contents:read
+          #  - deploy-py: contents:write, pull_requests:write
+          repositories: |
+            deploy-js
+            deploy-py
+
+      - name: Checkout deploy-js (source of truth)
+        uses: actions/checkout@v4
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          fetch-depth: 0
+
+      - name: Port changes to deploy-py and open PR
+        uses: anthropics/claude-code-action@v1
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ steps.app-token.outputs.token }}
+          claude_args: |
+            --model claude-opus-4-8
+            --max-turns 40
+            --allowedTools Edit,Read,Write,Glob,Grep,Bash
+          prompt: |
+            Use the update-deploy-py skill to port any changes in this repo
+            (deploy-js, the source of truth) into the deploy-py Python port and
+            open a PR on deploy-py if it has drifted. Follow the skill exactly.
