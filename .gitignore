@@ -5,5 +5,5 @@ dist/
 /.idea/workspace.xml
 /.idea/libraries/
 /.idea/markdown-navigator*
-/.idea/aws.xml
+/.idea/aws*
 /.idea/shelf

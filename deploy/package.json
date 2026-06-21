@@ -4,6 +4,7 @@
   "license": "MIT",
   "devDependencies": {
     "@types/gulp": "^4.0.5",
+    "@types/node": "^18",
     "del": "^5.0.0",
     "gulp": "^4.0.0"
   }

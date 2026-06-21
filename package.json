@@ -9,6 +9,9 @@
     "type": "git",
     "url": "git+https://github.com/mindhivenz/deploy-js.git"
   },
+  "engines": {
+    "node": ">=18"
+  },
   "dependencies": {
     "ansi-colors": "^4.1.1",
     "date-fns": "^2.12.0",
@@ -21,7 +24,6 @@
     "hash-mod": "^0.0.5",
     "into-stream": "^5.0.0",
     "lodash": "^4.17.4",
-    "node-fetch": "^2.6.0",
     "nodecredstash": "^2.0.0",
     "open": "^8.4.0",
     "p-limit": "^3.1.0",
@@ -42,8 +44,7 @@
     "@types/gulp-rename": "^2.0.1",
     "@types/into-stream": "^3.1.0",
     "@types/lodash": "^4.14.119",
-    "@types/node": "^16",
-    "@types/node-fetch": "^2.5.7",
+    "@types/node": "^18",
     "@types/nodecredstash": "^2.0.0",
     "@types/prompts": "^2.0.8",
     "@types/shell-escape": "^0.2.0",

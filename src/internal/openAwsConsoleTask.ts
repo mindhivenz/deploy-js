@@ -1,7 +1,6 @@
 import open from 'open'
 import PluginError from 'plugin-error'
 import querystring from 'querystring'
-import fetch from 'node-fetch'
 import log from 'fancy-log'
 import { URL } from 'url'
 import { url } from '../colors'
