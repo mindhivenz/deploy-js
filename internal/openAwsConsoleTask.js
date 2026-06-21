@@ -6,7 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const open_1 = __importDefault(require("open"));
 const plugin_error_1 = __importDefault(require("plugin-error"));
 const querystring_1 = __importDefault(require("querystring"));
-const node_fetch_1 = __importDefault(require("node-fetch"));
 const fancy_log_1 = __importDefault(require("fancy-log"));
 const url_1 = require("url");
 const colors_1 = require("../colors");
@@ -33,7 +32,7 @@ exports.default = ({ proj, stage, region, urlParts = {} }) => async () => {
         sessionKey: credentials.secretAccessKey,
         sessionToken: credentials.sessionToken,
     };
-    const federationResponse = await (0, node_fetch_1.default)(`https://signin.aws.amazon.com/federation?${querystring_1.default.stringify({
+    const federationResponse = await fetch(`https://signin.aws.amazon.com/federation?${querystring_1.default.stringify({
         Action: 'getSigninToken',
         Session: JSON.stringify(tempCredentials),
     })}`);
