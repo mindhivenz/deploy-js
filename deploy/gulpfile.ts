@@ -1,4 +1,4 @@
-import del from 'del'
+import { deleteAsync as del } from 'del'
 import { src, dest, series, parallel } from 'gulp'
 import ts from 'gulp-typescript'
 import path from 'path'
