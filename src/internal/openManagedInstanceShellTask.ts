@@ -6,6 +6,7 @@ import { prompt } from 'prompts'
 import { IRegionalProjOptions } from '../awsProjOptions'
 import awsServiceOptions from '../awsServiceOptions'
 import { ssmInteractiveCommand } from './ssmInteractiveCommand'
+import { globalArgs, parseArgs } from './args'
 
 export const openManagedInstanceShellTask =
   (opts: IRegionalProjOptions) => async () => {
@@ -27,6 +28,19 @@ export const openManagedInstanceShellTask =
     } while (token)
     if (instances.length === 0) {
       throw new PluginError('open:shell', 'No instances found')
+    }
+    const { host } = parseArgs(
+      globalArgs.option('host', {
+        describe: 'Connect to the instance with this computer name',
+        string: true,
+      }),
+    )
+    if (host) {
+      const matched = instances.find((inst) => inst.ComputerName === host)
+      if (matched && matched.InstanceId) {
+        await ssmInteractiveCommand(opts, matched.InstanceId, 'sudo -i -u root')
+        return
+      }
     }
     const choices = instances.map((inst) => ({
       title:
