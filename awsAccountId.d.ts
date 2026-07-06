@@ -1,3 +1,4 @@
 import { IProjOptions } from './awsProjOptions';
-declare const _default: (options: IProjOptions) => Promise<string>;
+declare const getAccountId: (options: IProjOptions) => Promise<string>;
+declare const _default: typeof getAccountId;
 export default _default;

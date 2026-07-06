@@ -9,5 +9,5 @@ export declare const globalArgs: yargs.Argv<{
 interface IParseOpts {
     complete?: boolean;
 }
-export declare const parseArgs: <T>(args: yargs.Argv<T>, { complete }?: IParseOpts) => yargs.Arguments<T> extends infer T_1 ? { [key in keyof T_1 as key | yargs.CamelCaseKey<key>]: yargs.Arguments<T>[key]; } : never;
+export declare const parseArgs: <T>(args: Argv<T>, { complete }?: IParseOpts) => { [key in keyof yargs.Arguments<T> as key | yargs.CamelCaseKey<key>]: yargs.Arguments<T>[key]; };
 export {};

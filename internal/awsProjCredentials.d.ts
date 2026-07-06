@@ -7,4 +7,6 @@ export declare class ProjCredentials extends AWS.ChainableTemporaryCredentials {
     refresh(callback: (err: AWS.AWSError) => void): void;
     private _resolveRoleArn;
 }
-export declare const projCredentialsFactory: (options: IProjOptions) => AWS.Credentials;
+declare const credentialsFactory: (options: IProjOptions) => AWS.Credentials;
+export declare const projCredentialsFactory: typeof credentialsFactory;
+export {};
