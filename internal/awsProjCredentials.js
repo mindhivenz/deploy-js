@@ -15,6 +15,7 @@ const awsMasterCredentials_1 = require("./awsMasterCredentials");
 const awsSession_1 = require("./awsSession");
 const nearestRegion_1 = require("./nearestRegion");
 class ProjCredentials extends aws_sdk_1.default.ChainableTemporaryCredentials {
+    projOptions;
     constructor(projOptions) {
         super({
             masterCredentials: awsMasterCredentials_1.master,

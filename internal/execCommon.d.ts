@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { SpawnOptions } from 'child_process';
 export interface IExecOpts extends Pick<SpawnOptions, 'cwd' | 'env'> {
     pipeInput?: boolean;

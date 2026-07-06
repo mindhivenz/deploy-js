@@ -10,6 +10,7 @@ const plugin_error_1 = __importDefault(require("plugin-error"));
 const prompts_1 = require("prompts");
 const awsServiceOptions_1 = __importDefault(require("../awsServiceOptions"));
 const ssmInteractiveCommand_1 = require("./ssmInteractiveCommand");
+const args_1 = require("./args");
 const openManagedInstanceShellTask = (opts) => async () => {
     const serviceOpts = (0, awsServiceOptions_1.default)(opts);
     const ssm = new aws_sdk_1.SSM(serviceOpts);
@@ -29,6 +30,17 @@ const openManagedInstanceShellTask = (opts) => async () => {
     } while (token);
     if (instances.length === 0) {
         throw new plugin_error_1.default('open:shell', 'No instances found');
+    }
+    const { host } = (0, args_1.parseArgs)(args_1.globalArgs.option('host', {
+        describe: 'Connect to the instance with this computer name',
+        string: true,
+    }));
+    if (host) {
+        const matched = instances.find((inst) => inst.ComputerName === host);
+        if (matched && matched.InstanceId) {
+            await (0, ssmInteractiveCommand_1.ssmInteractiveCommand)(opts, matched.InstanceId, 'sudo -i -u root');
+            return;
+        }
     }
     const choices = instances.map((inst) => ({
         title: (inst.ComputerName || inst.InstanceId) +

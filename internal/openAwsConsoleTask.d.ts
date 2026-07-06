@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { URL } from 'url';
 interface IOptions {
     proj: string;
