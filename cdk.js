@@ -15,6 +15,7 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ssmAgentManagedPolicies = void 0;
+__exportStar(require("./cdk-constructs/CustomerImageRepository"), exports);
 __exportStar(require("./cdk-constructs/NodeRole"), exports);
 __exportStar(require("./cdk-constructs/DatadogServerlessMacro"), exports);
 __exportStar(require("./cdk-constructs/importDatadogForwarderArn"), exports);
