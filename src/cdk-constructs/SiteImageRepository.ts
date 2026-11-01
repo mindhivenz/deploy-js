@@ -44,7 +44,7 @@ const keepWhileSitesUseLifecyclePolicy = {
   ],
 }
 
-interface CustomerImageRepositoryProps
+interface SiteImageRepositoryProps
   extends Omit<
     aws_ecr.RepositoryProps,
     'lifecycleRules' | 'lifecycleRegistryId'
@@ -52,11 +52,11 @@ interface CustomerImageRepositoryProps
   tagResolver: aws_iam.IGrantable
 }
 
-export class CustomerImageRepository extends aws_ecr.Repository {
+export class SiteImageRepository extends aws_ecr.Repository {
   constructor(
     scope: Construct,
     id: string,
-    { tagResolver, ...props }: CustomerImageRepositoryProps,
+    { tagResolver, ...props }: SiteImageRepositoryProps,
   ) {
     super(scope, id, props)
     const cfnRepository = this.node.defaultChild as aws_ecr.CfnRepository
