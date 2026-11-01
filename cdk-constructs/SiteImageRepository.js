@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CustomerImageRepository = void 0;
+exports.SiteImageRepository = void 0;
 const aws_cdk_lib_1 = require("aws-cdk-lib");
 // Sites resolve their tag at least daily, and resolving records a pull, so
 // an image goes unpulled only once no site uses it. ECR only archives on pull
@@ -44,7 +44,7 @@ const keepWhileSitesUseLifecyclePolicy = {
         },
     ],
 };
-class CustomerImageRepository extends aws_cdk_lib_1.aws_ecr.Repository {
+class SiteImageRepository extends aws_cdk_lib_1.aws_ecr.Repository {
     constructor(scope, id, { tagResolver, ...props }) {
         super(scope, id, props);
         const cfnRepository = this.node.defaultChild;
@@ -54,4 +54,4 @@ class CustomerImageRepository extends aws_cdk_lib_1.aws_ecr.Repository {
         this.grant(tagResolver, 'ecr:DescribeImages', 'ecr:BatchGetImage');
     }
 }
-exports.CustomerImageRepository = CustomerImageRepository;
+exports.SiteImageRepository = SiteImageRepository;
