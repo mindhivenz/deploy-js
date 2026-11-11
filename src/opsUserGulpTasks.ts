@@ -3,7 +3,7 @@ import { task } from 'gulp'
 import devName from './devName'
 import addAwsVaultProfile from './internal/addAwsVaultProfile'
 import { toCopy } from './colors'
-import { DEV_OWN_ACCOUNT_STAGE } from './stages'
+import { DEV_OWN_ACCOUNT_STAGE, PRODUCTION } from './stages'
 import { userRoleName } from './userRoleName'
 import openAwsConsoleTask from './internal/openAwsConsoleTask'
 import { openManagedInstanceShellTask } from './internal/openManagedInstanceShellTask'
@@ -47,7 +47,7 @@ export default ({ proj, stages, region }: IOptions) => {
       openManagedInstanceShellTask({ proj, stage, region }),
     )
 
-    if (stage === 'production') {
+    if (stage === PRODUCTION) {
       task(`open:aws`, openAwsConsoleTask({ proj, stage, region }))
       task(`open:shell`, openManagedInstanceShellTask({ proj, stage, region }))
     }
