@@ -36,7 +36,7 @@ exports.default = ({ proj, stages, region }) => {
             })();
         });
         (0, gulp_1.task)(`open:shell:${stage}`, (0, openManagedInstanceShellTask_1.openManagedInstanceShellTask)({ proj, stage, region }));
-        if (stage === 'production') {
+        if (stage === stages_1.PRODUCTION) {
             (0, gulp_1.task)(`open:aws`, (0, openAwsConsoleTask_1.default)({ proj, stage, region }));
             (0, gulp_1.task)(`open:shell`, (0, openManagedInstanceShellTask_1.openManagedInstanceShellTask)({ proj, stage, region }));
         }

@@ -13,35 +13,42 @@ const eyamlEncode_1 = __importDefault(require("./eyamlEncode"));
 const colors_1 = require("./colors");
 const args_1 = require("./internal/args");
 const nodeRoleNames_1 = require("./nodeRoleNames");
-exports.default = ({ proj, region, customers }) => {
-    const stage = 'production'; // REVISIT: will we activate nodes in non-production stages?
-    customers.forEach((customer) => {
-        const taskName = `generate:ssm-activation:${customer}`;
-        (0, gulp_1.task)(taskName, async () => {
-            const { region: overrideRegion } = (0, args_1.parseArgs)(args_1.globalArgs.option('region', {
-                type: 'string',
-            }));
-            const ssmRegion = overrideRegion || region;
-            const ssm = new aws_sdk_1.SSM((0, awsServiceOptions_1.default)({ proj, stage, region: ssmRegion }));
-            const expiryDate = (0, date_fns_1.addDays)(new Date(), 7);
-            const activationResult = await ssm
-                .createActivation({
-                ExpirationDate: expiryDate,
-                IamRole: (0, nodeRoleNames_1.nodeRoleName)(customer),
-                RegistrationLimit: 10,
-            })
-                .promise();
-            const code = activationResult.ActivationCode;
-            const encodedCode = await (0, eyamlEncode_1.default)(code, { proj, region });
-            (0, fancy_log_1.default)([
-                `Add the following to ${(0, colors_1.highlight)(`${proj}-control`)} data for ${(0, colors_1.highlight)(customer)}:`,
-                (0, ansi_colors_1.green)(`# This activation is valid until ${expiryDate.toUTCString()}, regenerate with:`),
-                (0, ansi_colors_1.green)(`# mhd ${taskName}`),
-                `${(0, ansi_colors_1.yellow)('hybrid_ssm_agent::activation')}:`,
-                `  ${(0, ansi_colors_1.yellow)('id')}: ${activationResult.ActivationId}`,
-                `  ${(0, ansi_colors_1.yellow)('code')}: ${encodedCode}`,
-                `${(0, ansi_colors_1.yellow)('hybrid_ssm_agent::region')}: ${ssmRegion}`,
-            ].join('\n'));
+const stages_1 = require("./stages");
+exports.default = ({ proj, region, customers, stages = [stages_1.PRODUCTION], }) => {
+    stages.forEach((stage) => {
+        customers.forEach((customer) => {
+            const baseTaskName = `generate:ssm-activation:${customer}`;
+            const taskName = stage === stages_1.PRODUCTION ? baseTaskName : `${baseTaskName}:${stage}`;
+            const generateActivation = async () => {
+                const { region: overrideRegion } = (0, args_1.parseArgs)(args_1.globalArgs.option('region', {
+                    type: 'string',
+                }));
+                const ssmRegion = overrideRegion || region;
+                const ssm = new aws_sdk_1.SSM((0, awsServiceOptions_1.default)({ proj, stage, region: ssmRegion }));
+                const expiryDate = (0, date_fns_1.addDays)(new Date(), 7);
+                const activationResult = await ssm
+                    .createActivation({
+                    ExpirationDate: expiryDate,
+                    IamRole: (0, nodeRoleNames_1.nodeRoleName)(customer),
+                    RegistrationLimit: 10,
+                })
+                    .promise();
+                const code = activationResult.ActivationCode;
+                const encodedCode = await (0, eyamlEncode_1.default)(code, { proj, region });
+                (0, fancy_log_1.default)([
+                    `Add the following to ${(0, colors_1.highlight)(`${proj}-control`)} data for ${(0, colors_1.highlight)(customer)}:`,
+                    (0, ansi_colors_1.green)(`# This activation is valid until ${expiryDate.toUTCString()}, regenerate with:`),
+                    (0, ansi_colors_1.green)(`# mhd ${taskName}`),
+                    `${(0, ansi_colors_1.yellow)('hybrid_ssm_agent::activation')}:`,
+                    `  ${(0, ansi_colors_1.yellow)('id')}: ${activationResult.ActivationId}`,
+                    `  ${(0, ansi_colors_1.yellow)('code')}: ${encodedCode}`,
+                    `${(0, ansi_colors_1.yellow)('hybrid_ssm_agent::region')}: ${ssmRegion}`,
+                ].join('\n'));
+            };
+            (0, gulp_1.task)(`${baseTaskName}:${stage}`, generateActivation);
+            if (stage === stages_1.PRODUCTION) {
+                (0, gulp_1.task)(baseTaskName, generateActivation);
+            }
         });
     });
 };
